@@ -6,3 +6,7 @@ body {
   padding: 0;
   font-family: 'Nanum Gothic', sans-serif;
 }
+
+main {
+  padding: 1rem;
+}
