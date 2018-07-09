@@ -1,0 +1,9 @@
+.header-wrapper {
+  flex-grow: 1;
+}
+
+.header-logo {
+  flex: 1;
+  max-width: 70%;
+  margin-right: auto;
+}
