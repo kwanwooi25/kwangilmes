@@ -1,0 +1,14 @@
+.page-header {
+  display: flex;
+}
+
+.page-header__title {
+  flex: 1;
+  margin: 0.5rem;
+}
+
+.page-header__search {
+  margin: 0.5rem;
+  width: 60%;
+  max-width: 300px;
+}

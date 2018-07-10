@@ -9,7 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import './LoginPage.css';
 
-const LoginPage = ({ loginUser, error, errorMessage }) => {
+const LoginPage = ({ loginUser, error }) => {
   return (
     <div className="login-page">
       <Card className="login-form">
@@ -25,7 +25,7 @@ const LoginPage = ({ loginUser, error, errorMessage }) => {
             type="password"
             fullWidth
           />
-          {error && <p className="login-form__error">{errorMessage}</p>}
+          {error && <p className="login-form__error">{error}</p>}
         </CardContent>
         <CardActions>
           <Button
@@ -45,8 +45,8 @@ const LoginPage = ({ loginUser, error, errorMessage }) => {
   );
 };
 
-const mapStateToProps = ({ auth: { error, errorMessage } }) => {
-  return { error, errorMessage };
+const mapStateToProps = ({ auth }) => {
+  return { error: auth.error };
 }
 
 export default connect(mapStateToProps, { loginUser })(LoginPage);

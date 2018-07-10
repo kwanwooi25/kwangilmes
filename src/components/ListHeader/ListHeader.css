@@ -1,0 +1,23 @@
+.list-header {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid #cdcdcd;
+}
+
+.list-header__row {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+
+.list-header__row button {
+  margin: .25rem;
+  min-width: 40px;
+}
+
+.list-header__checkbox {}
+
+.list-header__limit {
+  width: 100px;
+}

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import Header from './components/Header/Header';
-import LoginPage from './containers/LoginPage/LoginPage';
-import AccountsPage from './containers/AccountsPage/AccountsPage';
+import Header from '../components/Header/Header';
+import LoginPage from './LoginPage/LoginPage';
+import AccountsPage from './AccountsPage/AccountsPage';
 
 const DashboardPage = () => <h1>DashboardPage</h1>;
 const ProductsPage = () => <h1>ProductsPage</h1>;
@@ -56,7 +56,7 @@ class App extends Component {
   }
 
   render() {
-    const { isLoggedIn, user } = this.props.auth;
+    const { isLoggedIn } = this.props.auth;
     return (
       <BrowserRouter>
         <div className="App">

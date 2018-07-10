@@ -5,9 +5,8 @@ import {
 
 const INITIAL_STATE = {
   isLoggedIn: false,
-  user: {},
-  error: false,
-  errorMessage: ''
+  userToken: '',
+  error: ''
 }
 
 export default function(state = INITIAL_STATE, action) {
