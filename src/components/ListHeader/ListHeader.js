@@ -10,19 +10,19 @@ import './ListHeader.css';
 
 const ListHeader = ({
   rowsPerPage,
-  currentPage,
+  isFirstPage,
+  isLastPage,
   onRowsPerPageChange,
-  onPageChange
+  onPageChange,
+  onSelectAllChange
 }) => {
-  console.log(currentPage);
   return (
     <div className="list-header">
       <div className="list-header__row">
         <FormControlLabel
           control={
             <Checkbox
-              // checked={checked}
-              // onChange={}
+              onChange={(e) => { onSelectAllChange(e.target.checked) }}
               color="primary"
             />
           }
@@ -52,7 +52,7 @@ const ListHeader = ({
         <div className="paginator">
           <IconButton
             aria-label="first page"
-            disabled={currentPage <= 1}
+            disabled={isFirstPage}
             onClick={() => {
               onPageChange('first');
             }}
@@ -61,7 +61,7 @@ const ListHeader = ({
           </IconButton>
           <IconButton
             aria-label="previous page"
-            disabled={currentPage <= 1}
+            disabled={isFirstPage}
             onClick={() => {
               onPageChange('prev');
             }}
@@ -70,6 +70,7 @@ const ListHeader = ({
           </IconButton>
           <IconButton
             aria-label="next page"
+            disabled={isLastPage}
             onClick={() => {
               onPageChange('next');
             }}
@@ -78,6 +79,7 @@ const ListHeader = ({
           </IconButton>
           <IconButton
             aria-label="last page"
+            disabled={isLastPage}
             onClick={() => {
               onPageChange('last');
             }}

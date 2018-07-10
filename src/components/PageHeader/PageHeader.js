@@ -5,7 +5,6 @@ import Icon from '@material-ui/core/Icon';
 import './PageHeader.css';
 
 const PageHeader = ({ title, searchBox, onSearchChange }) => {
-  console.log(title, searchBox);
   return (
     <div className="page-header">
       <h2 className="page-header__title">{title}</h2>
