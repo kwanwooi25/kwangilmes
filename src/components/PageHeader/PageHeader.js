@@ -8,7 +8,7 @@ const PageHeader = ({ title, searchBox, onSearchChange }) => {
   return (
     <div className="page-header">
       <h2 className="page-header__title">{title}</h2>
-      {searchBox && (
+      {searchBox && onSearchChange && (
         <Input
           id="page-header__search"
           className="page-header__search"

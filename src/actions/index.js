@@ -1,10 +1,11 @@
 import {
   LOGIN_USER,
   LOGOUT_USER,
-  FETCH_ACCOUNTS_REQUEST,
-  FETCH_ACCOUNTS_RESPONSE,
+  FETCH_ACCOUNTS,
   TOGGLE_ACCOUNT_CHECKED,
-  SET_ACCOUNTS_CHECKED
+  SET_ACCOUNTS_CHECKED,
+  SET_ACCOUNTS_UNCHECKED,
+  DELETE_ACCOUNTS
 } from './types';
 
 // const HOST = 'http://api.kwangilmes.com';
@@ -28,7 +29,6 @@ export const logoutUser = () => dispatch => {
 };
 
 export const fetchAccounts = (userToken, search) => dispatch => {
-  dispatch({ type: FETCH_ACCOUNTS_REQUEST });
   fetch(`${HOST}/accounts`, {
     headers: {
       'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ export const fetchAccounts = (userToken, search) => dispatch => {
     .then(response => response.json())
     .then(({ success, error, data }) => {
       data.search = search;
-      dispatch({ type: FETCH_ACCOUNTS_RESPONSE, payload: data });
+      dispatch({ type: FETCH_ACCOUNTS, payload: data });
     });
 };
 
@@ -48,6 +48,36 @@ export const toggleAccountChecked = id => dispatch => {
   dispatch({ type: TOGGLE_ACCOUNT_CHECKED, payload: id });
 };
 
-export const setAccountsChecked = (checked) => dispatch => {
-  dispatch({ type: SET_ACCOUNTS_CHECKED, payload: checked });
+export const toggleAccountsChecked = (checked) => dispatch => {
+  if (checked) dispatch ({ type: SET_ACCOUNTS_CHECKED });
+  else dispatch ({ type: SET_ACCOUNTS_UNCHECKED });
+}
+
+export const deleteAccounts = (userToken, ids, search) => dispatch => {
+  fetch(`${HOST}/accounts/`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'delete',
+    body: JSON.stringify(ids)
+  })
+    .then(response => response.json())
+    .then(({ success }) => {
+      if (success) {
+        fetch(`${HOST}/accounts`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'x-access-token': userToken
+          },
+          method: 'post',
+          body: JSON.stringify(search)
+        })
+          .then(response => response.json())
+          .then(({ success, error, data }) => {
+            data.search = search;
+            dispatch({ type: FETCH_ACCOUNTS, payload: data });
+          });
+      }
+    })
 }

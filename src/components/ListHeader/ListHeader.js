@@ -6,6 +6,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
+import Tooltip from '@material-ui/core/Tooltip';
 import './ListHeader.css';
 
 const ListHeader = ({
@@ -14,7 +15,13 @@ const ListHeader = ({
   isLastPage,
   onRowsPerPageChange,
   onPageChange,
-  onSelectAllChange
+  onDeleteAllClick,
+  onSelectAllChange,
+  selectedCount,
+  isSelectedAll,
+  onCancelSelection,
+  totalCount,
+  offset
 }) => {
   return (
     <div className="list-header">
@@ -22,13 +29,39 @@ const ListHeader = ({
         <FormControlLabel
           control={
             <Checkbox
-              onChange={(e) => { onSelectAllChange(e.target.checked) }}
+              indeterminate={selectedCount > 0 && isSelectedAll === false}
+              checked={isSelectedAll}
+              onChange={e => {
+                onSelectAllChange(e.target.checked);
+              }}
               color="primary"
             />
           }
           label="전체선택"
         />
-        <Button variant="contained">전체삭제</Button>
+        {selectedCount !== 0 && (
+          <div className="list-header__has-selection">
+            <p>{selectedCount}개 항목 선택됨</p>
+            <div className="list-header__button-group">
+              <Tooltip title="전체삭제">
+                <IconButton
+                  aria-label="delete all"
+                  onClick={onDeleteAllClick}
+                >
+                  <Icon>delete</Icon>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="선택취소">
+                <IconButton
+                  aria-label="cancel selection"
+                  onClick={onCancelSelection}
+                >
+                  <Icon>cancel</Icon>
+                </IconButton>
+              </Tooltip>
+            </div>
+          </div>
+        )}
       </div>
       <div className="list-header__row">
         <FormControl>
@@ -50,42 +83,53 @@ const ListHeader = ({
           </Select>
         </FormControl>
         <div className="paginator">
-          <IconButton
-            aria-label="first page"
-            disabled={isFirstPage}
-            onClick={() => {
-              onPageChange('first');
-            }}
-          >
-            <Icon>first_page</Icon>
-          </IconButton>
-          <IconButton
-            aria-label="previous page"
-            disabled={isFirstPage}
-            onClick={() => {
-              onPageChange('prev');
-            }}
-          >
-            <Icon>navigate_before</Icon>
-          </IconButton>
-          <IconButton
-            aria-label="next page"
-            disabled={isLastPage}
-            onClick={() => {
-              onPageChange('next');
-            }}
-          >
-            <Icon>navigate_next</Icon>
-          </IconButton>
-          <IconButton
-            aria-label="last page"
-            disabled={isLastPage}
-            onClick={() => {
-              onPageChange('last');
-            }}
-          >
-            <Icon>last_page</Icon>
-          </IconButton>
+          <div className="paginator__message">
+            총
+            <span>{totalCount}</span>
+            개 중
+            <span>
+              {offset + 1}-{Math.min(rowsPerPage + offset, totalCount)}
+            </span>
+            번째 항목
+          </div>
+          <div className="paginator__buttons">
+            <IconButton
+              aria-label="first page"
+              disabled={isFirstPage}
+              onClick={() => {
+                onPageChange('first');
+              }}
+            >
+              <Icon>first_page</Icon>
+            </IconButton>
+            <IconButton
+              aria-label="previous page"
+              disabled={isFirstPage}
+              onClick={() => {
+                onPageChange('prev');
+              }}
+            >
+              <Icon>navigate_before</Icon>
+            </IconButton>
+            <IconButton
+              aria-label="next page"
+              disabled={isLastPage}
+              onClick={() => {
+                onPageChange('next');
+              }}
+            >
+              <Icon>navigate_next</Icon>
+            </IconButton>
+            <IconButton
+              aria-label="last page"
+              disabled={isLastPage}
+              onClick={() => {
+                onPageChange('last');
+              }}
+            >
+              <Icon>last_page</Icon>
+            </IconButton>
+          </div>
         </div>
       </div>
     </div>

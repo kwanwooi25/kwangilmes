@@ -14,22 +14,3 @@
 .list-body__item:hover {
   background: #efefef;
 }
-
-.list-body__checkbox {
-}
-
-.list-body__details {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.list-body__title {
-  margin: 0;
-  margin-bottom: 0.5rem;
-}
-
-.list-body__button-group {
-  display: flex;
-  flex-direction: column;
-}

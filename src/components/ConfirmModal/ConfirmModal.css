@@ -1,0 +1,15 @@
+.modal-bg {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.confirm-modal {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  width: 80%;
+  max-width: 360px;
+  padding: .5rem;
+}

@@ -1,1 +1,6 @@
-
+.fab-add {
+  display: inline-block;
+  position: sticky;
+  bottom: 10px;
+  float: right;
+}

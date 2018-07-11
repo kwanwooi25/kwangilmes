@@ -7,6 +7,7 @@
 .list-header__row {
   align-items: center;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   padding: 0.5rem;
 }
@@ -16,8 +17,39 @@
   min-width: 40px;
 }
 
-.list-header__checkbox {}
+.list-header__has-selection {
+  align-items: center;
+  display: flex;
+}
+
+.list-header__has-selection p {
+  font-size: 0.8rem;
+  margin-right: 1rem;
+}
 
 .list-header__limit {
   width: 100px;
+}
+
+.paginator {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+}
+
+.paginator__message {
+  font-size: .8rem;
+  margin-right: 1rem;
+}
+
+.paginator__message span {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+@media (min-width: 768px) {
+  .list-header {
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }

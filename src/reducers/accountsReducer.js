@@ -1,14 +1,16 @@
 import {
-  FETCH_ACCOUNTS_REQUEST,
-  FETCH_ACCOUNTS_RESPONSE,
+  FETCH_ACCOUNTS,
   TOGGLE_ACCOUNT_CHECKED,
-  SET_ACCOUNTS_CHECKED
+  SET_ACCOUNTS_CHECKED,
+  SET_ACCOUNTS_UNCHECKED,
+  DELETE_ACCOUNTS
 } from '../actions/types';
 
 const INITIAL_STATE = {
   isPending: false,
   count: 0,
   all: [],
+  current: [],
   selected: [],
   search: {
     account_name: '',
@@ -19,30 +21,50 @@ const INITIAL_STATE = {
 
 export default function(state = INITIAL_STATE, action) {
   switch (action.type) {
-    case FETCH_ACCOUNTS_REQUEST:
-      state.isPending = true;
-      return state;
-    case FETCH_ACCOUNTS_RESPONSE:
-      const { count, accounts, search } = action.payload;
+
+    case FETCH_ACCOUNTS:
+      const { count, accounts, ids, search } = action.payload;
+      accounts.forEach(account => {
+        account.checked = state.selected.includes(account.id);
+      });
       return {
         isPending: false,
         count: Number(count),
-        all: accounts,
+        all: ids,
+        current: accounts,
         search,
         selected: state.selected
       };
+
     case TOGGLE_ACCOUNT_CHECKED:
       const id = action.payload;
-      const updated = state.all.map(account => {
-        if (account.id === id) account.checked = !account.checked;
+      state.current.forEach(account => {
+        if (account.id === id) {
+          account.checked = !account.checked;
+          if (account.checked) {
+            state.selected.push(account.id);
+          } else {
+            state.selected.splice(state.selected.indexOf(account.id), 1);
+          }
+        }
       });
-      return { all: updated, ...state };
+      return { current: state.current, selected: state.selected, ...state };
+
     case SET_ACCOUNTS_CHECKED:
-      const checked = action.payload;
-      const updatedAll = state.all.map(account => {
-        account.checked = checked;
+      state.selected = [];
+      state.selected = state.selected.concat(state.all);
+      state.current.forEach(account => {
+        account.checked = true;
       });
-      return { all: updatedAll, ...state };
+      return { current: state.current, selected: state.selected, ...state };
+
+    case SET_ACCOUNTS_UNCHECKED:
+      state.selected = [];
+      state.current.forEach(account => {
+        account.checked = false;
+      });
+      return { current: state.current, selected: state.selected, ...state };
+
     default:
       return state;
   }
