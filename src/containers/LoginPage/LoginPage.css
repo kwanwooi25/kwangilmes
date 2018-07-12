@@ -9,8 +9,13 @@
   display: flex;
   flex-direction: column;
   margin: auto;
-  width: 90%;
-  max-width: 400px;
+  padding: 1rem 2rem;
+  width: 95%;
+  max-width: 360px;
+}
+
+.login-form button {
+  margin: 1.5rem auto 0.5rem;;
 }
 
 .login-form__error {

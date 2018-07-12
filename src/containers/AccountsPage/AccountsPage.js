@@ -15,6 +15,7 @@ import ListBody from '../../components/ListBody/ListBody';
 import AccountListItem from '../../components/AccountListItem/AccountListItem';
 import NoData from '../../components/NoData/NoData';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
+import AccountForm from '../../components/AccountForm/AccountForm';
 import './AccountsPage.css';
 
 class AccountsPage extends Component {
@@ -25,7 +26,9 @@ class AccountsPage extends Component {
       isConfirmModalOpen: false,
       selectedAccounts: [],
       confirmModalTitle: '',
-      confirmModalDescription: ''
+      confirmModalDescription: '',
+      isAccountFormOpen: false,
+      accountFormTitle: ''
     };
 
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -37,6 +40,8 @@ class AccountsPage extends Component {
     this.onCancelSelection = this.onCancelSelection.bind(this);
     this.showConfirmDeleteModal = this.showConfirmDeleteModal.bind(this);
     this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
+    this.showAccountForm = this.showAccountForm.bind(this);
+    this.onAccountFormClose = this.onAccountFormClose.bind(this);
   }
 
   componentDidMount() {
@@ -78,7 +83,8 @@ class AccountsPage extends Component {
         break;
       case 'last':
         if (count % search.limit === 0) {
-          search.offset = (parseInt(count / search.limit, 10) - 1) * search.limit;
+          search.offset =
+            (parseInt(count / search.limit, 10) - 1) * search.limit;
         } else {
           search.offset = parseInt(count / search.limit, 10) * search.limit;
         }
@@ -131,6 +137,26 @@ class AccountsPage extends Component {
     });
   }
 
+  showAccountForm(mode) {
+    if (mode === 'new') {
+      this.setState({
+        isAccountFormOpen: true,
+        accountFormTitle: '업체등록'
+      });
+    }
+  }
+
+  onAccountFormClose(result, data) {
+    this.setState({
+      isAccountFormOpen: false,
+      accountFormTitle: ''
+    });
+
+    if (result) {
+      console.log(data);
+    }
+  }
+
   render() {
     const { count, current, search, selected } = this.props.accounts;
     const isFirstPage = search.offset === 0;
@@ -173,18 +199,28 @@ class AccountsPage extends Component {
           </ListBody>
         )}
         <div className="fab-add">
-          <Button variant="fab" color="primary" aria-label="add">
+          <Button
+            variant="fab"
+            color="primary"
+            aria-label="add"
+            onClick={() => {
+              this.showAccountForm('new');
+            }}
+          >
             <Icon>add</Icon>
           </Button>
         </div>
-        {this.state.isConfirmModalOpen && (
-          <ConfirmModal
-            open={this.state.isConfirmModalOpen}
-            title={this.state.confirmModalTitle}
-            description={this.state.confirmModalDescription}
-            onClose={this.onConfirmModalClose}
-          />
-        )}
+        <ConfirmModal
+          open={this.state.isConfirmModalOpen}
+          title={this.state.confirmModalTitle}
+          description={this.state.confirmModalDescription}
+          onClose={this.onConfirmModalClose}
+        />
+        <AccountForm
+          open={this.state.isAccountFormOpen}
+          title={this.state.accountFormTitle}
+          onClose={this.onAccountFormClose}
+        />
       </main>
     );
   }

@@ -1,0 +1,11 @@
+.form-header {
+  display: flex;
+}
+
+.form-header__title {
+  flex: 1;
+}
+
+.full-screen-form {
+  margin-top: 64px;
+}

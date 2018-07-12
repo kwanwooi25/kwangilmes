@@ -1,0 +1,16 @@
+.form-content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-content__row {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 600px) {
+  .form-content__row {
+    flex-direction: row;
+  }
+}
