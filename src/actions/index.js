@@ -4,8 +4,7 @@ import {
   FETCH_ACCOUNTS,
   TOGGLE_ACCOUNT_CHECKED,
   SET_ACCOUNTS_CHECKED,
-  SET_ACCOUNTS_UNCHECKED,
-  DELETE_ACCOUNTS
+  SET_ACCOUNTS_UNCHECKED
 } from './types';
 
 // const HOST = 'http://api.kwangilmes.com';

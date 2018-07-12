@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { logoutUser } from '../actions';
 import Header from '../components/Header/Header';
+import Navigation from '../components/Navigation/Navigation';
 import LoginPage from './LoginPage/LoginPage';
 import AccountsPage from './AccountsPage/AccountsPage';
+import './App.css';
 
 const DashboardPage = () => <h1>DashboardPage</h1>;
 const ProductsPage = () => <h1>ProductsPage</h1>;
@@ -29,6 +32,10 @@ const PRIVATE_ROUTES = [
 ];
 
 class App extends Component {
+  state = {
+    isNavOpen: false
+  };
+
   renderPublicRoutes() {
     const { isLoggedIn } = this.props.auth;
     return PUBLIC_ROUTES.map(({ path, component }) => (
@@ -55,12 +62,28 @@ class App extends Component {
     ));
   }
 
+  openNav() {
+    this.setState({ isNavOpen: true });
+  }
+
+  closeNav() {
+    this.setState({ isNavOpen: false });
+  }
+
   render() {
     const { isLoggedIn } = this.props.auth;
+    const { logoutUser } = this.props;
     return (
       <BrowserRouter>
         <div className="App">
-          <Header isLoggedIn={isLoggedIn} />
+          <Header isLoggedIn={isLoggedIn} openNav={this.openNav.bind(this)} />
+          {isLoggedIn && (
+            <Navigation
+              open={this.state.isNavOpen}
+              closeNav={this.closeNav.bind(this)}
+              logoutUser={logoutUser}
+            />
+          )}
           <Switch>
             {this.renderPublicRoutes()}
             {this.renderPrivateRoutes()}
@@ -75,4 +98,7 @@ const mapStateToProps = ({ auth }) => {
   return { auth };
 };
 
-export default connect(mapStateToProps)(App);
+export default connect(
+  mapStateToProps,
+  { logoutUser }
+)(App);

@@ -13,6 +13,7 @@ import PageHeader from '../../components/PageHeader/PageHeader';
 import ListHeader from '../../components/ListHeader/ListHeader';
 import ListBody from '../../components/ListBody/ListBody';
 import AccountListItem from '../../components/AccountListItem/AccountListItem';
+import NoData from '../../components/NoData/NoData';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import './AccountsPage.css';
 
@@ -77,10 +78,12 @@ class AccountsPage extends Component {
         break;
       case 'last':
         if (count % search.limit === 0) {
-          search.offset = (parseInt(count / search.limit) - 1) * search.limit;
+          search.offset = (parseInt(count / search.limit, 10) - 1) * search.limit;
         } else {
-          search.offset = parseInt(count / search.limit) * search.limit;
+          search.offset = parseInt(count / search.limit, 10) * search.limit;
         }
+        break;
+      default:
         break;
     }
     this.props.fetchAccounts(token, search);
@@ -104,7 +107,6 @@ class AccountsPage extends Component {
   }
 
   showConfirmDeleteModal(ids) {
-    const { current } = this.props.accounts;
     this.setState({
       isConfirmModalOpen: true,
       selectedAccounts: ids,
@@ -156,16 +158,20 @@ class AccountsPage extends Component {
           totalCount={count}
           offset={search.offset}
         />
-        <ListBody>
-          {current.map(account => (
-            <AccountListItem
-              key={account.id}
-              account={account}
-              onListItemChecked={this.onListItemChecked}
-              onListItemDeleteClick={this.showConfirmDeleteModal}
-            />
-          ))}
-        </ListBody>
+        {current.length === 0 ? (
+          <NoData />
+        ) : (
+          <ListBody>
+            {current.map(account => (
+              <AccountListItem
+                key={account.id}
+                account={account}
+                onListItemChecked={this.onListItemChecked}
+                onListItemDeleteClick={this.showConfirmDeleteModal}
+              />
+            ))}
+          </ListBody>
+        )}
         <div className="fab-add">
           <Button variant="fab" color="primary" aria-label="add">
             <Icon>add</Icon>

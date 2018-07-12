@@ -1,6 +1,5 @@
 import React from 'react';
 import Modal from '@material-ui/core/Modal';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import './ConfirmModal.css';
@@ -22,7 +21,7 @@ const ConfirmModal = ({ open, title, subtitle, description, onClose }) => {
         {description && (
           <p className="confirm-modal__description">{description}</p>
         )}
-        <div className="button-group">
+        <div className="confirm-modal__button-group">
           <Button
             variant="contained"
             color="default"

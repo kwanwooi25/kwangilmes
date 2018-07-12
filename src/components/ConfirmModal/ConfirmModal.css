@@ -13,3 +13,15 @@
   max-width: 360px;
   padding: .5rem;
 }
+
+.confirm-modal__title,
+.confirm-modal__subtitle,
+.confirm-modal__description {
+  margin: 0;
+  padding: .5rem;
+}
+
+.confirm-modal__button-group button {
+  margin: .5rem;
+  margin-top: 2rem;
+}

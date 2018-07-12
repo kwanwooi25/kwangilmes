@@ -11,7 +11,7 @@ import './LoginPage.css';
 
 const LoginPage = ({ loginUser, error }) => {
   return (
-    <div className="login-page">
+    <main className="login-page">
       <Card className="login-form">
         <CardContent>
           <Typography variant="display2" align="center">
@@ -41,7 +41,7 @@ const LoginPage = ({ loginUser, error }) => {
           </Button>
         </CardActions>
       </Card>
-    </div>
+    </main>
   );
 };
 

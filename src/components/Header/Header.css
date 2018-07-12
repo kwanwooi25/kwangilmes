@@ -1,14 +1,10 @@
-.header-wrapper {
-  flex-grow: 1;
+.header {
+  max-height: 64px;
 }
 
 .header-logo {
   cursor: pointer;
   flex: 1;
-  max-width: 70%;
+  max-width: 200px;
   margin-right: auto;
-}
-
-.nav-item {
-  text-decoration: none;
 }

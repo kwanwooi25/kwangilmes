@@ -3,7 +3,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import Checkbox from '@material-ui/core/Checkbox';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -56,7 +55,7 @@ const ListHeader = ({
                   aria-label="cancel selection"
                   onClick={onCancelSelection}
                 >
-                  <Icon>cancel</Icon>
+                  <Icon>clear</Icon>
                 </IconButton>
               </Tooltip>
             </div>
