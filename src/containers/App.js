@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { logoutUser } from '../actions';
+import Snackbar from '@material-ui/core/Snackbar';
 import Header from '../components/Header/Header';
 import Navigation from '../components/Navigation/Navigation';
 import LoginPage from './LoginPage/LoginPage';
@@ -72,7 +73,8 @@ class App extends Component {
 
   render() {
     const { isLoggedIn } = this.props.auth;
-    const { logoutUser } = this.props;
+    const { isSnackbarOpen, snackbarMessage } = this.props.snackbar;
+    const { logoutUser, showSnackbar } = this.props;
     return (
       <BrowserRouter>
         <div className="App">
@@ -88,14 +90,25 @@ class App extends Component {
             {this.renderPublicRoutes()}
             {this.renderPrivateRoutes()}
           </Switch>
+          <Snackbar
+            className="snackbar"
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            autoHideDuration={4000}
+            open={isSnackbarOpen}
+            ContentProps={{
+              'aria-describedby': 'snackbarMessage',
+              className: 'snackbar-content'
+            }}
+            message={<span id="snackbarMessage">{snackbarMessage}</span>}
+          />
         </div>
       </BrowserRouter>
     );
   }
 }
 
-const mapStateToProps = ({ auth }) => {
-  return { auth };
+const mapStateToProps = ({ auth, snackbar }) => {
+  return { auth, snackbar };
 };
 
 export default connect(

@@ -1,8 +1,10 @@
 import {
   FETCH_ACCOUNTS,
+  FETCH_ACCOUNT,
   TOGGLE_ACCOUNT_CHECKED,
   SET_ACCOUNTS_CHECKED,
-  SET_ACCOUNTS_UNCHECKED
+  SET_ACCOUNTS_UNCHECKED,
+  DELETE_ACCOUNTS
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -11,6 +13,7 @@ const INITIAL_STATE = {
   all: [],
   current: [],
   selected: [],
+  selectedAccount: {},
   search: {
     account_name: '',
     limit: 10,
@@ -26,14 +29,16 @@ export default function(state = INITIAL_STATE, action) {
       accounts.forEach(account => {
         account.checked = state.selected.includes(account.id);
       });
-      return {
+      return Object.assign({}, state, {
         isPending: false,
         count: Number(count),
         all: ids,
         current: accounts,
-        search,
-        selected: state.selected
-      };
+        search
+      });
+
+    case FETCH_ACCOUNT:
+      return { selectedAccount: action.payload, ...state };
 
     case TOGGLE_ACCOUNT_CHECKED:
       const id = action.payload;
@@ -63,6 +68,10 @@ export default function(state = INITIAL_STATE, action) {
         account.checked = false;
       });
       return { current: state.current, selected: state.selected, ...state };
+
+    case DELETE_ACCOUNTS:
+      state.selected = state.selected.filter(id => !action.payload.includes(id));
+      return { selected: state.selected, ...state };
 
     default:
       return state;

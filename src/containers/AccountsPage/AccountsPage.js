@@ -2,8 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   fetchAccounts,
+  fetchAccount,
   toggleAccountChecked,
   toggleAccountsChecked,
+  addAccounts,
   deleteAccounts
 } from '../../actions';
 import Divider from '@material-ui/core/Divider';
@@ -28,7 +30,8 @@ class AccountsPage extends Component {
       confirmModalTitle: '',
       confirmModalDescription: '',
       isAccountFormOpen: false,
-      accountFormTitle: ''
+      accountFormTitle: '',
+      accountToEdit: ''
     };
 
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -137,12 +140,18 @@ class AccountsPage extends Component {
     });
   }
 
-  showAccountForm(mode) {
+  showAccountForm(mode, accountToEdit) {
     if (mode === 'new') {
       this.setState({
         isAccountFormOpen: true,
         accountFormTitle: '업체등록'
       });
+    } else if (mode === 'edit') {
+      this.setState({
+        isAccountFormOpen: true,
+        accountFormTitle: '업체수정',
+        accountToEdit
+      })
     }
   }
 
@@ -152,8 +161,15 @@ class AccountsPage extends Component {
       accountFormTitle: ''
     });
 
-    if (result) {
+    if (result && !data.accountId) {
+      const { search } = this.props.accounts;
+      const token = this.props.auth.userToken;
+      this.props.addAccounts(token, [data], search);
+    } else if (result && data.accountId) {
       console.log(data);
+      // const { search } = this.props.accounts;
+      // const token = this.props.auth.userToken;
+      // this.props.updateAccount(token, accountId, data, search);
     }
   }
 
@@ -193,6 +209,7 @@ class AccountsPage extends Component {
                 key={account.id}
                 account={account}
                 onListItemChecked={this.onListItemChecked}
+                onListItemEditClick={this.showAccountForm}
                 onListItemDeleteClick={this.showConfirmDeleteModal}
               />
             ))}
@@ -210,17 +227,22 @@ class AccountsPage extends Component {
             <Icon>add</Icon>
           </Button>
         </div>
-        <ConfirmModal
-          open={this.state.isConfirmModalOpen}
-          title={this.state.confirmModalTitle}
-          description={this.state.confirmModalDescription}
-          onClose={this.onConfirmModalClose}
-        />
-        <AccountForm
-          open={this.state.isAccountFormOpen}
-          title={this.state.accountFormTitle}
-          onClose={this.onAccountFormClose}
-        />
+        {this.state.isConfirmModalOpen && (
+          <ConfirmModal
+            open={this.state.isConfirmModalOpen}
+            title={this.state.confirmModalTitle}
+            description={this.state.confirmModalDescription}
+            onClose={this.onConfirmModalClose}
+          />
+        )}
+        {this.state.isAccountFormOpen && (
+          <AccountForm
+            accountId={this.state.accountToEdit}
+            open={this.state.isAccountFormOpen}
+            title={this.state.accountFormTitle}
+            onClose={this.onAccountFormClose}
+          />
+        )}
       </main>
     );
   }
@@ -232,5 +254,5 @@ const mapStateToProps = ({ auth, accounts }) => {
 
 export default connect(
   mapStateToProps,
-  { fetchAccounts, toggleAccountChecked, toggleAccountsChecked, deleteAccounts }
+  { fetchAccounts, fetchAccount, toggleAccountChecked, toggleAccountsChecked, addAccounts, deleteAccounts }
 )(AccountsPage);

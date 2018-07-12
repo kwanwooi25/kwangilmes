@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import MaskedInput from 'react-text-mask';
+import { fetchAccount } from '../../actions';
+import {
+  formatPhoneNumber,
+  informatPhoneNumber
+} from '../../helpers/formatPhoneNumber';
+import { validateEmail } from '../../helpers/validateEmail';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
@@ -14,12 +21,6 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import FullScreenDialog from '../../components/FullScreenDialog/FullScreenDialog';
 import AccountReview from '../../components/AccountReview/AccountReview';
-
-import {
-  formatPhoneNumber,
-  informatPhoneNumber
-} from '../../helpers/formatPhoneNumber';
-import { validateEmail } from '../../helpers/validateEmail';
 import './AccountForm.css';
 
 const RegNoMask = props => {
@@ -48,34 +49,48 @@ const RegNoMask = props => {
   );
 };
 const EMAIL_INPUTS = ['email', 'email_tax', 'ceo_email', 'manager_email'];
+const INITIAL_STATE = {
+  isReviewOpen: false,
+
+  // inputs
+  account_name: '',
+  reg_no: '',
+  phone: '',
+  fax: '',
+  email: '',
+  email_tax: '',
+  address: '',
+  account_memo: '',
+  ceo_name: '',
+  ceo_phone: '',
+  ceo_email: '',
+  manager_name: '',
+  manager_phone: '',
+  manager_email: '',
+
+  // validation errors
+  account_name_error: '',
+  email_error: '',
+  email_tax_error: '',
+  ceo_email_error: '',
+  manager_email_error: ''
+};
 
 class AccountForm extends Component {
-  state = {
-    isReviewOpen: false,
+  state = INITIAL_STATE;
 
-    // inputs
-    account_name: '',
-    reg_no: '',
-    phone: '',
-    fax: '',
-    email: '',
-    email_tax: '',
-    address: '',
-    account_memo: '',
-    ceo_name: '',
-    ceo_phone: '',
-    ceo_email: '',
-    manager_name: '',
-    manager_phone: '',
-    manager_email: '',
+  componentDidMount() {
+    const { accountId, accounts } = this.props;
+    if (accountId) {
+      const selectedAccount = accounts.current
+        .find(({ id }) => id === accountId);
+      Object.assign(INITIAL_STATE, selectedAccount);
+    }
 
-    // validation errors
-    account_name_error: '',
-    email_error: '',
-    email_tax_error: '',
-    ceo_email_error: '',
-    manager_email_error: ''
-  };
+    this.setState(INITIAL_STATE, () => {
+      console.log(this.state);
+    });
+  }
 
   onClickOk = () => {
     if (this.validate()) {
@@ -135,6 +150,7 @@ class AccountForm extends Component {
     this.setState({ isReviewOpen: false });
     if (result) {
       const data = {
+        accountId: this.state.accountId,
         account_name: this.state.account_name,
         reg_no: this.state.reg_no,
         phone: this.state.phone,
@@ -148,12 +164,12 @@ class AccountForm extends Component {
         ceo_email: this.state.ceo_email,
         manager_name: this.state.manager_name,
         manager_phone: this.state.manager_phone,
-        manager_email: this.state.manager_email,
+        manager_email: this.state.manager_email
       };
 
       this.props.onClose(true, data);
     }
-  }
+  };
 
   render() {
     const { open, onClose, title } = this.props;
@@ -164,7 +180,8 @@ class AccountForm extends Component {
         title={title}
         Buttons={
           <Button color="inherit" onClick={this.onClickOk.bind(this)}>
-            <Icon>check</Icon><span> 저장</span>
+            <Icon>check</Icon>
+            <span> 저장</span>
           </Button>
         }
       >
@@ -359,4 +376,8 @@ class AccountForm extends Component {
   }
 }
 
-export default AccountForm;
+const mapStateToProps = ({ accounts }) => {
+  return { accounts };
+};
+
+export default connect(mapStateToProps)(AccountForm);

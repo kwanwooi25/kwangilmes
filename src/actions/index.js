@@ -2,9 +2,13 @@ import {
   LOGIN_USER,
   LOGOUT_USER,
   FETCH_ACCOUNTS,
+  FETCH_ACCOUNT,
   TOGGLE_ACCOUNT_CHECKED,
   SET_ACCOUNTS_CHECKED,
-  SET_ACCOUNTS_UNCHECKED
+  SET_ACCOUNTS_UNCHECKED,
+  DELETE_ACCOUNTS,
+  SHOW_SNACKBAR,
+  HIDE_SNACKBAR
 } from './types';
 
 // const HOST = 'http://api.kwangilmes.com';
@@ -43,14 +47,46 @@ export const fetchAccounts = (userToken, search) => dispatch => {
     });
 };
 
+export const fetchAccount = (userToken, accountId) => dispatch => {
+  fetch(`${HOST}/accounts/${accountId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'get'
+  })
+    .then(response => response.json())
+    .then(({ success, data }) => {
+      dispatch({ type: FETCH_ACCOUNT, payload: data });
+    });
+};
+
 export const toggleAccountChecked = id => dispatch => {
   dispatch({ type: TOGGLE_ACCOUNT_CHECKED, payload: id });
 };
 
-export const toggleAccountsChecked = (checked) => dispatch => {
-  if (checked) dispatch ({ type: SET_ACCOUNTS_CHECKED });
-  else dispatch ({ type: SET_ACCOUNTS_UNCHECKED });
-}
+export const toggleAccountsChecked = checked => dispatch => {
+  if (checked) dispatch({ type: SET_ACCOUNTS_CHECKED });
+  else dispatch({ type: SET_ACCOUNTS_UNCHECKED });
+};
+
+export const addAccounts = (userToken, accounts, search) => dispatch => {
+  fetch(`${HOST}/accounts/add`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'post',
+    body: JSON.stringify(accounts)
+  })
+    .then(response => response.json())
+    .then(({ success, data }) => {
+      if (success) {
+        dispatch(showSnackbar(`${data.length}개 업체 등록 완료`));
+        dispatch(fetchAccounts(userToken, search));
+      }
+    });
+};
 
 export const deleteAccounts = (userToken, ids, search) => dispatch => {
   fetch(`${HOST}/accounts/`, {
@@ -62,21 +98,15 @@ export const deleteAccounts = (userToken, ids, search) => dispatch => {
     body: JSON.stringify(ids)
   })
     .then(response => response.json())
-    .then(({ success }) => {
+    .then(({ success, data }) => {
       if (success) {
-        fetch(`${HOST}/accounts`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-access-token': userToken
-          },
-          method: 'post',
-          body: JSON.stringify(search)
-        })
-          .then(response => response.json())
-          .then(({ success, error, data }) => {
-            data.search = search;
-            dispatch({ type: FETCH_ACCOUNTS, payload: data });
-          });
+        dispatch(showSnackbar(data));
+        dispatch({ type: DELETE_ACCOUNTS, payload: ids });
+        dispatch(fetchAccounts(userToken, search));
       }
-    })
-}
+    });
+};
+
+export const showSnackbar = message => dispatch => {
+  dispatch({ type: SHOW_SNACKBAR, payload: message });
+};

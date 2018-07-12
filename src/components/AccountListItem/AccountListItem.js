@@ -7,6 +7,7 @@ import './AccountListItem.css';
 const ListBodyItem = ({
   account,
   onListItemChecked,
+  onListItemEditClick,
   onListItemDeleteClick
 }) => {
   const { id, account_name, phone, checked } = account;
@@ -26,7 +27,12 @@ const ListBodyItem = ({
         {phone && <span>{phone}</span>}
       </div>
       <div className="button-group">
-        <IconButton color="primary" aria-label="edit">
+        <IconButton
+          color="primary"
+          aria-label="edit"
+          onClick={() => {
+            onListItemEditClick('edit', id);
+          }}>
           <Icon>edit</Icon>
         </IconButton>
         <IconButton
