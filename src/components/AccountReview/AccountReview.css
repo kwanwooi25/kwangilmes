@@ -1,0 +1,31 @@
+.account-review__message,
+.account-review__title,
+.account-review__row,
+.account-review__name,
+.account-review__value {
+  padding: 0.5rem;
+  margin: 0;
+}
+
+.account-review__message {
+  text-align: center;
+}
+
+.account-review__title {
+  margin-top: .5rem;
+}
+
+.account-review__row {
+  display: flex;
+}
+
+.account-review__name {
+  padding: 0 0.5rem;
+  width: 30%;
+}
+
+.account-review__value {
+  padding: 0 0.5rem;
+  font-weight: bold;
+  width: 70%;
+}

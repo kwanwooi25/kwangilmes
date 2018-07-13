@@ -1,14 +1,28 @@
-.page-header {
-  display: flex;
-}
-
 .page-header__title {
   flex: 1;
   margin: 0.5rem;
 }
 
+.page-header__tools {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
 .page-header__search {
-  margin: 0.5rem;
-  width: 60%;
-  max-width: 300px;
+  width: 100%;
+}
+
+.page-header__buttons {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .page-header__search {
+    flex: 1;
+  }
+
+  .page-header__buttons {
+    display: flex;
+  }
 }

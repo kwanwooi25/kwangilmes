@@ -6,10 +6,13 @@ import {
   toggleAccountChecked,
   toggleAccountsChecked,
   addAccounts,
+  updateAccount,
   deleteAccounts
 } from '../../actions';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ListHeader from '../../components/ListHeader/ListHeader';
@@ -155,21 +158,21 @@ class AccountsPage extends Component {
     }
   }
 
-  onAccountFormClose(result, data) {
+  onAccountFormClose(result, data, id) {
     this.setState({
       isAccountFormOpen: false,
-      accountFormTitle: ''
+      accountFormTitle: '',
+      accountToEdit: ''
     });
 
-    if (result && !data.accountId) {
+    if (result && id === undefined) {
       const { search } = this.props.accounts;
       const token = this.props.auth.userToken;
       this.props.addAccounts(token, [data], search);
-    } else if (result && data.accountId) {
-      console.log(data);
-      // const { search } = this.props.accounts;
-      // const token = this.props.auth.userToken;
-      // this.props.updateAccount(token, accountId, data, search);
+    } else if (result && id !== undefined) {
+      const { search } = this.props.accounts;
+      const token = this.props.auth.userToken;
+      this.props.updateAccount(token, id, data, search);
     }
   }
 
@@ -184,6 +187,13 @@ class AccountsPage extends Component {
           title="업체관리"
           searchBox
           onSearchChange={this.onSearchChange}
+          ToolButtons={
+            <Tooltip title="엑셀 다운로드">
+              <IconButton aria-label="엑셀다운로드">
+                <Icon>save_alt</Icon>
+              </IconButton>
+            </Tooltip>
+          }
         />
         <Divider />
         <ListHeader
@@ -207,6 +217,7 @@ class AccountsPage extends Component {
             {current.map(account => (
               <AccountListItem
                 key={account.id}
+                searchTerm={search.account_name}
                 account={account}
                 onListItemChecked={this.onListItemChecked}
                 onListItemEditClick={this.showAccountForm}
@@ -254,5 +265,5 @@ const mapStateToProps = ({ auth, accounts }) => {
 
 export default connect(
   mapStateToProps,
-  { fetchAccounts, fetchAccount, toggleAccountChecked, toggleAccountsChecked, addAccounts, deleteAccounts }
+  { fetchAccounts, updateAccount, toggleAccountChecked, toggleAccountsChecked, addAccounts, deleteAccounts }
 )(AccountsPage);

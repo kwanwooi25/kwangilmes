@@ -3,10 +3,11 @@ import {
   LOGOUT_USER,
   FETCH_ACCOUNTS,
   FETCH_ACCOUNT,
+  UPDATE_ACCOUNT,
+  DELETE_ACCOUNTS,
   TOGGLE_ACCOUNT_CHECKED,
   SET_ACCOUNTS_CHECKED,
   SET_ACCOUNTS_UNCHECKED,
-  DELETE_ACCOUNTS,
   SHOW_SNACKBAR,
   HIDE_SNACKBAR
 } from './types';
@@ -61,6 +62,30 @@ export const fetchAccount = (userToken, accountId) => dispatch => {
     });
 };
 
+export const updateAccount = (
+  userToken,
+  accountId,
+  data,
+  search
+) => dispatch => {
+  fetch(`${HOST}/accounts/${accountId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'put',
+    body: JSON.stringify(data)
+  })
+    .then(response => response.json())
+    .then(({ success }) => {
+      if (success) {
+        Promise.resolve(dispatch(fetchAccounts(userToken, search))).then(() => {
+          dispatch(showSnackbar('업체 수정 완료'));
+        });
+      }
+    });
+};
+
 export const toggleAccountChecked = id => dispatch => {
   dispatch({ type: TOGGLE_ACCOUNT_CHECKED, payload: id });
 };
@@ -82,8 +107,9 @@ export const addAccounts = (userToken, accounts, search) => dispatch => {
     .then(response => response.json())
     .then(({ success, data }) => {
       if (success) {
-        dispatch(showSnackbar(`${data.length}개 업체 등록 완료`));
-        dispatch(fetchAccounts(userToken, search));
+        Promise.resolve(dispatch(fetchAccounts(userToken, search))).then(() => {
+          dispatch(showSnackbar(`${data.length}개 업체 등록 완료`));
+        });
       }
     });
 };
@@ -100,13 +126,17 @@ export const deleteAccounts = (userToken, ids, search) => dispatch => {
     .then(response => response.json())
     .then(({ success, data }) => {
       if (success) {
-        dispatch(showSnackbar(data));
-        dispatch({ type: DELETE_ACCOUNTS, payload: ids });
-        dispatch(fetchAccounts(userToken, search));
+        Promise.resolve(dispatch(fetchAccounts(userToken, search))).then(() => {
+          dispatch(showSnackbar('업체 삭제 완료'));
+          dispatch({ type: DELETE_ACCOUNTS, payload: ids });
+        });
       }
     });
 };
 
 export const showSnackbar = message => dispatch => {
   dispatch({ type: SHOW_SNACKBAR, payload: message });
+  setTimeout(() => {
+    dispatch({ type: HIDE_SNACKBAR });
+  }, 3000);
 };

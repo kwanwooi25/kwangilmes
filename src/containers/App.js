@@ -74,7 +74,7 @@ class App extends Component {
   render() {
     const { isLoggedIn } = this.props.auth;
     const { isSnackbarOpen, snackbarMessage } = this.props.snackbar;
-    const { logoutUser, showSnackbar } = this.props;
+    const { logoutUser } = this.props;
     return (
       <BrowserRouter>
         <div className="App">
@@ -93,7 +93,6 @@ class App extends Component {
           <Snackbar
             className="snackbar"
             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            autoHideDuration={4000}
             open={isSnackbarOpen}
             ContentProps={{
               'aria-describedby': 'snackbarMessage',

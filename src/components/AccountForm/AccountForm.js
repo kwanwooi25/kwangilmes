@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import MaskedInput from 'react-text-mask';
-import { fetchAccount } from '../../actions';
 import {
   formatPhoneNumber,
   informatPhoneNumber
 } from '../../helpers/formatPhoneNumber';
 import { validateEmail } from '../../helpers/validateEmail';
+import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
@@ -14,7 +13,6 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import FormHelperText from '@material-ui/core/FormHelperText';
-import TextField from '@material-ui/core/TextField';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -23,31 +21,30 @@ import FullScreenDialog from '../../components/FullScreenDialog/FullScreenDialog
 import AccountReview from '../../components/AccountReview/AccountReview';
 import './AccountForm.css';
 
-const RegNoMask = props => {
-  const { inputRef, ...other } = props;
-  return (
-    <MaskedInput
-      {...other}
-      ref={inputRef}
-      mask={[
-        /\d/,
-        /\d/,
-        /\d/,
-        '-',
-        /\d/,
-        /\d/,
-        '-',
-        /\d/,
-        /\d/,
-        /\d/,
-        /\d/,
-        /\d/
-      ]}
-      guide={false}
-      showMask
-    />
-  );
-};
+const BASIC_INFO = [
+  { varName: 'account_name', displayName: '업체명', sm: 6, md: 4 },
+  { varName: 'reg_no', displayName: '사업자등록번호', sm: 6, md: 4 },
+  { varName: 'phone', displayName: '전화번호', sm: 6, md: 4 },
+  { varName: 'fax', displayName: '팩스번호', sm: 6, md: 4 },
+  { varName: 'email', displayName: '이메일', sm: 6, md: 4 },
+  {
+    varName: 'email_tax',
+    displayName: '세금계산서용 이메일',
+    sm: 6,
+    md: 4
+  },
+  { varName: 'address', displayName: '주소', md: 4 },
+  { varName: 'account_memo', displayName: '메모', md: 8, multiline: true }
+];
+
+const EXTRA_INFO = [
+  { varName: 'ceo_name', displayName: '대표자명', md: 4 },
+  { varName: 'ceo_phone', displayName: '대표자 전화', sm: 6, md: 4 },
+  { varName: 'ceo_email', displayName: '대표자 이메일', sm: 6, md: 4 },
+  { varName: 'manager_name', displayName: '담당자명', md: 4 },
+  { varName: 'manager_phone', displayName: '담당자 전화', sm: 6, md: 4 },
+  { varName: 'manager_email', displayName: '담당자 이메일', sm: 6, md: 4 }
+];
 const EMAIL_INPUTS = ['email', 'email_tax', 'ceo_email', 'manager_email'];
 const INITIAL_STATE = {
   isReviewOpen: false,
@@ -81,15 +78,13 @@ class AccountForm extends Component {
 
   componentDidMount() {
     const { accountId, accounts } = this.props;
-    if (accountId) {
-      const selectedAccount = accounts.current
-        .find(({ id }) => id === accountId);
-      Object.assign(INITIAL_STATE, selectedAccount);
+    if (accountId !== '') {
+      const account = accounts.current.find(({ id }) => id === accountId);
+      Object.keys(account).forEach(key => {
+        if (account[key] === null) delete account[key];
+      });
+      this.setState(Object.assign({}, INITIAL_STATE, account));
     }
-
-    this.setState(INITIAL_STATE, () => {
-      console.log(this.state);
-    });
   }
 
   onClickOk = () => {
@@ -150,7 +145,6 @@ class AccountForm extends Component {
     this.setState({ isReviewOpen: false });
     if (result) {
       const data = {
-        accountId: this.state.accountId,
         account_name: this.state.account_name,
         reg_no: this.state.reg_no,
         phone: this.state.phone,
@@ -167,12 +161,34 @@ class AccountForm extends Component {
         manager_email: this.state.manager_email
       };
 
-      this.props.onClose(true, data);
+      this.setState(INITIAL_STATE);
+      this.props.onClose(true, data, this.state.id);
     }
+  };
+
+  renderFields = elements => {
+    return elements.map(({ varName, displayName, sm, md, multiline }) => {
+      const error = this.state[`${varName}_error`];
+      return (
+        <Grid item xs={12} sm={sm} md={md} key={varName}>
+          <FormControl fullWidth error={error !== undefined && error !== ''}>
+            <InputLabel htmlFor={varName}>{displayName}</InputLabel>
+            <Input
+              id={varName}
+              value={this.state[varName]}
+              onChange={this.onInputChange(varName)}
+              multiline={multiline}
+            />
+            <FormHelperText id={varName}>{error}</FormHelperText>
+          </FormControl>
+        </Grid>
+      );
+    });
   };
 
   render() {
     const { open, onClose, title } = this.props;
+
     return (
       <FullScreenDialog
         open={open}
@@ -191,102 +207,9 @@ class AccountForm extends Component {
               <Typography variant="title">기본정보</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <div className="form-content">
-                <div className="form-content__row">
-                  <FormControl
-                    fullWidth
-                    error={this.state.account_name_error !== ''}
-                  >
-                    <InputLabel htmlFor="account_name">업체명</InputLabel>
-                    <Input
-                      id="account_name"
-                      value={this.state.account_name}
-                      onChange={this.onInputChange('account_name')}
-                    />
-                    <FormHelperText id="account_name">
-                      {this.state.account_name_error}
-                    </FormHelperText>
-                  </FormControl>
-                  <FormControl fullWidth>
-                    <InputLabel htmlFor="reg_no">사업자등록번호</InputLabel>
-                    <Input
-                      id="reg_no"
-                      value={this.state.reg_no}
-                      onChange={this.onInputChange('reg_no')}
-                      inputComponent={RegNoMask}
-                    />
-                  </FormControl>
-                </div>
-                <div className="form-content__row">
-                  <TextField
-                    id="phone"
-                    label="전화번호"
-                    value={this.state.phone}
-                    onChange={this.onInputChange('phone')}
-                    margin="normal"
-                    fullWidth
-                  />
-                  <TextField
-                    id="fax"
-                    label="팩스번호"
-                    value={this.state.fax}
-                    onChange={this.onInputChange('fax')}
-                    margin="normal"
-                    fullWidth
-                  />
-                </div>
-                <div className="form-content__row">
-                  <FormControl fullWidth error={this.state.email_error !== ''}>
-                    <InputLabel htmlFor="email">이메일</InputLabel>
-                    <Input
-                      id="email"
-                      value={this.state.email}
-                      onChange={this.onInputChange('email')}
-                    />
-                    <FormHelperText id="email">
-                      {this.state.email_error}
-                    </FormHelperText>
-                  </FormControl>
-                  <FormControl
-                    fullWidth
-                    error={this.state.email_tax_error !== ''}
-                  >
-                    <InputLabel htmlFor="email_tax">
-                      세금계산서용 이메일
-                    </InputLabel>
-                    <Input
-                      id="email_tax"
-                      value={this.state.email_tax}
-                      onChange={this.onInputChange('email_tax')}
-                    />
-                    <FormHelperText id="email_tax">
-                      {this.state.email_tax_error}
-                    </FormHelperText>
-                  </FormControl>
-                </div>
-                <div className="form-content__row">
-                  <TextField
-                    id="address"
-                    label="주소"
-                    value={this.state.address}
-                    onChange={this.onInputChange('address')}
-                    margin="normal"
-                    fullWidth
-                    multiline
-                  />
-                </div>
-                <div className="form-content__row">
-                  <TextField
-                    id="account_memo"
-                    label="메모"
-                    value={this.state.account_memo}
-                    onChange={this.onInputChange('account_memo')}
-                    margin="normal"
-                    fullWidth
-                    multiline
-                  />
-                </div>
-              </div>
+              <Grid container spacing={24}>
+                {this.renderFields(BASIC_INFO)}
+              </Grid>
             </ExpansionPanelDetails>
           </ExpansionPanel>
           <ExpansionPanel>
@@ -294,83 +217,20 @@ class AccountForm extends Component {
               <Typography variant="title">추가정보</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <div className="form-content">
-                <div className="form-content__row">
-                  <TextField
-                    id="ceo_name"
-                    label="대표자명"
-                    value={this.state.ceo_name}
-                    onChange={this.onInputChange('ceo_name')}
-                    margin="normal"
-                    fullWidth
-                  />
-                </div>
-                <div className="form-content__row">
-                  <TextField
-                    id="ceo_phone"
-                    label="대표자 전화"
-                    value={this.state.ceo_phone}
-                    onChange={this.onInputChange('ceo_phone')}
-                    margin="normal"
-                    fullWidth
-                  />
-                  <FormControl
-                    fullWidth
-                    error={this.state.ceo_email_error !== ''}
-                  >
-                    <InputLabel htmlFor="ceo_email">대표자 이메일</InputLabel>
-                    <Input
-                      id="ceo_email"
-                      value={this.state.ceo_email}
-                      onChange={this.onInputChange('ceo_email')}
-                    />
-                    <FormHelperText id="ceo_email">
-                      {this.state.ceo_email_error}
-                    </FormHelperText>
-                  </FormControl>
-                </div>
-                <div className="form-content__row">
-                  <TextField
-                    id="manager_name"
-                    label="담당자명"
-                    value={this.state.manager_name}
-                    onChange={this.onInputChange('manager_name')}
-                    fullWidth
-                  />
-                </div>
-                <div className="form-content__row">
-                  <TextField
-                    id="manager_phone"
-                    label="담당자 전화"
-                    value={this.state.manager_phone}
-                    onChange={this.onInputChange('manager_phone')}
-                    fullWidth
-                  />
-                  <FormControl
-                    fullWidth
-                    error={this.state.manager_email_error !== ''}
-                  >
-                    <InputLabel htmlFor="manager_email">이메일</InputLabel>
-                    <Input
-                      id="manager_email"
-                      value={this.state.manager_email}
-                      onChange={this.onInputChange('manager_email')}
-                    />
-                    <FormHelperText id="manager_email">
-                      {this.state.manager_email_error}
-                    </FormHelperText>
-                  </FormControl>
-                </div>
-              </div>
+              <Grid container spacing={24}>
+                {this.renderFields(EXTRA_INFO)}
+              </Grid>
             </ExpansionPanelDetails>
           </ExpansionPanel>
         </form>
-        <AccountReview
-          data={this.state}
-          open={this.state.isReviewOpen}
-          onClose={this.onReviewClose.bind(this)}
-          title={`${title} 확인`}
-        />
+        {this.state.isReviewOpen && (
+          <AccountReview
+            data={this.state}
+            open={this.state.isReviewOpen}
+            onClose={this.onReviewClose.bind(this)}
+            title={`${title} 확인`}
+          />
+        )}
       </FullScreenDialog>
     );
   }

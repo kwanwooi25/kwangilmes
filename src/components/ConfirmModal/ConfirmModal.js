@@ -8,8 +8,7 @@ const ConfirmModal = ({ open, title, subtitle, description, onClose }) => {
   return (
     <Modal
       className="modal-bg"
-      aria-labelledby="simple-modal-title"
-      aria-describedby="simple-modal-description"
+      aria-labelledby="confirm-modal"
       open={open}
       onClose={() => {
         onClose(false);

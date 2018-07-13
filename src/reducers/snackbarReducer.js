@@ -10,7 +10,10 @@ export default function(state = INITIAL_STATE, action) {
     case SHOW_SNACKBAR:
       return { isSnackbarOpen: true, snackbarMessage: action.payload };
 
-    default:
+    case HIDE_SNACKBAR:
       return INITIAL_STATE;
+
+    default:
+      return state;
   }
 }

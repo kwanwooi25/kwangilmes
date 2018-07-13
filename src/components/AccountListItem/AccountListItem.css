@@ -1,21 +1,16 @@
 .account-list-item__details {
-  flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.account-list-item__title {
-  margin: 0;
-  margin-bottom: 0.5rem;
+.button-group {
+  display: flex;
+  justify-content: flex-end;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 600px) {
   .account-list-item__details {
+    align-items: center;
     flex-direction: row;
-  }
-
-  .account-list-item__title {
-    margin: 0;
-    min-width: 50%;
   }
 }
