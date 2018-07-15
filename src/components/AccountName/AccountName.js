@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Modal from '@material-ui/core/Modal';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
+import { highlight } from '../../helpers/highlight';
 import './AccountName.css';
 
 const BASIC_INFO = [
@@ -55,30 +56,18 @@ class AccountName extends Component {
     });
 
   render() {
-    const { account, searchTerm } = this.props;
-    let accountName = account.account_name;
-    let hasExtraInfo = true;
-    EXTRA_INFO.forEach(({ varName }) => {
-      hasExtraInfo = hasExtraInfo && !!account[varName];
-    });
+    const { account, searchTerm, className } = this.props;
 
-    console.log(searchTerm);
-    if (searchTerm && accountName.toLowerCase().indexOf(searchTerm) > -1) {
-      const index = accountName.toLowerCase().indexOf(searchTerm);
-      const matchingText = accountName.substring(
-        index,
-        index + searchTerm.length
-      );
-      accountName = accountName.replace(
-        matchingText,
-        `<span class="highlight">${matchingText}</span>`
-      );
-    }
+    const extraInfoCount = EXTRA_INFO.map(({ varName }) => {
+      return !!account[varName];
+    }).filter(value => value === true).length;
+
+    const accountName = highlight(account.account_name, searchTerm);
 
     return (
       <div>
         <a
-          className="account-name"
+          className={`account-name ${className}`}
           onClick={this.showDetailView.bind(this)}
           dangerouslySetInnerHTML={{ __html: accountName }}
         />
@@ -98,7 +87,7 @@ class AccountName extends Component {
                   <h2 className="account-detail-view__subtitle">기본정보</h2>
                   {this.renderFields(BASIC_INFO, account)}
                 </Grid>
-                {hasExtraInfo && (
+                {extraInfoCount > 0 && (
                   <Grid item xs={12}>
                     <h2 className="account-detail-view__subtitle">추가정보</h2>
                     {this.renderFields(EXTRA_INFO, account)}

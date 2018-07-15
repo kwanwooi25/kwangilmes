@@ -43,10 +43,7 @@ const ListHeader = ({
             <p>{selectedCount}개 항목 선택됨</p>
             <div className="list-header__button-group">
               <Tooltip title="전체삭제">
-                <IconButton
-                  aria-label="delete all"
-                  onClick={onDeleteAllClick}
-                >
+                <IconButton aria-label="delete all" onClick={onDeleteAllClick}>
                   <Icon>delete</Icon>
                 </IconButton>
               </Tooltip>
@@ -62,6 +59,7 @@ const ListHeader = ({
           </div>
         )}
       </div>
+
       <div className="list-header__row">
         <FormControl>
           <Select
@@ -92,42 +90,50 @@ const ListHeader = ({
             번째 항목
           </div>
           <div className="paginator__buttons">
-            <IconButton
-              aria-label="first page"
-              disabled={isFirstPage}
-              onClick={() => {
-                onPageChange('first');
-              }}
-            >
-              <Icon>first_page</Icon>
-            </IconButton>
-            <IconButton
-              aria-label="previous page"
-              disabled={isFirstPage}
-              onClick={() => {
-                onPageChange('prev');
-              }}
-            >
-              <Icon>navigate_before</Icon>
-            </IconButton>
-            <IconButton
-              aria-label="next page"
-              disabled={isLastPage}
-              onClick={() => {
-                onPageChange('next');
-              }}
-            >
-              <Icon>navigate_next</Icon>
-            </IconButton>
-            <IconButton
-              aria-label="last page"
-              disabled={isLastPage}
-              onClick={() => {
-                onPageChange('last');
-              }}
-            >
-              <Icon>last_page</Icon>
-            </IconButton>
+            <Tooltip title="첫 페이지">
+              <IconButton
+                aria-label="first page"
+                disabled={isFirstPage}
+                onClick={() => {
+                  onPageChange('first');
+                }}
+              >
+                <Icon>first_page</Icon>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="이전 페이지">
+              <IconButton
+                aria-label="previous page"
+                disabled={isFirstPage}
+                onClick={() => {
+                  onPageChange('prev');
+                }}
+              >
+                <Icon>navigate_before</Icon>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="다음 페이지">
+              <IconButton
+                aria-label="next page"
+                disabled={isLastPage}
+                onClick={() => {
+                  onPageChange('next');
+                }}
+              >
+                <Icon>navigate_next</Icon>
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="마지막 페이지">
+              <IconButton
+                aria-label="last page"
+                disabled={isLastPage}
+                onClick={() => {
+                  onPageChange('last');
+                }}
+              >
+                <Icon>last_page</Icon>
+              </IconButton>
+            </Tooltip>
           </div>
         </div>
       </div>

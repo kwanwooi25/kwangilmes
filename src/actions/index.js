@@ -3,13 +3,16 @@ import {
   LOGOUT_USER,
   FETCH_ACCOUNTS,
   FETCH_ACCOUNT,
-  UPDATE_ACCOUNT,
   DELETE_ACCOUNTS,
   TOGGLE_ACCOUNT_CHECKED,
   SET_ACCOUNTS_CHECKED,
   SET_ACCOUNTS_UNCHECKED,
   SHOW_SNACKBAR,
-  HIDE_SNACKBAR
+  HIDE_SNACKBAR,
+  FETCH_PRODUCTS,
+  TOGGLE_PRODUCT_CHECKED,
+  SET_PRODUCTS_CHECKED,
+  SET_PRODUCTS_UNCHECKED,
 } from './types';
 
 // const HOST = 'http://api.kwangilmes.com';
@@ -139,4 +142,31 @@ export const showSnackbar = message => dispatch => {
   setTimeout(() => {
     dispatch({ type: HIDE_SNACKBAR });
   }, 3000);
+};
+
+export const fetchProducts = (userToken, search) => dispatch => {
+  fetch(`${HOST}/products`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'post',
+    body: JSON.stringify(search)
+  })
+    .then(response => response.json())
+    .then(({ success, error, data }) => {
+      if (success) {
+        data.search = search;
+        dispatch({ type: FETCH_PRODUCTS, payload: data });
+      }
+    });
+}
+
+export const toggleProductChecked = id => dispatch => {
+  dispatch({ type: TOGGLE_PRODUCT_CHECKED, payload: id });
+};
+
+export const toggleProductsChecked = checked => dispatch => {
+  if (checked) dispatch({ type: SET_PRODUCTS_CHECKED });
+  else dispatch({ type: SET_PRODUCTS_UNCHECKED });
 };

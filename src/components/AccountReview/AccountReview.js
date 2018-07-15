@@ -38,10 +38,9 @@ const renderFields = (elements, data) =>
   });
 
 const AccountReview = ({ data, open, onClose, title }) => {
-  let hasExtraInfo = true;
-  EXTRA_INFO.forEach(({ varName }) => {
-    hasExtraInfo = hasExtraInfo && !!data[varName];
-  });
+  const extraInfoCount = EXTRA_INFO.map(({ varName }) => {
+    return !!data[varName];
+  }).filter(value => value === true).length;
 
   return (
     <FullScreenDialog
@@ -74,7 +73,7 @@ const AccountReview = ({ data, open, onClose, title }) => {
             <h2 className="account-review__title">기본정보</h2>
             {renderFields(BASIC_INFO, data)}
           </Grid>
-          {hasExtraInfo && (
+          {extraInfoCount > 0 && (
             <Grid item xs={12} md={6}>
               <h2 className="account-review__title">추가정보</h2>
               {renderFields(EXTRA_INFO, data)}

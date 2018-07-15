@@ -3,6 +3,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
+import Tooltip from '@material-ui/core/Tooltip';
 import AccountName from '../AccountName/AccountName';
 import './AccountListItem.css';
 
@@ -35,23 +36,27 @@ const AccountListItem = ({
           </Grid>
         </Grid>
         <Grid item xs={4} sm={2} className="button-group">
-          <IconButton
-            color="primary"
-            aria-label="edit"
-            onClick={() => {
-              onListItemEditClick('edit', id);
-            }}
-          >
-            <Icon>edit</Icon>
-          </IconButton>
-          <IconButton
-            aria-label="delete"
-            onClick={() => {
-              onListItemDeleteClick([id]);
-            }}
-          >
-            <Icon>delete</Icon>
-          </IconButton>
+          <Tooltip title="수정">
+            <IconButton
+              color="primary"
+              aria-label="edit"
+              onClick={() => {
+                onListItemEditClick('edit', id);
+              }}
+            >
+              <Icon>edit</Icon>
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="삭제">
+            <IconButton
+              aria-label="delete"
+              onClick={() => {
+                onListItemDeleteClick([id]);
+              }}
+            >
+              <Icon>delete</Icon>
+            </IconButton>
+          </Tooltip>
         </Grid>
       </Grid>
     </li>

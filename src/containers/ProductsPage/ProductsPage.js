@@ -1,39 +1,35 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  fetchAccounts,
-  toggleAccountChecked,
-  toggleAccountsChecked,
-  addAccounts,
-  updateAccount,
-  deleteAccounts
+  fetchProducts,
+  toggleProductsChecked,
+  toggleProductChecked
 } from '../../actions';
-import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
+import Divider from '@material-ui/core/Divider';
+import Button from '@material-ui/core/Button';
 import PageHeader from '../../components/PageHeader/PageHeader';
+import ProductSearch from '../../components/ProductSearch/ProductSearch';
 import ListHeader from '../../components/ListHeader/ListHeader';
 import ListBody from '../../components/ListBody/ListBody';
-import AccountListItem from '../../components/AccountListItem/AccountListItem';
 import NoData from '../../components/NoData/NoData';
-import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
-import AccountForm from '../../components/AccountForm/AccountForm';
-import './AccountsPage.css';
+import ProductListItem from '../../components/ProductListItem/ProductListItem';
+import './ProductsPage.css';
 
-class AccountsPage extends Component {
+class ProductsPage extends Component {
   constructor() {
     super();
 
     this.state = {
       isConfirmModalOpen: false,
-      selectedAccounts: [],
+      selectedProducts: [],
       confirmModalTitle: '',
       confirmModalDescription: '',
-      isAccountFormOpen: false,
-      accountFormTitle: '',
-      accountToEdit: ''
+      isProductFormOpen: false,
+      productFormTitle: '',
+      productToEdit: ''
     };
 
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -45,36 +41,33 @@ class AccountsPage extends Component {
     this.onCancelSelection = this.onCancelSelection.bind(this);
     this.showConfirmDeleteModal = this.showConfirmDeleteModal.bind(this);
     this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
-    this.showAccountForm = this.showAccountForm.bind(this);
-    this.onAccountFormClose = this.onAccountFormClose.bind(this);
+    this.showProductForm = this.showProductForm.bind(this);
+    this.onProductFormClose = this.onProductFormClose.bind(this);
   }
 
   componentDidMount() {
-    const { search } = this.props.accounts;
+    const { search } = this.props.products;
     const token = this.props.auth.userToken;
-    this.props.fetchAccounts(token, search);
+    this.props.fetchProducts(token, search);
   }
 
-  onSearchChange(text) {
-    const { search } = this.props.accounts;
+  onSearchChange = (name, event) => {
+    const { search } = this.props.products;
     const token = this.props.auth.userToken;
-    search.account_name = text;
-    search.offset = 0;
-    this.props.fetchAccounts(token, search);
-  }
+    search[name] = event.target.value.toLowerCase();
+    this.props.fetchProducts(token, search);
+  };
 
-  onRowsPerPageChange(limit) {
-    const { search } = this.props.accounts;
+  onRowsPerPageChange = limit => {
+    const { search } = this.props.products;
     const token = this.props.auth.userToken;
     search.limit = Number(limit);
     search.offset = 0;
-    this.props.fetchAccounts(token, search);
-  }
+    this.props.fetchProducts(token, search);
+  };
 
-  onPageChange(change) {
-    const {
-      accounts: { count, search }
-    } = this.props;
+  onPageChange = change => {
+    const { count, search } = this.props.products;
     const token = this.props.auth.userToken;
     switch (change) {
       case 'prev':
@@ -97,97 +90,95 @@ class AccountsPage extends Component {
       default:
         break;
     }
-    this.props.fetchAccounts(token, search);
-  }
+    this.props.fetchProducts(token, search);
+  };
 
-  onListItemChecked(id) {
-    this.props.toggleAccountChecked(id);
-  }
-
-  onSelectAllChange(checked) {
-    this.props.toggleAccountsChecked(checked);
-  }
-
-  onDeleteAllClick() {
-    const { selected } = this.props.accounts;
+  onDeleteAllClick = () => {
+    const { selected } = this.props.products;
     this.showConfirmDeleteModal(selected);
-  }
+  };
 
-  onCancelSelection() {
-    this.props.toggleAccountsChecked(false);
-  }
+  onSelectAllChange = checked => {
+    this.props.toggleProductsChecked(checked);
+  };
 
-  showConfirmDeleteModal(ids) {
+  onCancelSelection = () => {
+    this.props.toggleProductsChecked(false);
+  };
+
+  onListItemChecked = id => {
+    this.props.toggleProductChecked(id);
+  };
+
+  showConfirmDeleteModal = ids => {
     this.setState({
       isConfirmModalOpen: true,
-      selectedAccounts: ids,
-      confirmModalTitle: '업체 삭제',
+      selectedProducts: ids,
+      confirmModalTitle: '품목 삭제',
       confirmModalDescription: `총 ${
         ids.length
-      }개 업체를 정말로 삭제 하시겠습니까?`
+      }개 품목을 정말로 삭제 하시겠습니까?`
     });
-  }
+  };
 
   onConfirmModalClose(result) {
     if (result) {
-      const { search } = this.props.accounts;
+      const { search } = this.props.products;
       const token = this.props.auth.userToken;
-      const ids = this.state.selectedAccounts;
-      this.props.deleteAccounts(token, ids, search);
+      const ids = this.state.selectedProducts;
+      this.props.deleteProducts(token, ids, search);
     }
 
     this.setState({
       isConfirmModalOpen: false,
-      selectedAccounts: [],
+      selectedProducts: [],
       confirmModalTitle: '',
       confirmModalDescription: ''
     });
   }
 
-  showAccountForm(mode, accountToEdit) {
+  showProductForm(mode, productToEdit) {
     if (mode === 'new') {
       this.setState({
-        isAccountFormOpen: true,
-        accountFormTitle: '업체등록'
+        isProductFormOpen: true,
+        productFormTitle: '품목등록'
       });
     } else if (mode === 'edit') {
       this.setState({
-        isAccountFormOpen: true,
-        accountFormTitle: '업체수정',
-        accountToEdit
+        isProductFormOpen: true,
+        productFormTitle: '품목수정',
+        productToEdit
       });
     }
   }
 
-  onAccountFormClose(result, data, id) {
+  onProductFormClose(result, data, id) {
     this.setState({
-      isAccountFormOpen: false,
-      accountFormTitle: '',
-      accountToEdit: ''
+      isProductFormOpen: false,
+      productFormTitle: '',
+      productToEdit: ''
     });
 
     if (result && id === undefined) {
-      const { search } = this.props.accounts;
+      const { search } = this.props.products;
       const token = this.props.auth.userToken;
-      this.props.addAccounts(token, [data], search);
+      this.props.addProducts(token, [data], search);
     } else if (result && id !== undefined) {
-      const { search } = this.props.accounts;
+      const { search } = this.props.products;
       const token = this.props.auth.userToken;
-      this.props.updateAccount(token, id, data, search);
+      this.props.updateProduct(token, id, data, search);
     }
   }
 
   render() {
-    const { count, current, search, selected } = this.props.accounts;
+    const { count, current, search, selected } = this.props.products;
     const isFirstPage = search.offset === 0;
     const isLastPage = count <= search.offset + search.limit;
     const isSelectedAll = selected.length !== 0 && selected.length === count;
     return (
       <main>
         <PageHeader
-          title="업체관리"
-          searchBox
-          onSearchChange={this.onSearchChange}
+          title="품목관리"
           ToolButtons={
             <Tooltip title="엑셀 다운로드">
               <IconButton aria-label="엑셀다운로드">
@@ -197,6 +188,7 @@ class AccountsPage extends Component {
           }
         />
         <Divider />
+        <ProductSearch onInputChange={this.onSearchChange} />
         <ListHeader
           rowsPerPage={search.limit}
           isFirstPage={isFirstPage}
@@ -215,20 +207,20 @@ class AccountsPage extends Component {
           <NoData />
         ) : (
           <ListBody>
-            {current.map(account => (
-              <AccountListItem
-                key={account.id}
-                searchTerm={search.account_name}
-                account={account}
+            {current.map(product => (
+              <ProductListItem
+                key={product.id}
+                search={search}
+                product={product}
                 onListItemChecked={this.onListItemChecked}
-                onListItemEditClick={this.showAccountForm}
+                onListItemEditClick={this.showProductForm}
                 onListItemDeleteClick={this.showConfirmDeleteModal}
               />
             ))}
           </ListBody>
         )}
         <div className="fab-add">
-          <Tooltip title="업체 추가">
+          <Tooltip title="품목 추가">
             <Button
               variant="fab"
               color="primary"
@@ -241,39 +233,16 @@ class AccountsPage extends Component {
             </Button>
           </Tooltip>
         </div>
-        {this.state.isConfirmModalOpen && (
-          <ConfirmModal
-            open={this.state.isConfirmModalOpen}
-            title={this.state.confirmModalTitle}
-            description={this.state.confirmModalDescription}
-            onClose={this.onConfirmModalClose}
-          />
-        )}
-        {this.state.isAccountFormOpen && (
-          <AccountForm
-            accountId={this.state.accountToEdit}
-            open={this.state.isAccountFormOpen}
-            title={this.state.accountFormTitle}
-            onClose={this.onAccountFormClose}
-          />
-        )}
       </main>
     );
   }
 }
 
-const mapStateToProps = ({ auth, accounts }) => {
-  return { auth, accounts };
+const mapStateToProps = ({ auth, products }) => {
+  return { auth, products };
 };
 
 export default connect(
   mapStateToProps,
-  {
-    fetchAccounts,
-    updateAccount,
-    toggleAccountChecked,
-    toggleAccountsChecked,
-    addAccounts,
-    deleteAccounts
-  }
-)(AccountsPage);
+  { fetchProducts, toggleProductsChecked, toggleProductChecked }
+)(ProductsPage);
