@@ -16,6 +16,7 @@ import ListHeader from '../../components/ListHeader/ListHeader';
 import ListBody from '../../components/ListBody/ListBody';
 import NoData from '../../components/NoData/NoData';
 import ProductListItem from '../../components/ProductListItem/ProductListItem';
+import ProductForm from '../../components/ProductForm/ProductForm';
 import './ProductsPage.css';
 
 class ProductsPage extends Component {
@@ -55,6 +56,22 @@ class ProductsPage extends Component {
     const { search } = this.props.products;
     const token = this.props.auth.userToken;
     search[name] = event.target.value.toLowerCase();
+    this.props.fetchProducts(token, search);
+  };
+
+  onSearchReset = () => {
+    const token = this.props.auth.userToken;
+    const search = {
+      account_name: '',
+      product_name: '',
+      product_thick: '',
+      product_length: '',
+      product_width: '',
+      ext_color: '',
+      print_color: '',
+      limit: 10,
+      offset: 0
+    };
     this.props.fetchProducts(token, search);
   };
 
@@ -188,7 +205,10 @@ class ProductsPage extends Component {
           }
         />
         <Divider />
-        <ProductSearch onInputChange={this.onSearchChange} />
+        <ProductSearch
+          onInputChange={this.onSearchChange}
+          onReset={this.onSearchReset}
+        />
         <ListHeader
           rowsPerPage={search.limit}
           isFirstPage={isFirstPage}
@@ -226,13 +246,21 @@ class ProductsPage extends Component {
               color="primary"
               aria-label="add"
               onClick={() => {
-                this.showAccountForm('new');
+                this.showProductForm('new');
               }}
             >
               <Icon>add</Icon>
             </Button>
           </Tooltip>
         </div>
+        {this.state.isProductFormOpen && (
+          <ProductForm
+            accountId={this.state.productToEdit}
+            open={this.state.isProductFormOpen}
+            title={this.state.productFormTitle}
+            onClose={this.onProductFormClose}
+          />
+        )}
       </main>
     );
   }

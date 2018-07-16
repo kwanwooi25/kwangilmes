@@ -56,7 +56,7 @@ const renderFieldsMdUp = (elements, onInputChange) => {
   });
 };
 
-const ProductSearch = ({ onInputChange }) => {
+const ProductSearch = ({ onInputChange, onReset }) => {
   return (
     <Grid container>
       <Grid item xs={10} sm={11} className="product-search__inputs">
@@ -67,7 +67,21 @@ const ProductSearch = ({ onInputChange }) => {
       </Grid>
       <Grid item xs={2} sm={1} className="product-search__buttons">
         <Tooltip title="초기화">
-          <IconButton color="primary" aria-label="초기화">
+          <IconButton
+            color="primary"
+            aria-label="초기화"
+            onClick={() => {
+              SEARCH_FIELDS.forEach(({ varName }) => {
+                const target = document.getElementById(varName);
+                if (target) target.value = '';
+              });
+              SEARCH_FIELDS_MD_UP.forEach(({ varName }) => {
+                const target = document.getElementById(varName);
+                if (target) target.value = '';
+              });
+              onReset();
+            }}
+          >
             <Icon>refresh</Icon>
           </IconButton>
         </Tooltip>

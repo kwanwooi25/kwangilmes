@@ -1,0 +1,17 @@
+.product-form__section-title,
+.product-form__section-content {
+  padding: 1rem;
+  /* border-bottom: 2px solid #ababab; */
+}
+
+.product-form__section-title {
+  background: #dedede;
+  margin-bottom: 1rem;
+}
+
+.product-form__size,
+.product-form__is_print,
+.product-form__ext_pretreat {
+  display: flex;
+  flex-direction: row !important;
+}
