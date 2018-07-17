@@ -1,31 +1,42 @@
-/* .account-review__message,
-.account-review__title,
-.account-review__row,
-.account-review__name,
-.account-review__value {
+.product-review__message,
+.product-review__title,
+.product-review__row,
+.product-review__name,
+.product-review__value {
   padding: 0.5rem;
   margin: 0;
 }
 
-.account-review__message {
+.product-review__message {
   text-align: center;
 }
 
-.account-review__title {
+.product-review__title {
   margin-top: .5rem;
 }
 
-.account-review__row {
+.product-review__row {
+  align-items: center;
   display: flex;
 }
 
-.account-review__name {
+.product-review__name {
   padding: 0 0.5rem;
   width: 30%;
 }
 
-.account-review__value {
+.product-review__value {
   padding: 0 0.5rem;
   font-weight: bold;
   width: 70%;
-} */
+}
+
+.product-review__image-container {
+  max-height: 80%;
+  margin: auto;
+}
+
+.product-review__image {
+  width: auto;
+  height: 100%;
+}

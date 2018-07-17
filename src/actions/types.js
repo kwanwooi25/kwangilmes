@@ -3,6 +3,8 @@ export const LOGOUT_USER = 'logout_user';
 
 export const FETCH_ACCOUNTS = 'fetch_accounts';
 export const FETCH_ACCOUNT = 'fetch_account';
+export const FETCH_ACCOUNT_NAMES = 'fetch_account_names';
+export const SET_ACCOUNT_NAMES = 'set_account_names';
 export const DELETE_ACCOUNTS = 'delete_accounts';
 
 export const TOGGLE_ACCOUNT_CHECKED = 'toggle_account_checked';

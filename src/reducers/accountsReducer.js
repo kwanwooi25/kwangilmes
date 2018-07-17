@@ -1,6 +1,7 @@
 import {
   FETCH_ACCOUNTS,
   FETCH_ACCOUNT,
+  FETCH_ACCOUNT_NAMES,
   TOGGLE_ACCOUNT_CHECKED,
   SET_ACCOUNTS_CHECKED,
   SET_ACCOUNTS_UNCHECKED,
@@ -11,6 +12,7 @@ const INITIAL_STATE = {
   isPending: false,
   count: 0,
   all: [],
+  names: [],
   current: [],
   selected: [],
   selectedAccount: {},
@@ -38,7 +40,10 @@ export default function(state = INITIAL_STATE, action) {
       });
 
     case FETCH_ACCOUNT:
-      return { selectedAccount: action.payload, ...state };
+      return Object.assign({}, state, { selectedAccount: action.payload });
+
+    case FETCH_ACCOUNT_NAMES:
+      return Object.assign({}, state, { names: action.payload });
 
     case TOGGLE_ACCOUNT_CHECKED:
       const id = action.payload;
@@ -52,7 +57,7 @@ export default function(state = INITIAL_STATE, action) {
           }
         }
       });
-      return { current: state.current, selected: state.selected, ...state };
+      return Object.assign({}, state, { current: state.current, selected: state.selected });
 
     case SET_ACCOUNTS_CHECKED:
       state.selected = [];
@@ -60,18 +65,18 @@ export default function(state = INITIAL_STATE, action) {
       state.current.forEach(account => {
         account.checked = true;
       });
-      return { current: state.current, selected: state.selected, ...state };
+      return Object.assign({}, state, { current: state.current, selected: state.selected });
 
     case SET_ACCOUNTS_UNCHECKED:
       state.selected = [];
       state.current.forEach(account => {
         account.checked = false;
       });
-      return { current: state.current, selected: state.selected, ...state };
+      return Object.assign({}, state, { current: state.current, selected: state.selected });
 
     case DELETE_ACCOUNTS:
       state.selected = state.selected.filter(id => !action.payload.includes(id));
-      return { selected: state.selected, ...state };
+      return Object.assign({}, state, { selected: state.selected });
 
     default:
       return state;

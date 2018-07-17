@@ -3,6 +3,7 @@ import {
   LOGOUT_USER,
   FETCH_ACCOUNTS,
   FETCH_ACCOUNT,
+  FETCH_ACCOUNT_NAMES,
   DELETE_ACCOUNTS,
   TOGGLE_ACCOUNT_CHECKED,
   SET_ACCOUNTS_CHECKED,
@@ -64,6 +65,20 @@ export const fetchAccount = (userToken, accountId) => dispatch => {
       dispatch({ type: FETCH_ACCOUNT, payload: data });
     });
 };
+
+export const fetchAccountNames = userToken => dispatch => {
+  fetch(`${HOST}/accounts`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'get'
+  })
+    .then(response => response.json())
+    .then(({ success, data }) => {
+      if (success) dispatch({ type: FETCH_ACCOUNT_NAMES, payload: data });
+    });
+}
 
 export const updateAccount = (
   userToken,
