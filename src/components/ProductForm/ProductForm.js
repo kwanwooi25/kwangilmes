@@ -162,8 +162,8 @@ class ProductForm extends Component {
       const config = {
         bucketName: 'kwangilmes-product-images',
         region: 'ap-northeast-2',
-        accessKeyId: 'AKIAJOGQB5W52GEWX7SQ',
-        secretAccessKey: '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'
+        accessKeyId: '',
+        secretAccessKey: ''
       };
       let response;
       if (this.state.print_image_file) {
