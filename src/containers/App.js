@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
+import moment from 'moment';
+import 'moment/locale/ko';
+import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
+import MomentUtils from 'material-ui-pickers/utils/moment-utils';
 import { logoutUser } from '../actions';
 import Snackbar from '@material-ui/core/Snackbar';
 import Header from '../components/Header/Header';
@@ -76,32 +80,34 @@ class App extends Component {
     const { isSnackbarOpen, snackbarMessage } = this.props.snackbar;
     const { logoutUser } = this.props;
     return (
-      <BrowserRouter>
-        <div className="App">
-          <Header isLoggedIn={isLoggedIn} openNav={this.openNav.bind(this)} />
-          {isLoggedIn && (
-            <Navigation
-              open={this.state.isNavOpen}
-              closeNav={this.closeNav.bind(this)}
-              logoutUser={logoutUser}
+      <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="ko">
+        <BrowserRouter>
+          <div className="App">
+            <Header isLoggedIn={isLoggedIn} openNav={this.openNav.bind(this)} />
+            {isLoggedIn && (
+              <Navigation
+                open={this.state.isNavOpen}
+                closeNav={this.closeNav.bind(this)}
+                logoutUser={logoutUser}
+              />
+            )}
+            <Switch>
+              {this.renderPublicRoutes()}
+              {this.renderPrivateRoutes()}
+            </Switch>
+            <Snackbar
+              className="snackbar"
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+              open={isSnackbarOpen}
+              ContentProps={{
+                'aria-describedby': 'snackbarMessage',
+                className: 'snackbar-content'
+              }}
+              message={<span id="snackbarMessage">{snackbarMessage}</span>}
             />
-          )}
-          <Switch>
-            {this.renderPublicRoutes()}
-            {this.renderPrivateRoutes()}
-          </Switch>
-          <Snackbar
-            className="snackbar"
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-            open={isSnackbarOpen}
-            ContentProps={{
-              'aria-describedby': 'snackbarMessage',
-              className: 'snackbar-content'
-            }}
-            message={<span id="snackbarMessage">{snackbarMessage}</span>}
-          />
-        </div>
-      </BrowserRouter>
+          </div>
+        </BrowserRouter>
+      </MuiPickersUtilsProvider>
     );
   }
 }

@@ -1,5 +1,6 @@
 import {
   FETCH_PRODUCTS,
+  DELETE_PRODUCTS,
   TOGGLE_PRODUCT_CHECKED,
   SET_PRODUCTS_CHECKED,
   SET_PRODUCTS_UNCHECKED,
@@ -73,9 +74,9 @@ export default function(state = INITIAL_STATE, action) {
       });
       return { current: state.current, selected: state.selected, ...state };
 
-    // case DELETE_ACCOUNTS:
-    //   state.selected = state.selected.filter(id => !action.payload.includes(id));
-    //   return { selected: state.selected, ...state };
+    case DELETE_PRODUCTS:
+      state.selected = state.selected.filter(id => !action.payload.includes(id));
+      return { selected: state.selected, ...state };
 
     default:
       return state;

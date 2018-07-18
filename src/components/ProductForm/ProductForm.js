@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { uploadFile } from 'react-s3';
 import { fetchAccountNames } from '../../actions';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -18,28 +19,37 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FullScreenDialog from '../../components/FullScreenDialog/FullScreenDialog';
 import ProductReview from '../../components/ProductReview/ProductReview';
 import './ProductForm.css';
-import { SECTIONS, REQUIRED, INITIAL_STATE } from './constants';
+import {
+  PRODUCT_FORM_SECTIONS,
+  PRODUCT_FORM_REQUIRED,
+  PRODUCT_FORM_INITIAL_STATE
+} from '../../helpers/constants';
 
 class ProductForm extends Component {
-  state = INITIAL_STATE;
+  state = PRODUCT_FORM_INITIAL_STATE;
 
   componentDidMount() {
-    const { auth, productId, accounts, products } = this.props;
+    const { auth, productId, products } = this.props;
     const token = auth.userToken;
     this.props.fetchAccountNames(token);
-    // if (productId !== '') {
-    //   const product = products.current.find(({ id }) => id === productId);
-    //   Object.keys(product).forEach(key => {
-    //     if (product[key] === null) delete product[key];
-    //   });
-    //   this.setState(Object.assign({}, INITIAL_STATE, product));
-    // }
+    if (productId !== '') {
+      const product = products.current.find(({ id }) => id === productId);
+      Object.keys(product).forEach(key => {
+        if (product[key] === null) delete product[key];
+        if (key === 'is_print') {
+          product[key] = product[key] ? 'is_print_true' : 'is_print_false';
+        }
+      });
+      this.setState(Object.assign({}, PRODUCT_FORM_INITIAL_STATE, product));
+    }
   }
 
   onClickOk = () => {
     if (this.validate()) {
       this.setState({
         isReviewOpen: true,
+        print_image_preview:
+          this.state.print_image_preview || this.state.print_image_url,
         account_name_error: '',
         product_name_error: '',
         product_thick_error: '',
@@ -55,7 +65,7 @@ class ProductForm extends Component {
 
     // check required field
     if (name) {
-      REQUIRED.forEach(({ varName, error }) => {
+      PRODUCT_FORM_REQUIRED.forEach(({ varName, error }) => {
         if (varName === name && this.state[varName] === '') {
           this.setState({ [`${varName}_error`]: error });
         } else if (varName === name && this.state[varName] !== '') {
@@ -63,7 +73,7 @@ class ProductForm extends Component {
         }
       });
     } else {
-      REQUIRED.forEach(({ varName, error }) => {
+      PRODUCT_FORM_REQUIRED.forEach(({ varName, error }) => {
         if (this.state[varName] === '') {
           this.setState({ [`${varName}_error`]: error });
           isValid = isValid && false;
@@ -146,12 +156,21 @@ class ProductForm extends Component {
     });
   };
 
-  onReviewClose = result => {
+  onReviewClose = async result => {
     this.setState({ isReviewOpen: false });
-    console.log(this.state);
-    let data = new FormData();
     if (result) {
-      data = {
+      const config = {
+        bucketName: 'kwangilmes-product-images',
+        region: 'ap-northeast-2',
+        accessKeyId: 'AKIAJOGQB5W52GEWX7SQ',
+        secretAccessKey: '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'
+      };
+      let response;
+      if (this.state.print_image_file) {
+        response = await uploadFile(this.state.print_image_file, config);
+      }
+
+      const data = {
         // basic info
         account_id: this.state.account_id,
         product_name: this.state.product_name,
@@ -173,8 +192,11 @@ class ProductForm extends Component {
         print_back_color_count: this.state.print_back_color_count,
         print_back_color: this.state.print_back_color,
         print_back_position: this.state.print_back_position,
-        print_image_file: this.state.print_image_file,
-        print_image_url: this.state.print_image_url,
+        print_image_url: this.state.print_image_url
+          ? this.state.print_image_url
+          : response
+            ? response.location
+            : '',
         print_memo: this.state.print_memo,
 
         // cutting
@@ -197,28 +219,14 @@ class ProductForm extends Component {
         unit_price: this.state.unit_price,
         product_memo: this.state.product_memo
       };
+
+      this.setState(PRODUCT_FORM_INITIAL_STATE);
+      this.props.onClose(true, data, this.state.id);
     }
-
-    // fetch('http://localhost:3000/products/add', {
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //     'x-access-token': this.props.auth.userToken
-    //   },
-    //   method: 'post',
-    //   body: JSON.stringify([data])
-    // }).then(response => response.json())
-    // .then(console.log)
-
-    console.log(data);
-
-    // if (result) {
-    //   this.setState(INITIAL_STATE);
-    //   this.props.onClose(true, data, this.state.id);
-    // }
   };
 
   renderSections = () => {
-    return SECTIONS.map(({ title, fields }) => {
+    return PRODUCT_FORM_SECTIONS.map(({ title, fields }) => {
       if (title === '인쇄' && this.state.is_print === 'is_print_false') {
         return undefined;
       }
@@ -247,6 +255,10 @@ class ProductForm extends Component {
         switch (varName) {
           case 'ext_pretreat':
             disabled = this.state.is_print === 'is_print_false';
+            break;
+
+          case 'print_image_url':
+            disabled = true;
             break;
 
           case 'print_back_color_count':

@@ -3,7 +3,10 @@ import { connect } from 'react-redux';
 import {
   fetchProducts,
   toggleProductsChecked,
-  toggleProductChecked
+  toggleProductChecked,
+  addProducts,
+  updateProduct,
+  deleteProducts
 } from '../../actions';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
@@ -17,6 +20,8 @@ import ListBody from '../../components/ListBody/ListBody';
 import NoData from '../../components/NoData/NoData';
 import ProductListItem from '../../components/ProductListItem/ProductListItem';
 import ProductForm from '../../components/ProductForm/ProductForm';
+import ProductOrderForm from '../../components/ProductOrderForm/ProductOrderForm';
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import './ProductsPage.css';
 
 class ProductsPage extends Component {
@@ -30,7 +35,9 @@ class ProductsPage extends Component {
       confirmModalDescription: '',
       isProductFormOpen: false,
       productFormTitle: '',
-      productToEdit: ''
+      productToEdit: '',
+      isProductOrderFormOpen: false,
+      productToOrder: {},
     };
 
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -42,6 +49,8 @@ class ProductsPage extends Component {
     this.onCancelSelection = this.onCancelSelection.bind(this);
     this.showConfirmDeleteModal = this.showConfirmDeleteModal.bind(this);
     this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
+    this.showProductOrderForm = this.showProductOrderForm.bind(this);
+    this.onProductOrderFormClose = this.onProductOrderFormClose.bind(this);
     this.showProductForm = this.showProductForm.bind(this);
     this.onProductFormClose = this.onProductFormClose.bind(this);
   }
@@ -138,7 +147,7 @@ class ProductsPage extends Component {
     });
   };
 
-  onConfirmModalClose(result) {
+  onConfirmModalClose = result => {
     if (result) {
       const { search } = this.props.products;
       const token = this.props.auth.userToken;
@@ -154,7 +163,27 @@ class ProductsPage extends Component {
     });
   }
 
-  showProductForm(mode, productToEdit) {
+  showProductOrderForm = productId => {
+    const { products } = this.props;
+    const product = products.current.find(({ id }) => id === productId);
+    Object.keys(product).forEach(key => {
+      if (product[key] === null) delete product[key];
+    });
+    this.setState({
+      isProductOrderFormOpen: true,
+      productToOrder: product
+    });
+  }
+
+  onProductOrderFormClose = (result, data, id) => {
+    console.log(result, data, id);
+    this.setState({
+      isProductOrderFormOpen: false,
+      productToOrder: {}
+    });
+  }
+
+  showProductForm = (mode, productToEdit) => {
     if (mode === 'new') {
       this.setState({
         isProductFormOpen: true,
@@ -169,7 +198,7 @@ class ProductsPage extends Component {
     }
   }
 
-  onProductFormClose(result, data, id) {
+  onProductFormClose = (result, data, id) => {
     this.setState({
       isProductFormOpen: false,
       productFormTitle: '',
@@ -233,6 +262,7 @@ class ProductsPage extends Component {
                 search={search}
                 product={product}
                 onListItemChecked={this.onListItemChecked}
+                onListItemOrderClick={this.showProductOrderForm}
                 onListItemEditClick={this.showProductForm}
                 onListItemDeleteClick={this.showConfirmDeleteModal}
               />
@@ -253,12 +283,27 @@ class ProductsPage extends Component {
             </Button>
           </Tooltip>
         </div>
+        {this.state.isConfirmModalOpen && (
+          <ConfirmModal
+            open={this.state.isConfirmModalOpen}
+            title={this.state.confirmModalTitle}
+            description={this.state.confirmModalDescription}
+            onClose={this.onConfirmModalClose}
+          />
+        )}
         {this.state.isProductFormOpen && (
           <ProductForm
-            accountId={this.state.productToEdit}
+            productId={this.state.productToEdit}
             open={this.state.isProductFormOpen}
             title={this.state.productFormTitle}
             onClose={this.onProductFormClose}
+          />
+        )}
+        {this.state.isProductOrderFormOpen && (
+          <ProductOrderForm
+            product={this.state.productToOrder}
+            open={this.state.isProductOrderFormOpen}
+            onClose={this.onProductOrderFormClose}
           />
         )}
       </main>
@@ -272,5 +317,5 @@ const mapStateToProps = ({ auth, products }) => {
 
 export default connect(
   mapStateToProps,
-  { fetchProducts, toggleProductsChecked, toggleProductChecked }
+  { fetchProducts, toggleProductsChecked, toggleProductChecked, addProducts, updateProduct, deleteProducts }
 )(ProductsPage);

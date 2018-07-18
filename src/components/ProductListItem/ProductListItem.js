@@ -15,6 +15,7 @@ const ProductListItem = ({
   search,
   product,
   onListItemChecked,
+  onListItemOrderClick,
   onListItemEditClick,
   onListItemDeleteClick
 }) => {
@@ -97,9 +98,9 @@ const ProductListItem = ({
             <IconButton
               color="secondary"
               aria-label="order"
-              // onClick={() => {
-              //   onListItemEditClick('edit', id);
-              // }}
+              onClick={() => {
+                onListItemOrderClick(id);
+              }}
             >
               <Icon>build</Icon>
             </IconButton>

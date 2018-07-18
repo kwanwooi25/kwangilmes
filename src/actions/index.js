@@ -11,9 +11,10 @@ import {
   SHOW_SNACKBAR,
   HIDE_SNACKBAR,
   FETCH_PRODUCTS,
+  DELETE_PRODUCTS,
   TOGGLE_PRODUCT_CHECKED,
   SET_PRODUCTS_CHECKED,
-  SET_PRODUCTS_UNCHECKED,
+  SET_PRODUCTS_UNCHECKED
 } from './types';
 
 // const HOST = 'http://api.kwangilmes.com';
@@ -184,4 +185,67 @@ export const toggleProductChecked = id => dispatch => {
 export const toggleProductsChecked = checked => dispatch => {
   if (checked) dispatch({ type: SET_PRODUCTS_CHECKED });
   else dispatch({ type: SET_PRODUCTS_UNCHECKED });
+};
+
+export const addProducts = (userToken, products, search) => dispatch => {
+  fetch(`${HOST}/products/add`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'post',
+    body: JSON.stringify(products)
+  })
+    .then(response => response.json())
+    .then(({ success, data }) => {
+      if (success) {
+        Promise.resolve(dispatch(fetchProducts(userToken, search))).then(() => {
+          dispatch(showSnackbar(`${data.length}개 품목 등록 완료`));
+        });
+      }
+    });
+};
+
+export const updateProduct = (
+  userToken,
+  productId,
+  data,
+  search
+) => dispatch => {
+  fetch(`${HOST}/products/${productId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'put',
+    body: JSON.stringify(data)
+  })
+    .then(response => response.json())
+    .then(({ success }) => {
+      if (success) {
+        Promise.resolve(dispatch(fetchProducts(userToken, search))).then(() => {
+          dispatch(showSnackbar('품목 수정 완료'));
+        });
+      }
+    });
+};
+
+export const deleteProducts = (userToken, ids, search) => dispatch => {
+  fetch(`${HOST}/products/`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'delete',
+    body: JSON.stringify(ids)
+  })
+    .then(response => response.json())
+    .then(({ success, data }) => {
+      if (success) {
+        Promise.resolve(dispatch(fetchProducts(userToken, search))).then(() => {
+          dispatch(showSnackbar('업체 삭제 완료'));
+          dispatch({ type: DELETE_PRODUCTS, payload: ids });
+        });
+      }
+    });
 };

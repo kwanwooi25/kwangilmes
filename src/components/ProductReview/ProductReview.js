@@ -1,12 +1,11 @@
 import React from 'react';
 import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import Grid from '@material-ui/core/Grid';
 import Popover from '@material-ui/core/Popover';
 import FullScreenDialog from '../../components/FullScreenDialog/FullScreenDialog';
 import './ProductReview.css';
-import { SECTIONS } from './constants';
+import { PRODUCT_DETAIL_SECTIONS } from '../../helpers/constants';
 
 class ProductReview extends React.Component {
   state = {
@@ -58,7 +57,7 @@ class ProductReview extends React.Component {
                     this.setState({ anchorEl: event.target });
                   }}
                 >
-                  {data.print_image_file_name}
+                  도안보기
                 </Button>
                 <Popover
                   className="product-review__image-container"
@@ -78,7 +77,7 @@ class ProductReview extends React.Component {
                 >
                   <img
                     className="product-review__image"
-                    src={value}
+                    src={value || data.print_image_url}
                     alt={displayName}
                     onClick={() => {
                       this.setState({ anchorEl: null });
@@ -100,7 +99,7 @@ class ProductReview extends React.Component {
     });
 
   renderSections = data =>
-    SECTIONS.map(({ title, fields }) => {
+    PRODUCT_DETAIL_SECTIONS.map(({ title, fields }) => {
       const hasInfo =
         fields
           .map(({ varName }) => !!data[varName])

@@ -15,6 +15,7 @@ export const SHOW_SNACKBAR = 'show_snackbar';
 export const HIDE_SNACKBAR = 'hide_snackbar';
 
 export const FETCH_PRODUCTS = 'fetch_products';
+export const DELETE_PRODUCTS = 'delete_products';
 
 export const TOGGLE_PRODUCT_CHECKED = 'toggle_product_checked';
 export const SET_PRODUCTS_CHECKED = 'set_products_checked';
