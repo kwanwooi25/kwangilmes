@@ -14,7 +14,6 @@ import './PlateListItem.css';
 const PlateListItem = ({
   search,
   plate,
-  products,
   onListItemChecked,
   onListItemEditClick,
   onListItemDeleteClick
@@ -24,12 +23,47 @@ const PlateListItem = ({
     checked,
     plate_round,
     plate_length,
-    plate_material
+    plate_material,
+    product_1,
+    product_1_name,
+    product_1_thick,
+    product_1_length,
+    product_1_width,
+    product_2,
+    product_2_name,
+    product_2_thick,
+    product_2_length,
+    product_2_width,
+    product_3,
+    product_3_name,
+    product_3_thick,
+    product_3_length,
+    product_3_width,
   } = plate;
   const plateSize = `${plate_round} x ${plate_length}`;
-  if (products.length) {
-    products.map(product => console.log(product.product_name));
-  }
+  const products = [
+    {
+      id: product_1,
+      name: product_1_name,
+      thick: product_1_thick,
+      length: product_1_length,
+      width: product_1_width
+    },
+    {
+      id: product_2,
+      name: product_2_name,
+      thick: product_2_thick,
+      length: product_2_length,
+      width: product_2_width
+    },
+    {
+      id: product_3,
+      name: product_3_name,
+      thick: product_3_thick,
+      length: product_3_length,
+      width: product_3_width
+    },
+  ];
   return (
     <li key={id} className="list-body__item">
       <div>
@@ -48,6 +82,11 @@ const PlateListItem = ({
               {plateSize}
             </Grid>
             <Grid item xs={12} md={3}>
+              {products.length && products.map(product => {
+                if (product.id !== null) {
+                  return <span key={product.id}>{product.name}</span>
+                }
+              })}
             </Grid>
           </Grid>
         </Grid>

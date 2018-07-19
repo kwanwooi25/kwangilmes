@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchPlates, togglePlatesChecked, togglePlateChecked } from '../../actions';
+import {
+  fetchPlates,
+  togglePlatesChecked,
+  togglePlateChecked
+} from '../../actions';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
@@ -200,35 +204,7 @@ class PlatesPage extends Component {
     } else {
       return undefined;
     }
-  }
-
-  renderPlasteListItem = () => {
-    const { userToken } = this.props.auth;
-    const { current, search } = this.props.plates;
-    return current.map(plate => {
-      const { product_1, product_2, product_3 } = plate;
-      let productsInPlate = [];
-      Promise.all([
-        this.fetchProductInfo(userToken, product_1),
-        this.fetchProductInfo(userToken, product_2),
-        this.fetchProductInfo(userToken, product_3)
-      ]).then(result => {
-        productsInPlate = result.filter(value => value !== undefined);
-      });
-
-      return (
-        <PlateListItem
-          key={plate.id}
-          search={search}
-          plate={plate}
-          // products={productsInPlate}
-          onListItemChecked={this.onListItemChecked}
-          onListItemEditClick={this.showPlateForm}
-          onListItemDeleteClick={this.showConfirmDeleteModal}
-        />
-      )
-    });
-  }
+  };
 
   render() {
     const { count, current, search, selected } = this.props.plates;
@@ -270,7 +246,18 @@ class PlatesPage extends Component {
           <NoData />
         ) : (
           <ListBody>
-            {this.renderPlasteListItem()}
+            {current.map(plate => {
+              return (
+                <PlateListItem
+                  key={plate.id}
+                  search={search}
+                  plate={plate}
+                  onListItemChecked={this.onListItemChecked}
+                  onListItemEditClick={this.showPlateForm}
+                  onListItemDeleteClick={this.showConfirmDeleteModal}
+                />
+              );
+            })}
           </ListBody>
         )}
         <div className="fab-add">
