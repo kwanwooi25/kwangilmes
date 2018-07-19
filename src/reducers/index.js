@@ -3,6 +3,7 @@ import authReducer from './authReducer';
 import snackbarReducer from './snackbarReducer';
 import accountsReducer from './accountsReducer';
 import productsReducer from './productsReducer';
+import platesReducer from './platesReducer';
 import ordersReducer from './ordersReducer';
 
 export default combineReducers({
@@ -10,5 +11,6 @@ export default combineReducers({
   snackbar: snackbarReducer,
   accounts: accountsReducer,
   products: productsReducer,
+  plates: platesReducer,
   orders: ordersReducer
 });

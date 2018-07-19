@@ -1,0 +1,38 @@
+
+.plate-list-item__account-name {
+  font-size: 0.9rem;
+}
+
+.plate-list-item__colors {
+  font-size: 0.8rem;
+}
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (min-width: 600px) {
+  .plate-list-item__details {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .plate-list-item__names {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+@media (min-width: 1280px) {
+  .plate-list-item__colors {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

@@ -15,6 +15,10 @@ import {
   TOGGLE_PRODUCT_CHECKED,
   SET_PRODUCTS_CHECKED,
   SET_PRODUCTS_UNCHECKED,
+  FETCH_PLATES,
+  TOGGLE_PLATE_CHECKED,
+  SET_PLATES_CHECKED,
+  SET_PLATES_UNCHECKED,
 } from './types';
 
 // const HOST = 'http://api.kwangilmes.com';
@@ -262,11 +266,34 @@ export const addOrder = (userToken, order, search) => dispatch => {
     .then(response => response.json())
     .then(({ success, data }) => {
       if (success) {
-        console.log(data);
         dispatch(showSnackbar(`작업지시 완료`));
-        // Promise.resolve(dispatch(fetchProducts(userToken, search))).then(() => {
-        //   dispatch(showSnackbar(`${data.length}개 품목 등록 완료`));
-        // });
       }
     });
+};
+
+export const fetchPlates = (userToken, search) => dispatch => {
+  fetch(`${HOST}/plates`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'post',
+    body: JSON.stringify(search)
+  })
+    .then(response => response.json())
+    .then(({ success, error, data }) => {
+      if (success) {
+        data.search = search;
+        dispatch({ type: FETCH_PLATES, payload: data });
+      }
+    });
+}
+
+export const togglePlateChecked = id => dispatch => {
+  dispatch({ type: TOGGLE_PLATE_CHECKED, payload: id });
+};
+
+export const togglePlatesChecked = checked => dispatch => {
+  if (checked) dispatch({ type: SET_PLATES_CHECKED });
+  else dispatch({ type: SET_PLATES_UNCHECKED });
 };

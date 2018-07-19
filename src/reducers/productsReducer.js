@@ -42,9 +42,6 @@ export default function(state = INITIAL_STATE, action) {
         search
       });
 
-    // case FETCH_ACCOUNT:
-    //   return { selectedAccount: action.payload, ...state };
-    //
     case TOGGLE_PRODUCT_CHECKED:
       const id = action.payload;
       state.current.forEach(product => {
@@ -57,7 +54,7 @@ export default function(state = INITIAL_STATE, action) {
           }
         }
       });
-      return { current: state.current, selected: state.selected, ...state };
+      return Object.assign({}, state, { current: state.current, selected: state.selected });
 
     case SET_PRODUCTS_CHECKED:
       state.selected = [];
@@ -65,14 +62,14 @@ export default function(state = INITIAL_STATE, action) {
       state.current.forEach(product => {
         product.checked = true;
       });
-      return { current: state.current, selected: state.selected, ...state };
+      return Object.assign({}, state, { current: state.current, selected: state.selected });
 
     case SET_PRODUCTS_UNCHECKED:
       state.selected = [];
       state.current.forEach(product => {
         product.checked = false;
       });
-      return { current: state.current, selected: state.selected, ...state };
+      return Object.assign({}, state, { current: state.current, selected: state.selected });
 
     case DELETE_PRODUCTS:
       state.selected = state.selected.filter(id => !action.payload.includes(id));
