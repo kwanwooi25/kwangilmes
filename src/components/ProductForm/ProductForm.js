@@ -119,16 +119,17 @@ class ProductForm extends Component {
             print_back_color_count: 0,
             print_back_color: '',
             print_back_position: '',
-            print_image_url: '',
+            print_image_file_name: '',
+            print_image_preview: '',
             print_memo: ''
           });
         } else if (value === 'is_print_true') {
-          this.setState({ ext_pretreat: 'single' });
+          this.setState({ ext_pretreat: '단면' });
         }
         break;
 
       case 'ext_pretreat':
-        if (value === 'single') {
+        if (value === '단면') {
           this.setState({
             print_back_color_count: 0,
             print_back_color: '',
@@ -160,10 +161,10 @@ class ProductForm extends Component {
     this.setState({ isReviewOpen: false });
     if (result) {
       const config = {
-        bucketName: 'kwangilmes-product-images',
-        region: 'ap-northeast-2',
-        accessKeyId: '',
-        secretAccessKey: ''
+        bucketName: process.env.REACT_APP_AWS_BUCKET_NAME,
+        region: process.env.REACT_APP_AWS_REGION,
+        accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY
       };
       let response;
       if (this.state.print_image_file) {
@@ -264,7 +265,7 @@ class ProductForm extends Component {
           case 'print_back_color_count':
           case 'print_back_color':
           case 'print_back_position':
-            disabled = this.state.ext_pretreat !== 'double';
+            disabled = this.state.ext_pretreat !== '양면';
             break;
 
           case 'cut_punch_count':

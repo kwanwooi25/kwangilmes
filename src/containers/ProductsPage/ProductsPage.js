@@ -6,7 +6,8 @@ import {
   toggleProductChecked,
   addProducts,
   updateProduct,
-  deleteProducts
+  deleteProducts,
+  addOrder
 } from '../../actions';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
@@ -37,7 +38,7 @@ class ProductsPage extends Component {
       productFormTitle: '',
       productToEdit: '',
       isProductOrderFormOpen: false,
-      productToOrder: {},
+      productToOrder: {}
     };
 
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -148,20 +149,20 @@ class ProductsPage extends Component {
   };
 
   onConfirmModalClose = result => {
-    if (result) {
-      const { search } = this.props.products;
-      const token = this.props.auth.userToken;
-      const ids = this.state.selectedProducts;
-      this.props.deleteProducts(token, ids, search);
-    }
-
     this.setState({
       isConfirmModalOpen: false,
       selectedProducts: [],
       confirmModalTitle: '',
       confirmModalDescription: ''
     });
-  }
+
+    if (result) {
+      const { search } = this.props.products;
+      const token = this.props.auth.userToken;
+      const ids = this.state.selectedProducts;
+      this.props.deleteProducts(token, ids, search);
+    }
+  };
 
   showProductOrderForm = productId => {
     const { products } = this.props;
@@ -173,15 +174,19 @@ class ProductsPage extends Component {
       isProductOrderFormOpen: true,
       productToOrder: product
     });
-  }
+  };
 
-  onProductOrderFormClose = (result, data, id) => {
-    console.log(result, data, id);
+  onProductOrderFormClose = (result, data) => {
     this.setState({
       isProductOrderFormOpen: false,
       productToOrder: {}
     });
-  }
+
+    if (result) {
+      const token = this.props.auth.userToken;
+      this.props.addOrder(token, data);
+    }
+  };
 
   showProductForm = (mode, productToEdit) => {
     if (mode === 'new') {
@@ -196,7 +201,7 @@ class ProductsPage extends Component {
         productToEdit
       });
     }
-  }
+  };
 
   onProductFormClose = (result, data, id) => {
     this.setState({
@@ -214,7 +219,7 @@ class ProductsPage extends Component {
       const token = this.props.auth.userToken;
       this.props.updateProduct(token, id, data, search);
     }
-  }
+  };
 
   render() {
     const { count, current, search, selected } = this.props.products;
@@ -317,5 +322,13 @@ const mapStateToProps = ({ auth, products }) => {
 
 export default connect(
   mapStateToProps,
-  { fetchProducts, toggleProductsChecked, toggleProductChecked, addProducts, updateProduct, deleteProducts }
+  {
+    fetchProducts,
+    toggleProductsChecked,
+    toggleProductChecked,
+    addProducts,
+    updateProduct,
+    deleteProducts,
+    addOrder
+  }
 )(ProductsPage);

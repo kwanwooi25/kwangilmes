@@ -14,7 +14,7 @@ import {
   DELETE_PRODUCTS,
   TOGGLE_PRODUCT_CHECKED,
   SET_PRODUCTS_CHECKED,
-  SET_PRODUCTS_UNCHECKED
+  SET_PRODUCTS_UNCHECKED,
 } from './types';
 
 // const HOST = 'http://api.kwangilmes.com';
@@ -246,6 +246,27 @@ export const deleteProducts = (userToken, ids, search) => dispatch => {
           dispatch(showSnackbar('업체 삭제 완료'));
           dispatch({ type: DELETE_PRODUCTS, payload: ids });
         });
+      }
+    });
+};
+
+export const addOrder = (userToken, order, search) => dispatch => {
+  fetch(`${HOST}/orders/add`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'post',
+    body: JSON.stringify(order)
+  })
+    .then(response => response.json())
+    .then(({ success, data }) => {
+      if (success) {
+        console.log(data);
+        dispatch(showSnackbar(`작업지시 완료`));
+        // Promise.resolve(dispatch(fetchProducts(userToken, search))).then(() => {
+        //   dispatch(showSnackbar(`${data.length}개 품목 등록 완료`));
+        // });
       }
     });
 };

@@ -44,3 +44,9 @@
 .product-order-form__datepicker {
   width: 100%;
 }
+
+.product-order-form__plate_status {
+  display: flex;
+  flex-direction: row !important;
+  justify-content: space-between;
+}

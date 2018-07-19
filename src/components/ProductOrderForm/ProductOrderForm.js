@@ -14,11 +14,16 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import Radio from '@material-ui/core/Radio';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FullScreenDialog from '../../components/FullScreenDialog/FullScreenDialog';
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import { PRODUCT_DETAIL_SECTIONS } from '../../helpers/constants';
+import { comma, uncomma } from '../../helpers/comma';
+import { getWeight } from '../../helpers/getWeight';
 import './ProductOrderForm.css';
 
 class ProductOrderForm extends Component {
@@ -26,29 +31,84 @@ class ProductOrderForm extends Component {
     super(props);
 
     this.state = {
-      product: props.product,
+      isProductDetailOpen: false,
+      isConfirmModalOpen: false,
 
       ordered_at: moment(),
-      deliver_by: moment().add(10, 'days'),
+      deliver_by: moment().add(7, 'days'),
       order_quantity: '',
+      order_quantity_weight: '',
+      plate_status: '확인',
       is_delivery_strict: false,
       is_urgent: false,
       order_memo_work: '',
       order_memo_delivery: '',
 
       order_quantity_error: '',
-    }
+      orderDetail: ''
+    };
 
     this.onClickOk = this.onClickOk.bind(this);
+    this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
   }
 
   componentDidMount() {
-
+    const { is_print } = this.props.product;
+    if (is_print) {
+      this.setState({ deliver_by: moment().add(10, 'days') });
+    }
   }
+
+  onConfirmModalClose = result => {
+    this.setState({ isConfirmModalOpen: false });
+
+    if (result) {
+      const data = {
+        product_id: this.props.product.id,
+        ordered_at: this.state.ordered_at.format('YYYY-MM-DD'),
+        deliver_by: this.state.deliver_by.format('YYYY-MM-DD'),
+        order_quantity: uncomma(this.state.order_quantity),
+        plate_status: this.state.plate_status,
+        is_delivery_strict: this.state.is_delivery_strict,
+        is_urgent: this.state.is_urgent,
+        order_memo_work: this.state.order_memo_work,
+        order_memo_delivery: this.state.order_memo_delivery
+      };
+
+      this.props.onClose(true, data);
+    }
+  };
 
   onClickOk = () => {
-    console.log('ok! proceed!');
-  }
+    if (this.validate()) {
+      const orderDetail = `
+        ${this.state.order_quantity}매
+        ${this.props.product.is_print && `(동판${this.state.plate_status})`}
+        ${this.state.is_delivery_strict ? ' / 납기엄수' : ''}
+        ${this.state.is_urgent ? ' / 지급' : ''}
+        ${this.state.order_memo_work ? ` / ${this.state.order_memo_work}` : ''}
+        ${this.state.order_memo_delivery ? ` / ${this.state.order_memo_delivery}` : ''}
+      `;
+
+      this.setState({ isConfirmModalOpen: true, orderDetail });
+    }
+  };
+
+  validate = () => {
+    let isValid = true;
+
+    if (this.state.order_quantity === '') {
+      isValid = false;
+      this.setState({ order_quantity_error: '주문수량을 입력하세요.' });
+    } else if (isNaN(uncomma(this.state.order_quantity))) {
+      isValid = false;
+      this.setState({ order_quantity_error: '숫자로 입력해야 합니다.' });
+    } else {
+      this.setState({ order_quantity_error: '' });
+    }
+
+    return isValid;
+  };
 
   renderProductFields = (fields, data) =>
     fields.map(({ varName, displayName }) => {
@@ -65,11 +125,14 @@ class ProductOrderForm extends Component {
           break;
         case 'ext_pretreat':
           value =
-            data.ext_pretreat === 'single'
-              ? '단면'
-              : data.ext_pretreat === 'double'
-                ? '양면'
-                : '';
+          data.ext_pretreat === 'single'
+            ? '단면'
+            : data.ext_pretreat === 'double'
+              ? '양면'
+              : '';
+          break;
+        case 'print_image_preview':
+          value = data.print_image_url;
           break;
         case 'ext_antistatic':
         case 'cut_ultrasonic':
@@ -115,7 +178,7 @@ class ProductOrderForm extends Component {
                 >
                   <img
                     className="product-order-form__image"
-                    src={value || data.print_image_url}
+                    src={value}
                     alt={displayName}
                     onClick={() => {
                       this.setState({ anchorEl: null });
@@ -141,8 +204,8 @@ class ProductOrderForm extends Component {
     return PRODUCT_DETAIL_SECTIONS.map(({ title, fields }) => {
       const hasInfo =
         fields
-          .map(({ varName }) => !!product[varName])
-          .filter(value => value === true).length > 0;
+      .map(({ varName }) => !!product[varName])
+      .filter(value => value === true).length > 0;
 
       if (hasInfo) {
         return (
@@ -153,15 +216,11 @@ class ProductOrderForm extends Component {
         );
       } else return undefined;
     });
-  }
+  };
 
-  renderOrderSection = () => {
-
-  }
+  renderOrderSection = () => {};
 
   onInputChange = name => event => {
-    console.log(name, event.target.value);
-
     let value;
     if (event.target.type === 'checkbox') {
       value = event.target.checked;
@@ -169,32 +228,33 @@ class ProductOrderForm extends Component {
       value = event.target.value;
     }
 
-    this.setState({ [name]: value });
-  }
-
-  // table.timestamp('ordered_at').notNullable();
-  //           table.timestamp('order_modified_at');
-  //           table.boolean('is_order_modified').defaultTo(false);
-  //           table.integer('account_id').notNullable();
-  //           table.integer('product_id').notNullable();
-  //           table.integer('order_quantity').notNullable();
-  //           table.float('order_quantity_weight').notNullable();
-  //           table.string('plate_status'); // 신규, 수정, 확인
-  //           table.boolean('is_plate_ready').defaultTo(true);
-  //           table.string('order_status').defaultTo('압출중'); // 압출중, 인쇄중, 가공중, 완료
-  //           table.timestamp('deliver_by').notNullable();
-  //           table.boolean('is_delivery_strict').defaultTo(false);
-  //           table.boolean('is_urgent').defaultTo(false);
-  //           table.text('order_memo_work');
-  //           table.text('order_memo_delivery');
-  //           table.boolean('is_completed').defaultTo(false);
-  //           table.timestamp('completed_at');
-  //           table.integer('completed_quantity');
-  //           table.boolean('is_delivered').defaultTo(false);
-  //           table.timestamp('delivered_at');
+    if (name === 'order_quantity') {
+      const weight = getWeight(this.props.product, uncomma(value));
+      this.setState(
+        {
+          order_quantity: comma(value),
+          order_quantity_weight: weight
+        },
+        () => {
+          this.validate();
+        }
+      );
+    } else {
+      this.setState({ [name]: value });
+    }
+  };
 
   render() {
     const { open, onClose } = this.props;
+    const {
+      product_name,
+      product_thick,
+      product_length,
+      product_width,
+      is_print
+    } = this.props.product;
+    const productTitle = `${product_name} (${product_thick} x ${product_length} x ${product_width})`;
+
     return (
       <FullScreenDialog
         open={open}
@@ -208,9 +268,16 @@ class ProductOrderForm extends Component {
         }
       >
         <form className="full-screen-form">
-          <ExpansionPanel>
+          <ExpansionPanel
+            expanded={this.state.isProductDetailOpen}
+            onChange={(event, expanded) => {
+              this.setState({ isProductDetailOpen: expanded });
+            }}
+          >
             <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="title">품목정보</Typography>
+              <Typography variant="title">
+                {this.state.isProductDetailOpen ? '품목정보' : productTitle}
+              </Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <Grid container spacing={24}>
@@ -223,36 +290,82 @@ class ProductOrderForm extends Component {
               <Typography variant="title">주문정보</Typography>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Grid container spacing={24}>
-                <Grid item xs={6}>
+              <Grid container spacing={16}>
+                <Grid item xs={6} sm={3}>
                   <DatePicker
                     className="product-order-form__datepicker"
                     keyboard
                     label="발주일"
                     format="YYYY/MM/DD"
                     disableFuture={true}
-                    mask={value => (value ? [/\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/] : [])}
+                    shouldDisableDate={date => {
+                      if (date.day() === 0 || date.day() === 6) {
+                        return true;
+                      }
+                      return false;
+                    }}
+                    mask={value =>
+                      value
+                        ? [
+                            /\d/,
+                            /\d/,
+                            /\d/,
+                            /\d/,
+                            '/',
+                            /\d/,
+                            /\d/,
+                            '/',
+                            /\d/,
+                            /\d/
+                          ]
+                        : []
+                    }
                     value={this.state.ordered_at}
-                    onChange={date => { this.setState({ ordered_at: date }) }}
+                    onChange={date => {
+                      this.setState({ ordered_at: date });
+                    }}
                     disableOpenOnEnter
                     animateYearScrolling={false}
                   />
                 </Grid>
-                <Grid item xs={6}>
+                <Grid item xs={6} sm={3}>
                   <DatePicker
                     keyboard
                     className="product-order-form__datepicker"
                     label="납기일"
                     format="YYYY/MM/DD"
                     disablePast={true}
-                    mask={value => (value ? [/\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/] : [])}
+                    shouldDisableDate={date => {
+                      if (date.day() === 0 || date.day() === 6) {
+                        return true;
+                      }
+                      return false;
+                    }}
+                    mask={value =>
+                      value
+                        ? [
+                            /\d/,
+                            /\d/,
+                            /\d/,
+                            /\d/,
+                            '/',
+                            /\d/,
+                            /\d/,
+                            '/',
+                            /\d/,
+                            /\d/
+                          ]
+                        : []
+                    }
                     value={this.state.deliver_by}
-                    onChange={date => { this.setState({ deliver_by: date }) }}
+                    onChange={date => {
+                      this.setState({ deliver_by: date });
+                    }}
                     disableOpenOnEnter
                     animateYearScrolling={false}
                   />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={7} sm={4}>
                   <FormControl
                     fullWidth
                     error={this.state.order_quantity_error !== ''}
@@ -263,15 +376,34 @@ class ProductOrderForm extends Component {
                       value={this.state.order_quantity}
                       onChange={this.onInputChange('order_quantity')}
                       endAdornment={
-                        <InputAdornment position="end">
-                          매
-                        </InputAdornment>
+                        <InputAdornment position="end">매</InputAdornment>
                       }
                     />
-                    <FormHelperText id="order_quantity">{this.state.order_quantity_error}</FormHelperText>
+                    <FormHelperText id="order_quantity">
+                      {this.state.order_quantity_error}
+                    </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={5} sm={2}>
+                  <FormControl fullWidth>
+                    <InputLabel htmlFor="order_quantity_weight">
+                      중량
+                    </InputLabel>
+                    <Input
+                      id="order_quantity_weight"
+                      disabled
+                      value={this.state.order_quantity_weight}
+                      onChange={this.onInputChange('order_quantity_weight')}
+                      startAdornment={
+                        <InputAdornment position="start">{'('}</InputAdornment>
+                      }
+                      endAdornment={
+                        <InputAdornment position="end">kg)</InputAdornment>
+                      }
+                    />
+                  </FormControl>
+                </Grid>
+                <Grid item xs={6} sm={3}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -280,10 +412,10 @@ class ProductOrderForm extends Component {
                         color="primary"
                       />
                     }
-                    label="엄수"
+                    label="납기엄수"
                   />
                 </Grid>
-                <Grid item xs={4}>
+                <Grid item xs={6} sm={3}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -295,7 +427,40 @@ class ProductOrderForm extends Component {
                     label="지급"
                   />
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
+                  <FormControl
+                    fullWidth
+                    component="fieldset"
+                  >
+                    <RadioGroup
+                      aria-label="plate_status"
+                      name="plate_status"
+                      className="product-order-form__plate_status"
+                      value={this.state.plate_status}
+                      onChange={this.onInputChange('plate_status')}
+                    >
+                      <FormControlLabel
+                        value="확인"
+                        control={<Radio color="primary" />}
+                        disabled={is_print === false}
+                        label="동판확인"
+                      />
+                      <FormControlLabel
+                        value="신규"
+                        control={<Radio color="primary" />}
+                        disabled={is_print === false}
+                        label="동판신규"
+                      />
+                      <FormControlLabel
+                        value="수정"
+                        control={<Radio color="primary" />}
+                        disabled={is_print === false}
+                        label="동판수정"
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
                     <InputLabel htmlFor="order_memo_work">작업참고</InputLabel>
                     <Input
@@ -306,9 +471,11 @@ class ProductOrderForm extends Component {
                     />
                   </FormControl>
                 </Grid>
-                <Grid item xs={12}>
+                <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
-                    <InputLabel htmlFor="order_memo_delivery">납품참고</InputLabel>
+                    <InputLabel htmlFor="order_memo_delivery">
+                      납품참고
+                    </InputLabel>
                     <Input
                       id="order_memo_delivery"
                       value={this.state.order_memo_delivery}
@@ -321,16 +488,17 @@ class ProductOrderForm extends Component {
             </ExpansionPanelDetails>
           </ExpansionPanel>
         </form>
-        {/* {this.state.isReviewOpen && (
-          <ProductOrderReview
-            data={this.state}
-            open={this.state.isReviewOpen}
-            onClose={this.onReviewClose.bind(this)}
-            title="작업지시 확인"
+        {this.state.isConfirmModalOpen && (
+          <ConfirmModal
+            open={this.state.isConfirmModalOpen}
+            title="작업지시 하시겠습니까?"
+            subtitle={productTitle}
+            description={this.state.orderDetail}
+            onClose={this.onConfirmModalClose}
           />
-        )} */}
+        )}
       </FullScreenDialog>
-    )
+    );
   }
 }
 

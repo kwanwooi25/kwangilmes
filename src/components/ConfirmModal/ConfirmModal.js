@@ -33,13 +33,13 @@ const ConfirmModal = ({ open, title, subtitle, description, onClose }) => {
           </Button>
           <Button
             variant="contained"
-            color="secondary"
+            color="primary"
             onClick={() => {
               onClose(true);
             }}
           >
-            삭제
-            <Icon>delete</Icon>
+            확인
+            <Icon>check</Icon>
           </Button>
         </div>
       </div>

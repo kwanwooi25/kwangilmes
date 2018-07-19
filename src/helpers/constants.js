@@ -14,7 +14,7 @@ export const PRODUCT_FORM_INITIAL_STATE = {
   // extrusion
   ext_color: '',
   ext_antistatic: false,
-  ext_pretreat: '', // 없음: '', 단면: 'single', 양면: 'double'
+  ext_pretreat: '', // 없음: '', '단면', '양면'
   ext_memo: '',
 
   // printing
