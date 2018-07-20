@@ -5,33 +5,31 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
-import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import Typography from '@material-ui/core/Typography';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import Radio from '@material-ui/core/Radio';
+import InputAdornment from '@material-ui/core/InputAdornment';
 import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FullScreenDialog from '../../components/FullScreenDialog/FullScreenDialog';
+import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import './PlateForm.css';
-// import { PLATE_FORM_FIELDS } from '../../helpers/constants';
 
 const PLATE_FORM_FIELDS = [
-  { varName: 'plate_round', displayName: '둘레', xs: 6 },
-  { varName: 'plate_length', displayName: '기장', xs: 6 },
+  { varName: 'plate_round', displayName: '둘레', xs: 6, sm: 3 },
+  { varName: 'plate_length', displayName: '기장', xs: 6, sm: 3 },
   {
     type: 'select',
     varName: 'plate_material',
     displayName: '재질',
     options: ['신주', '데스'],
-    xs: 4
+    xs: 4,
+    sm: 2
   },
-  { varName: 'storage_location', displayName: '위치', xs: 8 }
+  { varName: 'storage_location', displayName: '위치', xs: 8, sm: 4 }
 ];
 
 const PLATE_FORM_REQUIRED = [
@@ -41,6 +39,10 @@ const PLATE_FORM_REQUIRED = [
 ];
 
 const PLATE_FORM_INITIAL_STATE = {
+  isConfirmModalOpen: false,
+  confirmDescription: '',
+
+  // plate props
   plate_round: '',
   plate_length: '',
   plate_material: '',
@@ -64,24 +66,57 @@ class PlateForm extends Component {
   state = PLATE_FORM_INITIAL_STATE;
 
   componentDidMount() {
-    const { auth, plateId, plates } = this.props;
-    const token = auth.userToken;
-    // this.props.fetchAccountNames(token);
-    // if (productId !== '') {
-    //   const product = products.current.find(({ id }) => id === productId);
-    //   Object.keys(product).forEach(key => {
-    //     if (product[key] === null) delete product[key];
-    //     if (key === 'is_print') {
-    //       product[key] = product[key] ? 'is_print_true' : 'is_print_false';
-    //     }
-    //   });
-    //   this.setState(Object.assign({}, PRODUCT_FORM_INITIAL_STATE, product));
-    // }
+    const { plateId, plates } = this.props;
+    if (plateId !== '') {
+      const plate = plates.current.find(({ id }) => id === plateId);
+      plate.products = [];
+      for (let i = 1; i < 4; i++) {
+        if (plate[`product_${i}`]) {
+          plate.products.push({
+            id: plate[`product_${i}`],
+            product_name: plate[`product_${i}_name`],
+            product_thick: plate[`product_${i}_thick`],
+            product_length: plate[`product_${i}_length`],
+            product_width: plate[`product_${i}_width`]
+          });
+        }
+      }
+
+      this.setState(Object.assign({}, PLATE_FORM_INITIAL_STATE, plate));
+    }
   }
 
   onClickOk = () => {
     if (this.validate()) {
-      this.setState({});
+      this.setState({
+        isConfirmModalOpen: true,
+        confirmDescription: this.state.id
+          ? '동판 수정 하시겠습니까?'
+          : '동판 추가 하시겠습니까?',
+        plate_round_error: '',
+        plate_length_error: '',
+        plate_material_error: '',
+        product_search_error: ''
+      });
+    }
+  };
+
+  onConfirmModalClose = result => {
+    this.setState({ isConfirmModalOpen: false });
+    if (result) {
+      const data = {
+        plate_round: this.state.plate_round,
+        plate_length: this.state.plate_length,
+        plate_material: this.state.plate_material,
+        storage_location: this.state.storage_location,
+        product_1: this.state.products[0] ? this.state.products[0].id : null,
+        product_2: this.state.products[1] ? this.state.products[1].id : null,
+        product_3: this.state.products[2] ? this.state.products[2].id : null,
+        memo: ''
+      };
+
+      this.setState(Object.assign({}, PLATE_FORM_INITIAL_STATE));
+      this.props.onClose(true, data, this.state.id);
     }
   };
 
@@ -121,13 +156,7 @@ class PlateForm extends Component {
       value = event.target.value;
     }
 
-    switch (name) {
-      default:
-        break;
-    }
-
     this.setState({ [name]: value }, () => {
-      console.log(this.state);
       this.validate(name);
     });
   };
@@ -141,7 +170,6 @@ class PlateForm extends Component {
   };
 
   searchProduct = () => {
-    console.log('search for:::', this.state.product_search);
     if (this.state.product_search === '') {
       this.setState({ product_search_error: '검색어를 입력해야 합니다.' });
     } else {
@@ -165,9 +193,7 @@ class PlateForm extends Component {
             data.products.forEach(product => {
               product.checked = false;
             });
-            this.setState({ product_search_result: data.products }, () => {
-              console.log(this.state);
-            });
+            this.setState({ product_search_result: data.products });
           }
         });
     }
@@ -188,22 +214,31 @@ class PlateForm extends Component {
         <Grid
           item
           xs={12}
+          key={id}
           onClick={event => {
+            let newArray = [];
+            let selectedProduct = null;
             if (!checked) {
-              const newArray = this.state.product_search_result.map(product => {
+              newArray = this.state.product_search_result.map(product => {
                 if (product.id === id) {
                   product.checked = true;
+                  selectedProduct = product;
                 } else {
                   product.checked = false;
                 }
                 return product;
               });
-
-              this.setState({
-                product_search_result: newArray,
-                selectedProduct: product
+            } else {
+              newArray = this.state.product_search_result.map(product => {
+                product.checked = false;
+                return product;
               });
             }
+
+            this.setState({
+              product_search_result: newArray,
+              selectedProduct
+            });
           }}
         >
           <Checkbox checked={checked} color="primary" />
@@ -211,17 +246,6 @@ class PlateForm extends Component {
         </Grid>
       );
     });
-  };
-
-  onReviewClose = result => {
-    this.setState({ isReviewOpen: false });
-    // if (result) {
-    //   const data = {
-    //   };
-    //
-    //   this.setState(PRODUCT_FORM_INITIAL_STATE);
-    //   this.props.onClose(true, data, this.state.id);
-    // }
   };
 
   renderFields = () => {
@@ -282,17 +306,16 @@ class PlateForm extends Component {
       } = product;
       const productName = `${product_name} (${product_thick} x ${product_length} x ${product_width})`;
       return (
-        <Grid item xs={12} key={index} className="plate-form__product">
-          <Chip
-            fullWidth
-            label={productName}
-            onDelete={() => {
-              const { products } = this.state;
-              products.splice(index, 1);
-              this.setState({ products });
-            }}
-          />
-        </Grid>
+        <Chip
+          key={index}
+          label={productName}
+          className="plate-form__product"
+          onDelete={() => {
+            const { products } = this.state;
+            products.splice(index, 1);
+            this.setState({ products });
+          }}
+        />
       );
     });
   };
@@ -313,89 +336,119 @@ class PlateForm extends Component {
         }
       >
         <form className="full-screen-form">
-          <Grid container spacing={16} className="plate-form__contents">
-            {this.renderFields()}
-          </Grid>
-          {this.state.products.length > 0 && (
-            <Grid container spacing={16} className="plate-form__contents">
-              <h3>사용품목</h3>
-              {this.renderProducts()}
-            </Grid>
-          )}
-          {this.state.products.length < 3 && (
-            <Grid container spacing={16} className="plate-form__contents">
-              <Grid item xs={9}>
-                <FormControl
-                  fullWidth
-                  error={this.state.product_search_error !== ''}
-                >
-                  <Input
-                    id="product_search"
-                    value={this.state.product_search}
-                    placeholder="품명으로 검색"
-                    onChange={this.onInputChange('product_search')}
-                  />
-                  <FormHelperText id="product_search">
-                    {this.state.product_search_error}
-                  </FormHelperText>
-                </FormControl>
+          <div className="plate-form__section">
+            <div className="plate-form__section-title">
+              <Typography variant="title">동판정보</Typography>
+            </div>
+            <div className="plate-form__section-content">
+              <Grid container spacing={24}>
+                {this.renderFields()}
               </Grid>
-              <Grid item xs={3}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  onClick={this.searchProduct.bind(this)}
-                >
-                  검색
-                </Button>
-              </Grid>
-              <Grid item xs={12}>
-                <Button
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  disabled={!this.state.selectedProduct}
-                  onClick={() => {
-                    const { products } = this.state;
-                    products.push(this.state.selectedProduct);
-                    this.setState({ products });
-                    this.resetProductSearch();
-                  }}
-                >
-                  사용품목 등록
-                </Button>
-              </Grid>
+            </div>
+          </div>
 
-              <Grid
-                item
-                xs={12}
-                className="plate-form__product_search_result"
-              >
-                {this.state.product_search_result.length ? (
-                  this.renderSearchResult()
-                ) : (
-                  <span>검색된 품목이 없습니다.</span>
-                )}
-              </Grid>
-            </Grid>
+          <div className="plate-form__section">
+            <div className="plate-form__section-title">
+              <Typography variant="title">사용품목</Typography>
+            </div>
+            {this.state.products.length > 0 && (
+              <div className="plate-form__section-content">
+                <Grid container spacing={24}>
+                  {this.renderProducts()}
+                </Grid>
+              </div>
+            )}
+          </div>
+
+          {this.state.products.length < 3 && (
+            <div className="plate-form__section">
+              <div className="plate-form__section-content">
+                <Grid container spacing={24}>
+                  <Grid item xs={9} md={3}>
+                    <FormControl
+                      fullWidth
+                      error={this.state.product_search_error !== ''}
+                    >
+                      <Input
+                        id="product_search"
+                        value={this.state.product_search}
+                        placeholder="품명으로 검색"
+                        onChange={this.onInputChange('product_search')}
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={() => {
+                                this.setState({ product_search: '' });
+                                this.resetProductSearch();
+                              }}
+                            >
+                              <Icon>clear</Icon>
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                      />
+                      <FormHelperText id="product_search">
+                        {this.state.product_search_error}
+                      </FormHelperText>
+                    </FormControl>
+                  </Grid>
+                  <Grid item xs={3} md={1}>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      onClick={this.searchProduct.bind(this)}
+                    >
+                      검색
+                    </Button>
+                  </Grid>
+                  <Grid item xs={12} md={2}>
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      disabled={!this.state.selectedProduct}
+                      onClick={() => {
+                        const { products } = this.state;
+                        products.push(this.state.selectedProduct);
+                        this.setState({ products });
+                        this.resetProductSearch();
+                      }}
+                    >
+                      사용품목 등록
+                    </Button>
+                  </Grid>
+
+                  {this.state.product_search_result.length > 0 && (
+                    <Grid
+                      item
+                      xs={12}
+                      md={6}
+                      className="plate-form__product_search_result"
+                    >
+                      {this.renderSearchResult()}
+                    </Grid>
+                  )}
+                </Grid>
+              </div>
+            </div>
           )}
         </form>
-        {/* {this.state.isReviewOpen && (
-          <ProductReview
-            data={this.state}
-            open={this.state.isReviewOpen}
-            onClose={this.onReviewClose.bind(this)}
+        {this.state.isConfirmModalOpen && (
+          <ConfirmModal
+            open={this.state.isConfirmModalOpen}
             title={`${title} 확인`}
+            description={this.state.confirmDescription}
+            onClose={this.onConfirmModalClose.bind(this)}
           />
-        )} */}
+        )}
       </FullScreenDialog>
     );
   }
 }
 
-const mapStateToProps = ({ auth }) => {
-  return { auth };
+const mapStateToProps = ({ auth, plates }) => {
+  return { auth, plates };
 };
 
 export default connect(mapStateToProps)(PlateForm);

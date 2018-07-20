@@ -310,6 +310,49 @@ export const deletePlates = (userToken, ids, search) => dispatch => {
     });
 };
 
+export const addPlates = (userToken, plates, search) => dispatch => {
+  fetch(`${HOST}/plates/add`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'post',
+    body: JSON.stringify(plates)
+  })
+    .then(response => response.json())
+    .then(({ success, data }) => {
+      if (success) {
+        Promise.resolve(dispatch(fetchPlates(userToken, search))).then(() => {
+          dispatch(showSnackbar(`${data.length}개 동판 등록 완료`));
+        });
+      }
+    });
+};
+
+export const updatePlate = (
+  userToken,
+  plateId,
+  data,
+  search
+) => dispatch => {
+  fetch(`${HOST}/plates/${plateId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'put',
+    body: JSON.stringify(data)
+  })
+    .then(response => response.json())
+    .then(({ success }) => {
+      if (success) {
+        Promise.resolve(dispatch(fetchPlates(userToken, search))).then(() => {
+          dispatch(showSnackbar('동판 수정 완료'));
+        });
+      }
+    });
+};
+
 export const togglePlateChecked = id => dispatch => {
   dispatch({ type: TOGGLE_PLATE_CHECKED, payload: id });
 };

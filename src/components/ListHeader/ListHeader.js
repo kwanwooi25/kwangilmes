@@ -90,50 +90,42 @@ const ListHeader = ({
             번째 항목
           </div>
           <div className="paginator__buttons">
-            <Tooltip title="첫 페이지">
-              <IconButton
-                aria-label="first page"
-                disabled={isFirstPage}
-                onClick={() => {
-                  onPageChange('first');
-                }}
-              >
-                <Icon>first_page</Icon>
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="이전 페이지">
-              <IconButton
-                aria-label="previous page"
-                disabled={isFirstPage}
-                onClick={() => {
-                  onPageChange('prev');
-                }}
-              >
-                <Icon>navigate_before</Icon>
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="다음 페이지">
-              <IconButton
-                aria-label="next page"
-                disabled={isLastPage}
-                onClick={() => {
-                  onPageChange('next');
-                }}
-              >
-                <Icon>navigate_next</Icon>
-              </IconButton>
-            </Tooltip>
-            <Tooltip title="마지막 페이지">
-              <IconButton
-                aria-label="last page"
-                disabled={isLastPage}
-                onClick={() => {
-                  onPageChange('last');
-                }}
-              >
-                <Icon>last_page</Icon>
-              </IconButton>
-            </Tooltip>
+            <IconButton
+              aria-label="first page"
+              disabled={isFirstPage}
+              onClick={() => {
+                onPageChange('first');
+              }}
+            >
+              <Icon>first_page</Icon>
+            </IconButton>
+            <IconButton
+              aria-label="previous page"
+              disabled={isFirstPage}
+              onClick={() => {
+                onPageChange('prev');
+              }}
+            >
+              <Icon>navigate_before</Icon>
+            </IconButton>
+            <IconButton
+              aria-label="next page"
+              disabled={isLastPage}
+              onClick={() => {
+                onPageChange('next');
+              }}
+            >
+              <Icon>navigate_next</Icon>
+            </IconButton>
+            <IconButton
+              aria-label="last page"
+              disabled={isLastPage}
+              onClick={() => {
+                onPageChange('last');
+              }}
+            >
+              <Icon>last_page</Icon>
+            </IconButton>
           </div>
         </div>
       </div>

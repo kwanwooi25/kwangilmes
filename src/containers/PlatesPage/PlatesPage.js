@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import {
   fetchPlates,
   deletePlates,
+  addPlates,
+  updatePlate,
   togglePlatesChecked,
   togglePlateChecked
 } from '../../actions';
@@ -154,7 +156,6 @@ class PlatesPage extends Component {
   };
 
   showPlateForm = (mode, plateToEdit) => {
-    console.log(mode, plateToEdit);
     if (mode === 'new') {
       this.setState({
         isPlateFormOpen: true,
@@ -176,17 +177,15 @@ class PlatesPage extends Component {
       plateToEdit: ''
     });
 
-    console.log(result, data);
-
-    // if (result && id === undefined) {
-    //   const { search } = this.props.products;
-    //   const token = this.props.auth.userToken;
-    //   this.props.addProducts(token, [data], search);
-    // } else if (result && id !== undefined) {
-    //   const { search } = this.props.products;
-    //   const token = this.props.auth.userToken;
-    //   this.props.updateProduct(token, id, data, search);
-    // }
+    if (result && id === undefined) {
+      const { search } = this.props.plates;
+      const token = this.props.auth.userToken;
+      this.props.addPlates(token, [data], search);
+    } else if (result && id !== undefined) {
+      const { search } = this.props.plates;
+      const token = this.props.auth.userToken;
+      this.props.updatePlate(token, id, data, search);
+    }
   };
 
   render() {
@@ -267,7 +266,7 @@ class PlatesPage extends Component {
         )}
         {this.state.isPlateFormOpen && (
           <PlateForm
-            productId={this.state.plateToEdit}
+            plateId={this.state.plateToEdit}
             open={this.state.isPlateFormOpen}
             title={this.state.plateFormTitle}
             onClose={this.onPlateFormClose}
@@ -284,5 +283,12 @@ const mapStateToProps = ({ auth, plates }) => {
 
 export default connect(
   mapStateToProps,
-  { fetchPlates, deletePlates, togglePlatesChecked, togglePlateChecked }
+  {
+    fetchPlates,
+    deletePlates,
+    addPlates,
+    updatePlate,
+    togglePlatesChecked,
+    togglePlateChecked
+  }
 )(PlatesPage);

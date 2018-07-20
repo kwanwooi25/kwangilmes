@@ -19,56 +19,64 @@
   justify-content: center;
 }
 
-/* .account-detail-view,
-.account-detail-view__title,
-.account-detail-view__title h1,
-.account-detail-view__subtitle,
-.account-detail-view__row,
-.account-detail-view__name,
-.account-detail-view__value {
+.plate-detail-view,
+.plate-detail-view__title,
+.plate-detail-view__title h1,
+.plate-detail-view__subtitle,
+.plate-detail-view__row,
+.plate-detail-view__name,
+.plate-detail-view__value {
   margin: 0;
 }
 
-.account-detail-view {
+.plate-detail-view {
   background: white;
   width: 80%;
-  max-width: 480px;
+  max-width: 400px;
 }
 
-.account-detail-view__title {
+.plate-detail-view__title {
   background: #3f50b5;
   color: white;
   text-align: center;
 }
 
-.account-detail-view__title h1 {
+.plate-detail-view__title h1 {
   padding: 0.5rem;
 }
 
-.account-detail-view__subtitle {
+.plate-detail-view__subtitle {
   margin-top: .5rem;
   padding: .5rem;
 }
 
-.account-detail-view__row {
+.plate-detail-view__row {
   display: flex;
   padding: .5rem;
 }
 
-.account-detail-view__name {
+.plate-detail-view__name {
   width: 30%;
 }
 
-.account-detail-view__value {
+.plate-detail-view__value {
   font-weight: bold;
   width: 70%;
 }
 
-.account-detail-view__button-group {
+.plate-detail-view__product {
+  display: block;
+}
+
+.plate-detail-view__product-size {
+  font-size: 0.8rem;
+}
+
+.plate-detail-view__button-group {
   display: flex;
   justify-content: center;
 }
 
-.account-detail-view__button-group button {
+.plate-detail-view__button-group button {
   margin: 1rem 0.5rem;
-} */
+}

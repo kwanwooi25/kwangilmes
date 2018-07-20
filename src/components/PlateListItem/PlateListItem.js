@@ -5,7 +5,6 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import Tooltip from '@material-ui/core/Tooltip';
-import Hidden from '@material-ui/core/Hidden';
 import PlateSize from '../PlateSize/PlateSize';
 import './PlateListItem.css';
 
@@ -19,9 +18,6 @@ const PlateListItem = ({
   const {
     id,
     checked,
-    plate_round,
-    plate_length,
-    plate_material,
     product_1,
     product_1_name,
     product_1_thick,
@@ -38,7 +34,6 @@ const PlateListItem = ({
     product_3_length,
     product_3_width
   } = plate;
-  const plateSize = `${plate_round} x ${plate_length}`;
   const products = [
     {
       id: product_1,
@@ -56,6 +51,7 @@ const PlateListItem = ({
       size: `${product_3_thick} x ${product_3_length} x ${product_3_width}`
     }
   ];
+
   return (
     <li key={id} className="list-body__item">
       <div>
@@ -89,6 +85,7 @@ const PlateListItem = ({
                     </div>
                   );
                 }
+                return undefined;
               })}
           </Grid>
         </Grid>
