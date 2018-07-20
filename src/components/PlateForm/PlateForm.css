@@ -1,0 +1,10 @@
+.plate-form__contents {
+  padding: 1rem;
+}
+
+.plate-form__product_search_result {
+  border-radius: .5rem;
+  border: 1px solid #cdcdcd;
+  height: 10rem;
+  overflow-y: auto;
+}

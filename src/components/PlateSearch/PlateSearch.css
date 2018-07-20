@@ -1,0 +1,17 @@
+.product-search__inputs {
+  margin: 1rem;
+}
+
+.product-search__buttons {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (min-width: 1280px) {
+  .product-search__buttons {
+    align-items: center;
+    flex-direction: row;
+  }
+}

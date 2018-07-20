@@ -6,9 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import Tooltip from '@material-ui/core/Tooltip';
 import Hidden from '@material-ui/core/Hidden';
-// import AccountName from '../AccountName/AccountName';
-// import ProductName from '../ProductName/ProductName';
-// import ProductSize from '../ProductSize/ProductSize';
+import PlateSize from '../PlateSize/PlateSize';
 import './PlateListItem.css';
 
 const PlateListItem = ({
@@ -38,31 +36,25 @@ const PlateListItem = ({
     product_3_name,
     product_3_thick,
     product_3_length,
-    product_3_width,
+    product_3_width
   } = plate;
   const plateSize = `${plate_round} x ${plate_length}`;
   const products = [
     {
       id: product_1,
       name: product_1_name,
-      thick: product_1_thick,
-      length: product_1_length,
-      width: product_1_width
+      size: `${product_1_thick} x ${product_1_length} x ${product_1_width}`
     },
     {
       id: product_2,
       name: product_2_name,
-      thick: product_2_thick,
-      length: product_2_length,
-      width: product_2_width
+      size: `${product_2_thick} x ${product_2_length} x ${product_2_width}`
     },
     {
       id: product_3,
       name: product_3_name,
-      thick: product_3_thick,
-      length: product_3_length,
-      width: product_3_width
-    },
+      size: `${product_3_thick} x ${product_3_length} x ${product_3_width}`
+    }
   ];
   return (
     <li key={id} className="list-body__item">
@@ -77,17 +69,27 @@ const PlateListItem = ({
       </div>
       <Grid container>
         <Grid item xs={8} sm={10} className="plate-list-item__details">
-          <Grid item xs={12} md={9} lg={10} className="plate-list-item__names">
-            <Grid item xs={12} md={3}>
-              {plateSize}
-            </Grid>
-            <Grid item xs={12} md={3}>
-              {products.length && products.map(product => {
-                if (product.id !== null) {
-                  return <span key={product.id}>{product.name}</span>
+          <Grid item xs={12} md={3} className="plate-list-item__plate-size">
+            <PlateSize plate={plate} search={search} />
+          </Grid>
+          <Grid item xs={12} md={9} className="plate-list-item__product-list">
+            {products.length &&
+              products.map(({ id, name, size }) => {
+                if (id !== null && name !== null) {
+                  name = highlight(name, search.product_name);
+                  return (
+                    <div key={id} className="plate-list-item__product">
+                      <span
+                        className="plate-list-item__product-name"
+                        dangerouslySetInnerHTML={{ __html: name }}
+                      />
+                      <span className="plate-list-item__product-size">
+                        {size}
+                      </span>
+                    </div>
+                  );
                 }
               })}
-            </Grid>
           </Grid>
         </Grid>
         <Grid item xs={4} sm={2} className="button-group">

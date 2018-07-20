@@ -37,6 +37,7 @@ export const SET_PRODUCTS_UNCHECKED = 'set_products_unchecked';
 PLATES
 ---------------------------*/
 export const FETCH_PLATES = 'fetch_plates';
+export const DELETE_PLATES = 'delete_plates';
 
 export const TOGGLE_PLATE_CHECKED = 'toggle_plate_checked';
 export const SET_PLATES_CHECKED = 'set_plates_checked';

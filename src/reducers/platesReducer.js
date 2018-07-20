@@ -1,5 +1,6 @@
 import {
   FETCH_PLATES,
+  DELETE_PLATES,
   TOGGLE_PLATE_CHECKED,
   SET_PLATES_CHECKED,
   SET_PLATES_UNCHECKED
@@ -67,9 +68,9 @@ export default function(state = INITIAL_STATE, action) {
       });
       return Object.assign({}, state, { current: state.current, selected: state.selected });
 
-    // case DELETE_PLATES:
-    //   state.selected = state.selected.filter(id => !action.payload.includes(id));
-    //   return { selected: state.selected, ...state };
+    case DELETE_PLATES:
+      state.selected = state.selected.filter(id => !action.payload.includes(id));
+      return Object.assign({}, state, { selected: state.selected });
 
     default:
       return state;

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
   fetchPlates,
+  deletePlates,
   togglePlatesChecked,
   togglePlateChecked
 } from '../../actions';
@@ -11,13 +12,12 @@ import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
 import Button from '@material-ui/core/Button';
 import PageHeader from '../../components/PageHeader/PageHeader';
-// import ProductSearch from '../../components/ProductSearch/ProductSearch';
+import PlateSearch from '../../components/PlateSearch/PlateSearch';
 import ListHeader from '../../components/ListHeader/ListHeader';
 import ListBody from '../../components/ListBody/ListBody';
 import NoData from '../../components/NoData/NoData';
 import PlateListItem from '../../components/PlateListItem/PlateListItem';
-// import ProductForm from '../../components/ProductForm/ProductForm';
-// import ProductOrderForm from '../../components/ProductOrderForm/ProductOrderForm';
+import PlateForm from '../../components/PlateForm/PlateForm';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import './PlatesPage.css';
 
@@ -35,7 +35,7 @@ class PlatesPage extends Component {
       plateToEdit: ''
     };
 
-    // this.onSearchChange = this.onSearchChange.bind(this);
+    this.onSearchChange = this.onSearchChange.bind(this);
     this.onRowsPerPageChange = this.onRowsPerPageChange.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
     this.onListItemChecked = this.onListItemChecked.bind(this);
@@ -43,9 +43,9 @@ class PlatesPage extends Component {
     this.onDeleteAllClick = this.onDeleteAllClick.bind(this);
     this.onCancelSelection = this.onCancelSelection.bind(this);
     this.showConfirmDeleteModal = this.showConfirmDeleteModal.bind(this);
-    // this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
+    this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
     this.showPlateForm = this.showPlateForm.bind(this);
-    // this.onProductFormClose = this.onProductFormClose.bind(this);
+    this.onPlateFormClose = this.onPlateFormClose.bind(this);
   }
 
   componentDidMount() {
@@ -54,28 +54,25 @@ class PlatesPage extends Component {
     this.props.fetchPlates(token, search);
   }
 
-  // onSearchChange = (name, event) => {
-  //   const { search } = this.props.products;
-  //   const token = this.props.auth.userToken;
-  //   search[name] = event.target.value.toLowerCase();
-  //   this.props.fetchProducts(token, search);
-  // };
-  //
-  // onSearchReset = () => {
-  //   const token = this.props.auth.userToken;
-  //   const search = {
-  //     account_name: '',
-  //     product_name: '',
-  //     product_thick: '',
-  //     product_length: '',
-  //     product_width: '',
-  //     ext_color: '',
-  //     print_color: '',
-  //     limit: 10,
-  //     offset: 0
-  //   };
-  //   this.props.fetchProducts(token, search);
-  // };
+  onSearchChange = (name, event) => {
+    const { search } = this.props.plates;
+    const token = this.props.auth.userToken;
+    search[name] = event.target.value.toLowerCase();
+    this.props.fetchPlates(token, search);
+  };
+
+  onSearchReset = () => {
+    const token = this.props.auth.userToken;
+    const search = {
+      product_name: '',
+      plate_round: '',
+      plate_length: '',
+      plate_material: '',
+      limit: 10,
+      offset: 0
+    };
+    this.props.fetchPlates(token, search);
+  };
 
   onRowsPerPageChange = limit => {
     const { search } = this.props.plates;
@@ -152,11 +149,12 @@ class PlatesPage extends Component {
       const { search } = this.props.plates;
       const token = this.props.auth.userToken;
       const ids = this.state.selectedPlates;
-      // this.props.deleteProducts(token, ids, search);
+      this.props.deletePlates(token, ids, search);
     }
   };
 
   showPlateForm = (mode, plateToEdit) => {
+    console.log(mode, plateToEdit);
     if (mode === 'new') {
       this.setState({
         isPlateFormOpen: true,
@@ -171,39 +169,24 @@ class PlatesPage extends Component {
     }
   };
 
-  // onProductFormClose = (result, data, id) => {
-  //   this.setState({
-  //     isPlateFormOpen: false,
-  //     plateFormTitle: '',
-  //     plateToEdit: ''
-  //   });
-  //
-  //   if (result && id === undefined) {
-  //     const { search } = this.props.products;
-  //     const token = this.props.auth.userToken;
-  //     this.props.addProducts(token, [data], search);
-  //   } else if (result && id !== undefined) {
-  //     const { search } = this.props.products;
-  //     const token = this.props.auth.userToken;
-  //     this.props.updateProduct(token, id, data, search);
-  //   }
-  // };
+  onPlateFormClose = (result, data, id) => {
+    this.setState({
+      isPlateFormOpen: false,
+      plateFormTitle: '',
+      plateToEdit: ''
+    });
 
-  fetchProductInfo = async (userToken, productId) => {
-    const result = await fetch(`http://localhost:3000/products/${productId}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': userToken
-      },
-      method: 'get'
-    }).then(response => response.json());
+    console.log(result, data);
 
-    const { success, data } = result;
-    if (success) {
-      return data;
-    } else {
-      return undefined;
-    }
+    // if (result && id === undefined) {
+    //   const { search } = this.props.products;
+    //   const token = this.props.auth.userToken;
+    //   this.props.addProducts(token, [data], search);
+    // } else if (result && id !== undefined) {
+    //   const { search } = this.props.products;
+    //   const token = this.props.auth.userToken;
+    //   this.props.updateProduct(token, id, data, search);
+    // }
   };
 
   render() {
@@ -224,10 +207,10 @@ class PlatesPage extends Component {
           }
         />
         <Divider />
-        {/* <ProductSearch
+        <PlateSearch
           onInputChange={this.onSearchChange}
           onReset={this.onSearchReset}
-        /> */}
+        />
         <ListHeader
           rowsPerPage={search.limit}
           isFirstPage={isFirstPage}
@@ -266,30 +249,30 @@ class PlatesPage extends Component {
               variant="fab"
               color="primary"
               aria-label="add"
-              // onClick={() => {
-              //   this.showPlateForm('new');
-              // }}
+              onClick={() => {
+                this.showPlateForm('new');
+              }}
             >
               <Icon>add</Icon>
             </Button>
           </Tooltip>
         </div>
-        {/* {this.state.isConfirmModalOpen && (
+        {this.state.isConfirmModalOpen && (
           <ConfirmModal
             open={this.state.isConfirmModalOpen}
             title={this.state.confirmModalTitle}
             description={this.state.confirmModalDescription}
             onClose={this.onConfirmModalClose}
           />
-        )} */}
-        {/* {this.state.isPlateFormOpen && (
-          <ProductForm
+        )}
+        {this.state.isPlateFormOpen && (
+          <PlateForm
             productId={this.state.plateToEdit}
             open={this.state.isPlateFormOpen}
             title={this.state.plateFormTitle}
-            onClose={this.onProductFormClose}
+            onClose={this.onPlateFormClose}
           />
-        )} */}
+        )}
       </main>
     );
   }
@@ -301,5 +284,5 @@ const mapStateToProps = ({ auth, plates }) => {
 
 export default connect(
   mapStateToProps,
-  { fetchPlates, togglePlatesChecked, togglePlateChecked }
+  { fetchPlates, deletePlates, togglePlatesChecked, togglePlateChecked }
 )(PlatesPage);

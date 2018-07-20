@@ -16,6 +16,7 @@ import {
   SET_PRODUCTS_CHECKED,
   SET_PRODUCTS_UNCHECKED,
   FETCH_PLATES,
+  DELETE_PLATES,
   TOGGLE_PLATE_CHECKED,
   SET_PLATES_CHECKED,
   SET_PLATES_UNCHECKED,
@@ -288,6 +289,26 @@ export const fetchPlates = (userToken, search) => dispatch => {
       }
     });
 }
+
+export const deletePlates = (userToken, ids, search) => dispatch => {
+  fetch(`${HOST}/plates/`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'delete',
+    body: JSON.stringify(ids)
+  })
+    .then(response => response.json())
+    .then(({ success, data }) => {
+      if (success) {
+        Promise.resolve(dispatch(fetchPlates(userToken, search))).then(() => {
+          dispatch(showSnackbar('동판 삭제 완료'));
+          dispatch({ type: DELETE_PLATES, payload: ids });
+        });
+      }
+    });
+};
 
 export const togglePlateChecked = id => dispatch => {
   dispatch({ type: TOGGLE_PLATE_CHECKED, payload: id });
