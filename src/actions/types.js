@@ -42,3 +42,13 @@ export const DELETE_PLATES = 'delete_plates';
 export const TOGGLE_PLATE_CHECKED = 'toggle_plate_checked';
 export const SET_PLATES_CHECKED = 'set_plates_checked';
 export const SET_PLATES_UNCHECKED = 'set_plates_unchecked';
+
+/*---------------------------
+ORDERS
+---------------------------*/
+export const FETCH_ORDERS = 'fetch_orders';
+export const DELETE_ORDERS = 'delete_orders';
+
+export const TOGGLE_ORDER_CHECKED = 'toggle_order_checked';
+export const SET_ORDERS_CHECKED = 'set_orders_checked';
+export const SET_ORDERS_UNCHECKED = 'set_orders_unchecked';

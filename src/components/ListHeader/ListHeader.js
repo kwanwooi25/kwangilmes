@@ -1,4 +1,5 @@
 import React from 'react';
+import Grid from '@material-ui/core/Grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
@@ -20,28 +21,32 @@ const ListHeader = ({
   isSelectedAll,
   onCancelSelection,
   totalCount,
-  offset
+  offset,
+  Buttons
 }) => {
   return (
     <div className="list-header">
-      <div className="list-header__row">
-        <FormControlLabel
-          control={
-            <Checkbox
-              indeterminate={selectedCount > 0 && isSelectedAll === false}
-              checked={isSelectedAll}
-              onChange={e => {
-                onSelectAllChange(e.target.checked);
-              }}
-              color="primary"
-            />
-          }
-          label="전체선택"
-        />
-        {selectedCount !== 0 && (
-          <div className="list-header__has-selection">
-            <p>{selectedCount}개 항목 선택됨</p>
+      <Grid container spacing={16}>
+        <Grid item xs={4} sm={2}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                indeterminate={selectedCount > 0 && isSelectedAll === false}
+                checked={isSelectedAll}
+                onChange={e => {
+                  onSelectAllChange(e.target.checked);
+                }}
+                color="primary"
+              />
+            }
+            label="전체선택"
+          />
+        </Grid>
+        <Grid item xs={8} sm={10} lg={4} className="list-header__selected">
+          {selectedCount !== 0 && <span>{selectedCount}개 항목 선택됨</span>}
+          {selectedCount !== 0 && (
             <div className="list-header__button-group">
+              {Buttons}
               <Tooltip title="전체삭제">
                 <IconButton aria-label="delete all" onClick={onDeleteAllClick}>
                   <Icon>delete</Icon>
@@ -56,30 +61,28 @@ const ListHeader = ({
                 </IconButton>
               </Tooltip>
             </div>
-          </div>
-        )}
-      </div>
-
-      <div className="list-header__row">
-        <FormControl>
-          <Select
-            className="list-header__limit"
-            native
-            onChange={e => {
-              onRowsPerPageChange(e.target.value);
-            }}
-            value={rowsPerPage}
-            inputProps={{
-              name: 'limit',
-              id: 'limit'
-            }}
-          >
-            <option value={5}>5개씩</option>
-            <option value={10}>10개씩</option>
-            <option value={20}>20개씩</option>
-          </Select>
-        </FormControl>
-        <div className="paginator">
+          )}
+        </Grid>
+        <Grid item xs={4} lg={2} className="list-header__limit">
+          <FormControl>
+            <Select
+              native
+              onChange={e => {
+                onRowsPerPageChange(e.target.value);
+              }}
+              value={rowsPerPage}
+              inputProps={{
+                name: 'limit',
+                id: 'limit'
+              }}
+            >
+              <option value={5}>5개씩</option>
+              <option value={10}>10개씩</option>
+              <option value={20}>20개씩</option>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={8} lg={4} className="paginator">
           <div className="paginator__message">
             총
             <span>{totalCount}</span>
@@ -127,8 +130,8 @@ const ListHeader = ({
               <Icon>last_page</Icon>
             </IconButton>
           </div>
-        </div>
-      </div>
+        </Grid>
+      </Grid>
     </div>
   );
 };

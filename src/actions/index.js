@@ -20,6 +20,10 @@ import {
   TOGGLE_PLATE_CHECKED,
   SET_PLATES_CHECKED,
   SET_PLATES_UNCHECKED,
+  FETCH_ORDERS,
+  TOGGLE_ORDER_CHECKED,
+  SET_ORDERS_CHECKED,
+  SET_ORDERS_UNCHECKED
 } from './types';
 
 // const HOST = 'http://api.kwangilmes.com';
@@ -360,4 +364,31 @@ export const togglePlateChecked = id => dispatch => {
 export const togglePlatesChecked = checked => dispatch => {
   if (checked) dispatch({ type: SET_PLATES_CHECKED });
   else dispatch({ type: SET_PLATES_UNCHECKED });
+};
+
+export const fetchOrders = (userToken, search) => dispatch => {
+  fetch(`${HOST}/orders`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'post',
+    body: JSON.stringify(search)
+  })
+    .then(response => response.json())
+    .then(({ success, error, data }) => {
+      if (success) {
+        data.search = search;
+        dispatch({ type: FETCH_ORDERS, payload: data });
+      }
+    });
+}
+
+export const toggleOrderChecked = id => dispatch => {
+  dispatch({ type: TOGGLE_ORDER_CHECKED, payload: id });
+};
+
+export const toggleOrdersChecked = checked => dispatch => {
+  if (checked) dispatch({ type: SET_ORDERS_CHECKED });
+  else dispatch({ type: SET_ORDERS_UNCHECKED });
 };

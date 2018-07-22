@@ -13,10 +13,10 @@ import LoginPage from './LoginPage/LoginPage';
 import AccountsPage from './AccountsPage/AccountsPage';
 import ProductsPage from './ProductsPage/ProductsPage';
 import PlatesPage from './PlatesPage/PlatesPage';
+import OrdersPage from './OrdersPage/OrdersPage';
 import './App.css';
 
 const DashboardPage = () => <h1>DashboardPage</h1>;
-const OrdersPage = () => <h1>OrdersPage</h1>;
 const UsersPage = () => <h1>UsersPage</h1>;
 
 const PublicRoute = ({ isLoggedIn, ...rest }) =>

@@ -1,0 +1,43 @@
+.order-list-item__delivery-remark-wrapper,
+.order-list-item__dates-wrapper,
+.order-list-item__account-name-wrapper,
+.order-list-item__product-name-wrapper,
+.order-list-item__product-size-wrapper,
+.order-list-item__print-info-wrapper,
+.order-list-item__quantity-wrapper {
+  padding: .2rem 0;
+}
+
+.order-list-item__delivery-remark {
+  background: #f50057;
+  border-radius: .2rem;
+  color: white;
+  font-size: .75rem;
+  padding: .2rem;
+}
+
+.order-list-item__delivery-remark:nth-child(2) {
+  margin-left: .5rem;
+}
+
+.order-list-item__dates-wrapper,
+.order-list-item__quantity-wrapper {
+  align-items: baseline;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.order-list-item__dates,
+.order-list-item__quantity-weight {
+  font-size: .8rem;
+}
+
+.order-list-item__account-name,
+.order-list-item__print-info {
+  font-size: .9rem;
+}
+
+.order-list-item__quantity-title {
+  font-size: .75rem;
+}
