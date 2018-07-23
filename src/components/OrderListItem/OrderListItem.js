@@ -8,6 +8,7 @@ import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import Tooltip from '@material-ui/core/Tooltip';
+import OrderId from '../OrderId/OrderId';
 import AccountName from '../AccountName/AccountName';
 import ProductName from '../ProductName/ProductName';
 import './OrderListItem.css';
@@ -86,7 +87,7 @@ const OrderListItem = ({
             )}
           </Grid>
           <Grid item xs={12}>
-            <span className="order-list-item__orderId">{id}</span>
+            <OrderId order={order} />
           </Grid>
         </Grid>
         <Grid item xs={6} lg={2}>

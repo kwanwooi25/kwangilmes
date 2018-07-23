@@ -63,15 +63,15 @@ class PlateSize extends Component {
 
       if (value) {
         return (
-          <Grid item xs={12} key={varName} className="plate-detail-view__row">
-            <span className="plate-detail-view__name">{displayName}</span>
+          <Grid item xs={12} key={varName} className="detail-view__row">
+            <span className="detail-view__name">{displayName}</span>
             {varName === 'products' ? (
               <span
-                className="plate-detail-view__value"
+                className="detail-view__value"
                 dangerouslySetInnerHTML={{ __html: value }}
               />
             ) : (
-              <span className="plate-detail-view__value">{value}</span>
+              <span className="detail-view__value">{value}</span>
             )}
           </Grid>
         );
@@ -97,20 +97,20 @@ class PlateSize extends Component {
         />
         {this.state.isDetailViewOpen && (
           <Modal
-            className="modal-bg"
+            className="detail-view__bg"
             aria-labelledby="plate-detail-view"
             open={this.state.isDetailViewOpen}
             onClose={this.hideDetailView.bind(this)}
           >
-            <div className="plate-detail-view">
+            <div className="detail-view plate-detail-view">
               <Grid container>
-                <Grid item xs={12} className="plate-detail-view__title">
+                <Grid item xs={12} className="detail-view__title">
                   <h1>동판 상세 정보</h1>
                 </Grid>
                 <Grid item xs={12}>
                   {this.renderFields()}
                 </Grid>
-                <Grid item xs={12} className="plate-detail-view__button-group">
+                <Grid item xs={12} className="detail-view__buttons">
                   <Button
                     variant="contained"
                     color="primary"

@@ -46,10 +46,10 @@ class AccountName extends Component {
             item
             key={displayName}
             xs={12}
-            className="account-detail-view__row"
+            className="detail-view__row"
           >
-            <span className="account-detail-view__name">{displayName}</span>
-            <span className="account-detail-view__value">{data[varName]}</span>
+            <span className="detail-view__name">{displayName}</span>
+            <span className="detail-view__value">{data[varName]}</span>
           </Grid>
         );
       } else return undefined;
@@ -73,30 +73,30 @@ class AccountName extends Component {
         />
         {this.state.isDetailViewOpen && (
           <Modal
-            className="modal-bg"
+            className="detail-view__bg"
             aria-labelledby="account-detail-view"
             open={this.state.isDetailViewOpen}
             onClose={this.hideDetailView.bind(this)}
           >
-            <div className="account-detail-view">
+            <div className="detail-view">
               <Grid container>
-                <Grid item xs={12} className="account-detail-view__title">
+                <Grid item xs={12} className="detail-view__title">
                   <h1>업체 상세 정보</h1>
                 </Grid>
                 <Grid item xs={12}>
-                  <h2 className="account-detail-view__subtitle">기본정보</h2>
+                  <h2 className="detail-view__subtitle">기본정보</h2>
                   {this.renderFields(BASIC_INFO, account)}
                 </Grid>
                 {extraInfoCount > 0 && (
                   <Grid item xs={12}>
-                    <h2 className="account-detail-view__subtitle">추가정보</h2>
+                    <h2 className="detail-view__subtitle">추가정보</h2>
                     {this.renderFields(EXTRA_INFO, account)}
                   </Grid>
                 )}
                 <Grid
                   item
                   xs={12}
-                  className="account-detail-view__button-group"
+                  className="detail-view__buttons"
                 >
                   <Button
                     variant="contained"

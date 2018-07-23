@@ -31,7 +31,7 @@ class ProductName extends Component {
       if (hasInfo) {
         return (
           <Grid item xs={12} md={6} key={title}>
-            <h2 className="product-detail-view__subtitle">{title}</h2>
+            <h2 className="detail-view__subtitle">{title}</h2>
             {this.renderFields(fields, data)}
           </Grid>
         );
@@ -76,9 +76,9 @@ class ProductName extends Component {
       if (value) {
         if (varName === 'print_image_preview') {
           return (
-            <div key={displayName} className="product-detail-view__row">
-              <span className="product-detail-view__name">{displayName}</span>
-              <span className="product-detail-view__value">
+            <div key={displayName} className="detail-view__row">
+              <span className="detail-view__name">{displayName}</span>
+              <span className="detail-view__value">
                 <Button
                   fullWidth
                   variant="contained"
@@ -89,7 +89,7 @@ class ProductName extends Component {
                   도안보기
                 </Button>
                 <Popover
-                  className="product-detail-view__image-container"
+                  className="detail-view__image-container"
                   open={Boolean(this.state.anchorEl)}
                   anchorEl={this.state.anchorEl}
                   onClose={() => {
@@ -105,7 +105,7 @@ class ProductName extends Component {
                   }}
                 >
                   <img
-                    className="product-detail-view__image"
+                    className="detail-view__image"
                     src={data.print_image_url}
                     alt={displayName}
                     onClick={() => {
@@ -119,9 +119,9 @@ class ProductName extends Component {
         }
 
         return (
-          <div key={displayName} className="product-detail-view__row">
-            <span className="product-detail-view__name">{displayName}</span>
-            <span className="product-detail-view__value">{value}</span>
+          <div key={displayName} className="detail-view__row">
+            <span className="detail-view__name">{displayName}</span>
+            <span className="detail-view__value">{value}</span>
           </div>
         );
       } else return undefined;
@@ -141,21 +141,21 @@ class ProductName extends Component {
         />
         {this.state.isDetailViewOpen && (
           <Modal
-            className="modal-bg"
+            className="detail-view__bg"
             aria-labelledby="product-detail-view"
             open={this.state.isDetailViewOpen}
             onClose={this.hideDetailView.bind(this)}
           >
-            <div className="product-detail-view">
+            <div className="detail-view product-detail-view">
               <Grid container>
-                <Grid item xs={12} className="product-detail-view__title">
+                <Grid item xs={12} className="detail-view__title">
                   <h1>품목 상세 정보</h1>
                 </Grid>
                 {this.renderSections(product)}
                 <Grid
                   item
                   xs={12}
-                  className="product-detail-view__button-group"
+                  className="detail-view__buttons"
                 >
                   <Button
                     variant="contained"
