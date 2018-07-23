@@ -9,6 +9,11 @@
   border-bottom: 2px solid black;
 }
 
+.product-detail-view__contents {
+  display: flex;
+  flex-wrap: wrap;
+}
+
 @media (min-width: 960px) {
   .product-detail-view {
     width: 90%;

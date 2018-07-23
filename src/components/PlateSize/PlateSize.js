@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import Modal from '@material-ui/core/Modal';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import { highlight } from '../../helpers/highlight';
+import CustomModal from '../../components/CustomModal/CustomModal';
 import './PlateSize.css';
 
 const FIELDS = [
@@ -96,32 +96,23 @@ class PlateSize extends Component {
           dangerouslySetInnerHTML={{ __html: plateSize }}
         />
         {this.state.isDetailViewOpen && (
-          <Modal
-            className="detail-view__bg"
-            aria-labelledby="plate-detail-view"
+          <CustomModal
+            className="plate-detail-view"
+            title="동판 상세 정보"
             open={this.state.isDetailViewOpen}
             onClose={this.hideDetailView.bind(this)}
+            Buttons={
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.hideDetailView.bind(this)}
+              >
+                확인
+              </Button>
+            }
           >
-            <div className="detail-view plate-detail-view">
-              <Grid container>
-                <Grid item xs={12} className="detail-view__title">
-                  <h1>동판 상세 정보</h1>
-                </Grid>
-                <Grid item xs={12}>
-                  {this.renderFields()}
-                </Grid>
-                <Grid item xs={12} className="detail-view__buttons">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={this.hideDetailView.bind(this)}
-                  >
-                    확인
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-          </Modal>
+            {this.renderFields()}
+          </CustomModal>
         )}
       </div>
     );

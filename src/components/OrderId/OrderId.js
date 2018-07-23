@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { comma } from '../../helpers/comma';
 import { getWeight } from '../../helpers/getWeight';
-import Modal from '@material-ui/core/Modal';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Popover from '@material-ui/core/Popover';
+import CustomModal from '../../components/CustomModal/CustomModal';
 import { highlight } from '../../helpers/highlight';
 import './OrderId.css';
 
@@ -110,37 +110,28 @@ class OrderId extends Component {
           {order.id}
         </a>
         {this.state.isDetailViewOpen && (
-          <Modal
-            className="detail-view__bg"
-            aria-labelledby="product-detail-view"
+          <CustomModal
+            className={modalClassName}
+            title="주문 상세 정보"
             open={this.state.isDetailViewOpen}
             onClose={this.hideDetailView.bind(this)}
+            Buttons={
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.hideDetailView.bind(this)}
+              >
+                확인
+              </Button>
+            }
           >
-            <div className={modalClassName}>
-              <Grid container>
-                <Grid item xs={12} className="detail-view__title">
-                  <h1>주문 상세 정보</h1>
-                </Grid>
-                <Grid item xs={12}>
-                  {order.is_completed && (
-                    <div className="detail-view__badges">
-                      <span className="detail-view__badges-badge">완료</span>
-                    </div>
-                  )}
-                  {this.renderFields()}
-                </Grid>
-                <Grid item xs={12} className="detail-view__buttons">
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={this.hideDetailView.bind(this)}
-                  >
-                    확인
-                  </Button>
-                </Grid>
-              </Grid>
-            </div>
-          </Modal>
+            {order.is_completed && (
+              <div className="detail-view__badges">
+                <span className="detail-view__badges-badge">완료</span>
+              </div>
+            )}
+            {this.renderFields()}
+          </CustomModal>
         )}
       </div>
     );

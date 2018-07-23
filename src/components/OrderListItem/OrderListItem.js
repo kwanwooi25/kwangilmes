@@ -17,7 +17,7 @@ const OrderListItem = ({
   search,
   order,
   onListItemChecked,
-  onListItemOrderClick,
+  onListItemCompleteClick,
   onListItemEditClick,
   onListItemDeleteClick
 }) => {
@@ -38,7 +38,8 @@ const OrderListItem = ({
     order_quantity_weight,
     is_completed,
     completed_quantity,
-    completed_at
+    completed_at,
+    is_order_modified
   } = order;
 
   // 제품규격
@@ -84,6 +85,12 @@ const OrderListItem = ({
             )}
             {is_urgent && (
               <span className="order-list-item__delivery-remark">지급</span>
+            )}
+            {is_order_modified && (
+              <span className="order-list-item__delivery-remark modified">수정됨</span>
+            )}
+            {is_completed && (
+              <span className="order-list-item__delivery-remark completed">완료</span>
             )}
           </Grid>
           <Grid item xs={12}>
@@ -143,7 +150,7 @@ const OrderListItem = ({
               {comma(order_quantity)}매
             </span>
             <span className="order-list-item__quantity-weight">
-              ({Number(order_quantity_weight).toFixed(2)}kg)
+              ({comma(Number(order_quantity_weight).toFixed(2))}kg)
             </span>
           </Grid>
           {completed_quantity && (
@@ -153,7 +160,7 @@ const OrderListItem = ({
                 {comma(completed_quantity)}매
               </span>
               <span className="order-list-item__quantity-weight">
-                ({Number(completedQuantityWeight).toFixed(2)}kg)
+                ({comma(Number(completedQuantityWeight).toFixed(2))}kg)
               </span>
             </Grid>
           )}
@@ -177,7 +184,7 @@ const OrderListItem = ({
             disabled={is_completed}
             aria-label="complete"
             onClick={() => {
-              console.log('order complete:::', id);
+              onListItemCompleteClick([id]);
             }}
           >
             <Icon>done</Icon>
@@ -188,9 +195,9 @@ const OrderListItem = ({
             color="primary"
             disabled={is_completed}
             aria-label="edit"
-            // onClick={() => {
-            //   onListItemEditClick('edit', id);
-            // }}
+            onClick={() => {
+              onListItemEditClick(id);
+            }}
           >
             <Icon>edit</Icon>
           </IconButton>

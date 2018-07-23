@@ -21,6 +21,7 @@ import {
   SET_PLATES_CHECKED,
   SET_PLATES_UNCHECKED,
   FETCH_ORDERS,
+  DELETE_ORDERS,
   TOGGLE_ORDER_CHECKED,
   SET_ORDERS_CHECKED,
   SET_ORDERS_UNCHECKED
@@ -259,23 +260,6 @@ export const deleteProducts = (userToken, ids, search) => dispatch => {
     });
 };
 
-export const addOrder = (userToken, order, search) => dispatch => {
-  fetch(`${HOST}/orders/add`, {
-    headers: {
-      'Content-Type': 'application/json',
-      'x-access-token': userToken
-    },
-    method: 'post',
-    body: JSON.stringify(order)
-  })
-    .then(response => response.json())
-    .then(({ success, data }) => {
-      if (success) {
-        dispatch(showSnackbar(`작업지시 완료`));
-      }
-    });
-};
-
 export const fetchPlates = (userToken, search) => dispatch => {
   fetch(`${HOST}/plates`, {
     headers: {
@@ -383,6 +367,67 @@ export const fetchOrders = (userToken, search) => dispatch => {
       }
     });
 }
+
+export const addOrder = (userToken, order, search) => dispatch => {
+  fetch(`${HOST}/orders/add`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'post',
+    body: JSON.stringify(order)
+  })
+    .then(response => response.json())
+    .then(({ success, data }) => {
+      if (success) {
+        dispatch(showSnackbar(`작업지시 완료`));
+      }
+    });
+};
+
+export const updateOrder = (
+  userToken,
+  orderId,
+  data,
+  search
+) => dispatch => {
+  fetch(`${HOST}/orders/${orderId}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'put',
+    body: JSON.stringify(data)
+  })
+    .then(response => response.json())
+    .then(({ success }) => {
+      if (success) {
+        Promise.resolve(dispatch(fetchOrders(userToken, search))).then(() => {
+          dispatch(showSnackbar('작업지시 수정 완료'));
+        });
+      }
+    });
+};
+
+export const deleteOrders = (userToken, ids, search) => dispatch => {
+  fetch(`${HOST}/orders/`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'delete',
+    body: JSON.stringify(ids)
+  })
+    .then(response => response.json())
+    .then(({ success, data }) => {
+      if (success) {
+        Promise.resolve(dispatch(fetchOrders(userToken, search))).then(() => {
+          dispatch(showSnackbar('주문 취소 완료'));
+          dispatch({ type: DELETE_ORDERS, payload: ids });
+        });
+      }
+    });
+};
 
 export const toggleOrderChecked = id => dispatch => {
   dispatch({ type: TOGGLE_ORDER_CHECKED, payload: id });

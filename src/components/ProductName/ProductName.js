@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import Modal from '@material-ui/core/Modal';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import Popover from '@material-ui/core/Popover';
 import { highlight } from '../../helpers/highlight';
+import CustomModal from '../../components/CustomModal/CustomModal';
 import './ProductName.css';
 import { PRODUCT_DETAIL_SECTIONS } from '../../helpers/constants';
 
@@ -140,34 +140,25 @@ class ProductName extends Component {
           dangerouslySetInnerHTML={{ __html: productName }}
         />
         {this.state.isDetailViewOpen && (
-          <Modal
-            className="detail-view__bg"
-            aria-labelledby="product-detail-view"
+          <CustomModal
+            className="product-detail-view"
+            title="품목 상세 정보"
             open={this.state.isDetailViewOpen}
             onClose={this.hideDetailView.bind(this)}
+            Buttons={
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.hideDetailView.bind(this)}
+              >
+                확인
+              </Button>
+            }
           >
-            <div className="detail-view product-detail-view">
-              <Grid container>
-                <Grid item xs={12} className="detail-view__title">
-                  <h1>품목 상세 정보</h1>
-                </Grid>
-                {this.renderSections(product)}
-                <Grid
-                  item
-                  xs={12}
-                  className="detail-view__buttons"
-                >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={this.hideDetailView.bind(this)}
-                  >
-                    확인
-                  </Button>
-                </Grid>
-              </Grid>
+            <div className="product-detail-view__contents">
+              {this.renderSections(product)}
             </div>
-          </Modal>
+          </CustomModal>
         )}
       </div>
     );

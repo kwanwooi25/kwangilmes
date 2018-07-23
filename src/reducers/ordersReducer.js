@@ -1,5 +1,6 @@
 import {
   FETCH_ORDERS,
+  DELETE_ORDERS,
   TOGGLE_ORDER_CHECKED,
   SET_ORDERS_CHECKED,
   SET_ORDERS_UNCHECKED
@@ -74,9 +75,9 @@ export default function(state = INITIAL_STATE, action) {
       });
       return Object.assign({}, state, { current: state.current, selected: state.selected });
 
-    // case DELETE_PRODUCTS:
-    //   state.selected = state.selected.filter(id => !action.payload.includes(id));
-    //   return { selected: state.selected, ...state };
+    case DELETE_ORDERS:
+      state.selected = state.selected.filter(id => !action.payload.includes(id));
+      return Object.assign({}, state, { selected: state.selected });
 
     default:
       return state;

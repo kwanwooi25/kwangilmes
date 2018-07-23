@@ -26,37 +26,64 @@ import { comma, uncomma } from '../../helpers/comma';
 import { getWeight } from '../../helpers/getWeight';
 import './ProductOrderForm.css';
 
+const INITIAL_STATE = {
+  isProductDetailOpen: false,
+  isConfirmModalOpen: false,
+
+  product_id: '',
+  ordered_at: moment(),
+  deliver_by: moment().add(7, 'days'),
+  order_quantity: '',
+  order_quantity_weight: '',
+  plate_status: '확인',
+  is_delivery_strict: false,
+  is_urgent: false,
+  order_memo_work: '',
+  order_memo_delivery: '',
+
+  order_quantity_error: '',
+  orderDetail: ''
+};
+
 class ProductOrderForm extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      isProductDetailOpen: false,
-      isConfirmModalOpen: false,
-
-      ordered_at: moment(),
-      deliver_by: moment().add(7, 'days'),
-      order_quantity: '',
-      order_quantity_weight: '',
-      plate_status: '확인',
-      is_delivery_strict: false,
-      is_urgent: false,
-      order_memo_work: '',
-      order_memo_delivery: '',
-
-      order_quantity_error: '',
-      orderDetail: ''
-    };
+    this.state = INITIAL_STATE;
 
     this.onClickOk = this.onClickOk.bind(this);
     this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
   }
 
   componentDidMount() {
-    const { is_print } = this.props.product;
-    if (is_print) {
-      this.setState({ deliver_by: moment().add(10, 'days') });
+    let data;
+    let product_id;
+    let order_id;
+
+    if (this.props.product) {
+      data = this.props.product;
+      data.product_id = data.id;
+      delete data.id;
+    } else if (this.props.order) {
+      data = this.props.order;
+      data.order_id = data.id;
+      delete data.id;
     }
+
+    const { is_print } = data;
+    data.deliver_by = moment().add(7, 'days');
+    if (is_print) data.deliver_by.add(3, 'days');
+
+    if (data.order_id) {
+      data = Object.assign(data, {
+        ordered_at: moment(data.ordered_at),
+        deliver_by: moment(data.deliver_by),
+        order_quantity: comma(data.order_quantity),
+        order_quantity_weight: comma(getWeight(data, data.order_quantity))
+      });
+    }
+
+    this.setState(Object.assign({}, this.state, data));
   }
 
   onConfirmModalClose = result => {
@@ -64,7 +91,7 @@ class ProductOrderForm extends Component {
 
     if (result) {
       const data = {
-        product_id: this.props.product.id,
+        product_id: this.state.product_id,
         ordered_at: this.state.ordered_at.format('YYYY-MM-DD'),
         deliver_by: this.state.deliver_by.format('YYYY-MM-DD'),
         order_quantity: uncomma(this.state.order_quantity),
@@ -75,6 +102,8 @@ class ProductOrderForm extends Component {
         order_memo_delivery: this.state.order_memo_delivery
       };
 
+      if (this.state.order_id) data.id = this.state.order_id;
+
       this.props.onClose(true, data);
     }
   };
@@ -83,11 +112,15 @@ class ProductOrderForm extends Component {
     if (this.validate()) {
       const orderDetail = `
         ${this.state.order_quantity}매
-        ${this.props.product.is_print && `(동판${this.state.plate_status})`}
+        ${this.state.is_print && `(동판${this.state.plate_status})`}
         ${this.state.is_delivery_strict ? ' / 납기엄수' : ''}
         ${this.state.is_urgent ? ' / 지급' : ''}
         ${this.state.order_memo_work ? ` / ${this.state.order_memo_work}` : ''}
-        ${this.state.order_memo_delivery ? ` / ${this.state.order_memo_delivery}` : ''}
+        ${
+          this.state.order_memo_delivery
+            ? ` / ${this.state.order_memo_delivery}`
+            : ''
+        }
       `;
 
       this.setState({ isConfirmModalOpen: true, orderDetail });
@@ -110,8 +143,9 @@ class ProductOrderForm extends Component {
     return isValid;
   };
 
-  renderProductFields = (fields, data) =>
-    fields.map(({ varName, displayName }) => {
+  renderProductFields = fields => {
+    const data = this.state;
+    return fields.map(({ varName, displayName }) => {
       let value;
 
       switch (varName) {
@@ -125,11 +159,11 @@ class ProductOrderForm extends Component {
           break;
         case 'ext_pretreat':
           value =
-          data.ext_pretreat === 'single'
-            ? '단면'
-            : data.ext_pretreat === 'double'
-              ? '양면'
-              : '';
+            data.ext_pretreat === 'single'
+              ? '단면'
+              : data.ext_pretreat === 'double'
+                ? '양면'
+                : '';
           break;
         case 'print_image_preview':
           value = data.print_image_url;
@@ -198,27 +232,26 @@ class ProductOrderForm extends Component {
         );
       } else return undefined;
     });
+  };
 
   renderProductSection = () => {
-    const { product } = this.props;
+    const data = this.state;
     return PRODUCT_DETAIL_SECTIONS.map(({ title, fields }) => {
       const hasInfo =
         fields
-      .map(({ varName }) => !!product[varName])
-      .filter(value => value === true).length > 0;
+          .map(({ varName }) => !!data[varName])
+          .filter(value => value === true).length > 0;
 
       if (hasInfo) {
         return (
           <Grid item xs={12} md={6} key={title}>
             <h2 className="product-order-form__title">{title}</h2>
-            {this.renderProductFields(fields, product)}
+            {this.renderProductFields(fields)}
           </Grid>
         );
       } else return undefined;
     });
   };
-
-  renderOrderSection = () => {};
 
   onInputChange = name => event => {
     let value;
@@ -229,7 +262,7 @@ class ProductOrderForm extends Component {
     }
 
     if (name === 'order_quantity') {
-      const weight = getWeight(this.props.product, uncomma(value));
+      const weight = getWeight(this.state, uncomma(value));
       this.setState(
         {
           order_quantity: comma(value),
@@ -252,14 +285,14 @@ class ProductOrderForm extends Component {
       product_length,
       product_width,
       is_print
-    } = this.props.product;
+    } = this.state;
     const productTitle = `${product_name} (${product_thick} x ${product_length} x ${product_width})`;
 
     return (
       <FullScreenDialog
         open={open}
         onClose={onClose}
-        title="작업지시"
+        title={this.state.order_id ? '작업지시 수정' : '작업지시 작성'}
         Buttons={
           <Button color="inherit" onClick={this.onClickOk.bind(this)}>
             <Icon>check</Icon>
@@ -374,10 +407,7 @@ class ProductOrderForm extends Component {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <FormControl
-                    fullWidth
-                    component="fieldset"
-                  >
+                  <FormControl fullWidth component="fieldset">
                     <RadioGroup
                       aria-label="plate_status"
                       name="plate_status"
@@ -437,7 +467,7 @@ class ProductOrderForm extends Component {
         {this.state.isConfirmModalOpen && (
           <ConfirmModal
             open={this.state.isConfirmModalOpen}
-            title="작업지시 하시겠습니까?"
+            title={this.state.order_id ? "작업지시 수정하시겠습니까?" : "작업지시 하시겠습니까?"}
             subtitle={productTitle}
             description={this.state.orderDetail}
             onClose={this.onConfirmModalClose}

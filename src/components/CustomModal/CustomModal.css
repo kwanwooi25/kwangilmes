@@ -1,0 +1,35 @@
+.modal__bg {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}
+
+.modal {
+  background: white;
+  width: 90%;
+  overflow: auto;
+  max-height: 90%;
+  max-width: 480px;
+  margin: 0;
+}
+
+.modal__title {
+  background: #3f50b5;
+  color: white;
+  text-align: center;
+  margin: 0;
+}
+
+.modal__title h1 {
+  padding: 1rem;
+  margin: 0;
+}
+
+.modal__buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.modal__buttons button {
+  margin: 1rem 0.5rem;
+}

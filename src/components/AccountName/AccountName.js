@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import Modal from '@material-ui/core/Modal';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import { highlight } from '../../helpers/highlight';
+import CustomModal from '../../components/CustomModal/CustomModal';
 import './AccountName.css';
 
 const BASIC_INFO = [
@@ -72,43 +72,32 @@ class AccountName extends Component {
           dangerouslySetInnerHTML={{ __html: accountName }}
         />
         {this.state.isDetailViewOpen && (
-          <Modal
-            className="detail-view__bg"
-            aria-labelledby="account-detail-view"
+          <CustomModal
+            className="account-detail-view"
+            title="업체 상세 정보"
             open={this.state.isDetailViewOpen}
             onClose={this.hideDetailView.bind(this)}
+            Buttons={
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.hideDetailView.bind(this)}
+              >
+                확인
+              </Button>
+            }
           >
-            <div className="detail-view">
-              <Grid container>
-                <Grid item xs={12} className="detail-view__title">
-                  <h1>업체 상세 정보</h1>
-                </Grid>
-                <Grid item xs={12}>
-                  <h2 className="detail-view__subtitle">기본정보</h2>
-                  {this.renderFields(BASIC_INFO, account)}
-                </Grid>
-                {extraInfoCount > 0 && (
-                  <Grid item xs={12}>
-                    <h2 className="detail-view__subtitle">추가정보</h2>
-                    {this.renderFields(EXTRA_INFO, account)}
-                  </Grid>
-                )}
-                <Grid
-                  item
-                  xs={12}
-                  className="detail-view__buttons"
-                >
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={this.hideDetailView.bind(this)}
-                  >
-                    확인
-                  </Button>
-                </Grid>
+            <Grid item xs={12}>
+              <h2 className="detail-view__subtitle">기본정보</h2>
+              {this.renderFields(BASIC_INFO, account)}
+            </Grid>
+            {extraInfoCount > 0 && (
+              <Grid item xs={12}>
+                <h2 className="detail-view__subtitle">추가정보</h2>
+                {this.renderFields(EXTRA_INFO, account)}
               </Grid>
-            </div>
-          </Modal>
+            )}
+          </CustomModal>
         )}
       </div>
     );

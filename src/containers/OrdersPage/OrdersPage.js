@@ -3,6 +3,8 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 import {
   fetchOrders,
+  updateOrder,
+  deleteOrders,
   toggleOrderChecked,
   toggleOrdersChecked,
 } from '../../actions';
@@ -16,7 +18,8 @@ import ListHeader from '../../components/ListHeader/ListHeader';
 import ListBody from '../../components/ListBody/ListBody';
 import NoData from '../../components/NoData/NoData';
 import OrderListItem from '../../components/OrderListItem/OrderListItem';
-// import ProductForm from '../../components/ProductForm/ProductForm';
+import CompleteOrderModal from '../../components/CompleteOrderModal/CompleteOrderModal';
+import ProductOrderForm from '../../components/ProductOrderForm/ProductOrderForm';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import './OrdersPage.css';
 
@@ -26,12 +29,12 @@ class OrdersPage extends Component {
 
     this.state = {
       isConfirmModalOpen: false,
-      selectedOrders: [],
+      selectedOrderIds: [],
       confirmModalTitle: '',
       confirmModalDescription: '',
-      // isProductFormOpen: false,
-      // productFormTitle: '',
-      // productToEdit: '',
+      isCompleteOrderModalOpen: false,
+      isProductOrderFormOpen: false,
+      orderToEdit: ''
     };
 
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -43,10 +46,10 @@ class OrdersPage extends Component {
     this.onDeleteAllClick = this.onDeleteAllClick.bind(this);
     this.onCancelSelection = this.onCancelSelection.bind(this);
     this.showConfirmDeleteModal = this.showConfirmDeleteModal.bind(this);
-    // this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
-    // this.onProductOrderFormClose = this.onProductOrderFormClose.bind(this);
-    // this.showProductForm = this.showProductForm.bind(this);
-    // this.onProductFormClose = this.onProductFormClose.bind(this);
+    this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
+    this.onProductOrderFormClose = this.onProductOrderFormClose.bind(this);
+    this.showProductOrderForm = this.showProductOrderForm.bind(this);
+    this.showCompleteOrderModal = this.showCompleteOrderModal.bind(this);
   }
 
   componentDidMount() {
@@ -145,7 +148,7 @@ class OrdersPage extends Component {
   showConfirmDeleteModal = ids => {
     this.setState({
       isConfirmModalOpen: true,
-      selectedOrders: ids,
+      selectedOrderIds: ids,
       confirmModalTitle: '작업지시 취소',
       confirmModalDescription: `총 ${
         ids.length
@@ -153,78 +156,75 @@ class OrdersPage extends Component {
     });
   };
 
-  // onConfirmModalClose = result => {
-  //   this.setState({
-  //     isConfirmModalOpen: false,
-  //     selectedProducts: [],
-  //     confirmModalTitle: '',
-  //     confirmModalDescription: ''
-  //   });
-  //
-  //   if (result) {
-  //     const { search } = this.props.products;
-  //     const token = this.props.auth.userToken;
-  //     const ids = this.state.selectedProducts;
-  //     this.props.deleteProducts(token, ids, search);
-  //   }
-  // };
-  //
-  // showProductOrderForm = productId => {
-  //   const { products } = this.props;
-  //   const product = products.current.find(({ id }) => id === productId);
-  //   Object.keys(product).forEach(key => {
-  //     if (product[key] === null) delete product[key];
-  //   });
-  //   this.setState({
-  //     isProductOrderFormOpen: true,
-  //     productToOrder: product
-  //   });
-  // };
-  //
-  // onProductOrderFormClose = (result, data) => {
-  //   this.setState({
-  //     isProductOrderFormOpen: false,
-  //     productToOrder: {}
-  //   });
-  //
-  //   if (result) {
-  //     const token = this.props.auth.userToken;
-  //     this.props.addOrder(token, data);
-  //   }
-  // };
-  //
-  // showProductForm = (mode, productToEdit) => {
-  //   if (mode === 'new') {
-  //     this.setState({
-  //       isProductFormOpen: true,
-  //       productFormTitle: '품목등록'
-  //     });
-  //   } else if (mode === 'edit') {
-  //     this.setState({
-  //       isProductFormOpen: true,
-  //       productFormTitle: '품목수정',
-  //       productToEdit
-  //     });
-  //   }
-  // };
-  //
-  // onProductFormClose = (result, data, id) => {
-  //   this.setState({
-  //     isProductFormOpen: false,
-  //     productFormTitle: '',
-  //     productToEdit: ''
-  //   });
-  //
-  //   if (result && id === undefined) {
-  //     const { search } = this.props.products;
-  //     const token = this.props.auth.userToken;
-  //     this.props.addProducts(token, [data], search);
-  //   } else if (result && id !== undefined) {
-  //     const { search } = this.props.products;
-  //     const token = this.props.auth.userToken;
-  //     this.props.updateProduct(token, id, data, search);
-  //   }
-  // };
+  onConfirmModalClose = result => {
+    this.setState({
+      isConfirmModalOpen: false,
+      selectedOrderIds: [],
+      confirmModalTitle: '',
+      confirmModalDescription: ''
+    });
+
+    if (result) {
+      const { search } = this.props.orders;
+      const token = this.props.auth.userToken;
+      const ids = this.state.selectedOrderIds;
+      this.props.deleteOrders(token, ids, search);
+    }
+  };
+
+  showCompleteOrderModal = ids => {
+    const token = this.props.auth.userToken;
+    fetch(`http://localhost:3000/orders-by-ids`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': token
+      },
+      method: 'post',
+      body: JSON.stringify(ids)
+    })
+      .then(response => response.json())
+      .then(({ success, error, data }) => {
+        if (success) {
+          this.setState({
+            isCompleteOrderModalOpen: true,
+            selectedOrders: data
+          })
+        }
+      });
+  }
+
+  onCompleteOrderModalClose = result => {
+    console.log(result);
+    this.setState({
+      isCompleteOrderModalOpen: false,
+      selectedOrders: []
+    })
+  }
+
+  showProductOrderForm = orderId => {
+    const { orders } = this.props;
+    const order = orders.current.find(({ id }) => id === orderId);
+    Object.keys(order).forEach(key => {
+      if (order[key] === null) delete order[key];
+    });
+    this.setState({
+      isProductOrderFormOpen: true,
+      orderToEdit: order
+    });
+  };
+
+  onProductOrderFormClose = (result, data) => {
+    this.setState({
+      isProductOrderFormOpen: false,
+      orderToEdit: {}
+    });
+
+    if (result) {
+      const { search } = this.props.orders;
+      const token = this.props.auth.userToken;
+      this.props.updateOrder(token, data.id, data, search);
+    }
+  };
 
   render() {
     const { count, current, search, selected } = this.props.orders;
@@ -277,6 +277,7 @@ class OrdersPage extends Component {
                 <IconButton
                   color="primary"
                   aria-label="complete"
+                  onClick={() => { this.showCompleteOrderModal(selected) }}
                 >
                   <Icon>done</Icon>
                 </IconButton>
@@ -294,35 +295,35 @@ class OrdersPage extends Component {
                 search={search}
                 order={order}
                 onListItemChecked={this.onListItemChecked}
-                // onListItemEditClick={this.showProductForm}
+                onListItemCompleteClick={this.showCompleteOrderModal}
+                onListItemEditClick={this.showProductOrderForm}
                 onListItemDeleteClick={this.showConfirmDeleteModal}
               />
             ))}
           </ListBody>
         )}
-        {/* {this.state.isConfirmModalOpen && (
+        {this.state.isConfirmModalOpen && (
           <ConfirmModal
             open={this.state.isConfirmModalOpen}
             title={this.state.confirmModalTitle}
             description={this.state.confirmModalDescription}
             onClose={this.onConfirmModalClose}
           />
-        )} */}
-        {/* {this.state.isProductFormOpen && (
-          <ProductForm
-            productId={this.state.productToEdit}
-            open={this.state.isProductFormOpen}
-            title={this.state.productFormTitle}
-            onClose={this.onProductFormClose}
+        )}
+        {this.state.isCompleteOrderModalOpen && (
+          <CompleteOrderModal
+            open={this.state.isCompleteOrderModalOpen}
+            orders={this.state.selectedOrders}
+            onClose={this.onCompleteOrderModalClose}
           />
-        )} */}
-        {/* {this.state.isProductOrderFormOpen && (
+        )}
+        {this.state.isProductOrderFormOpen && (
           <ProductOrderForm
-            product={this.state.productToOrder}
+            order={this.state.orderToEdit}
             open={this.state.isProductOrderFormOpen}
             onClose={this.onProductOrderFormClose}
           />
-        )} */}
+        )}
       </main>
     );
   }
@@ -336,6 +337,8 @@ export default connect(
   mapStateToProps,
   {
     fetchOrders,
+    updateOrder,
+    deleteOrders,
     toggleOrderChecked,
     toggleOrdersChecked
   }

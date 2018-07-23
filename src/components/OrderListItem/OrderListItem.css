@@ -28,14 +28,25 @@
 
 .order-list-item__delivery-remark {
   background: #f50057;
-  border-radius: .2rem;
+  border-radius: .25rem;
   color: white;
   font-size: .75rem;
-  padding: .2rem;
+  padding: .25rem;
+  margin-left: .5rem;
 }
 
-.order-list-item__delivery-remark:nth-child(2) {
-  margin-left: .5rem;
+.order-list-item__delivery-remark.modified {
+  background: #ffc400;
+  color: black;
+}
+
+.order-list-item__delivery-remark.completed {
+  background: #909090;
+  color: #efefef;
+}
+
+.order-list-item__delivery-remark:first-child {
+  margin-left: 0;
 }
 
 .order-list-item__dates-wrapper,
