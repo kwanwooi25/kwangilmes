@@ -7,19 +7,7 @@
   font-size: 0.8rem;
 }
 
-.button-group {
-  display: flex;
-  justify-content: flex-end;
-}
-
 @media (min-width: 600px) {
-  .product-list-item__details {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
   .product-list-item__names {
     display: flex;
     align-items: center;

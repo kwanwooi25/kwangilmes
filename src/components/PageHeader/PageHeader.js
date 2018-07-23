@@ -8,7 +8,7 @@ import './PageHeader.css';
 
 const PageHeader = ({ title, searchBox, onSearchChange, ToolButtons }) => {
   return (
-    <Grid container>
+    <Grid container className="page-header">
       <Grid item xs={4} sm={6} md={7}>
         <h2 className="page-header__title">{title}</h2>
       </Grid>

@@ -58,14 +58,12 @@ const renderFieldsMdUp = (elements, onInputChange) => {
 
 const ProductSearch = ({ onInputChange, onReset }) => {
   return (
-    <Grid container>
-      <Grid item xs={10} sm={11} className="product-search__inputs">
-        <Grid container spacing={16}>
-          {renderFields(SEARCH_FIELDS, onInputChange)}
-          {renderFieldsMdUp(SEARCH_FIELDS_MD_UP, onInputChange)}
-        </Grid>
+    <Grid container spacing={24} className="search-wrapper">
+      <Grid container spacing={16} className="search-inputs">
+        {renderFields(SEARCH_FIELDS, onInputChange)}
+        {renderFieldsMdUp(SEARCH_FIELDS_MD_UP, onInputChange)}
       </Grid>
-      <Grid item xs={2} sm={1} className="product-search__buttons">
+      <Grid item className="search-buttons">
         <Tooltip title="초기화">
           <IconButton
             color="primary"

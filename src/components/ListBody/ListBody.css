@@ -1,7 +1,11 @@
 .list-body {
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
   list-style: none;
-  padding: 0.25rem;
   margin: 0;
+  padding: 0;
+  margin-top: .25rem;
 }
 
 .list-body__item {
@@ -13,4 +17,22 @@
 
 .list-body__item:hover {
   background: #efefef;
+}
+
+.list-body__item-details {
+  flex: 1;
+  padding: .5rem;
+}
+
+.list-item__item-buttons {
+  display: flex;
+  justify-content: center;
+  border-radius: 24px;
+  background: #efefef;
+}
+
+@media (min-width: 960px) {
+  .list-item__item-buttons {
+    margin-left: 1rem;
+  }
 }

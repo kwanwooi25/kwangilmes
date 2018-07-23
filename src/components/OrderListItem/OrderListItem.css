@@ -1,3 +1,21 @@
+.order-list-item {
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.completed {
+  background: #dedede;
+  color: #ababab;
+}
+
+.order-list-item__checkbox {
+  align-self: flex-start;
+}
+
+.order-list-item__buttons {
+  align-self: flex-end;
+}
+
 .order-list-item__delivery-remark-wrapper,
 .order-list-item__dates-wrapper,
 .order-list-item__account-name-wrapper,
@@ -40,4 +58,24 @@
 
 .order-list-item__quantity-title {
   font-size: .75rem;
+}
+
+@media (min-width: 960px) {
+  .order-list-item {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .order-list-item__checkbox,
+  .order-list-item__buttons {
+    align-self: center;
+  }
+}
+
+@media (min-width: 1280px) {
+  .order-list-item__dates-wrapper,
+  .order-list-item__quantity-wrapper {
+    justify-content: flex-start;
+    margin-left: 1rem;
+  }
 }

@@ -63,71 +63,69 @@ const ProductListItem = ({
           color="primary"
         />
       </div>
-      <Grid container>
-        <Grid item xs={8} sm={10} className="product-list-item__details">
-          <Grid item xs={12} md={9} lg={10} className="product-list-item__names">
-            <Grid item xs={12} md={3}>
-              <AccountName
-                account={product}
-                searchTerm={search.account_name}
-                className="product-list-item__account-name"
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <ProductName product={product} searchTerm={search.product_name} />
-            </Grid>
-            <Grid item xs={12} md={3}>
-              <ProductSize product={product} search={search} />
-            </Grid>
+      <Grid container className="list-body__item-details">
+        <Grid item xs={12} md={9} className="product-list-item__names">
+          <Grid item xs={12} sm={4}>
+            <AccountName
+              account={product}
+              searchTerm={search.account_name}
+              className="product-list-item__account-name"
+            />
           </Grid>
-          <Hidden smDown>
-            <Grid item md={3} lg={2} className="product-list-item__colors">
-              <Grid item md={12} lg={3}>
-                <span dangerouslySetInnerHTML={{ __html: extColor }} />
-              </Grid>
-              {is_print && (
-                <Grid item md={12} lg={9}>
-                  <span dangerouslySetInnerHTML={{ __html: printColor }} />
-                </Grid>
-              )}
+          <Grid item xs={12} sm={5}>
+            <ProductName product={product} searchTerm={search.product_name} />
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            <ProductSize product={product} search={search} />
+          </Grid>
+        </Grid>
+        <Hidden smDown>
+          <Grid item md={3} className="product-list-item__colors">
+            <Grid item md={12} lg={3}>
+              <span dangerouslySetInnerHTML={{ __html: extColor }} />
             </Grid>
-          </Hidden>
-        </Grid>
-        <Grid item xs={4} sm={2} className="button-group">
-          <Tooltip title="작업지시">
-            <IconButton
-              color="secondary"
-              aria-label="order"
-              onClick={() => {
-                onListItemOrderClick(id);
-              }}
-            >
-              <Icon>build</Icon>
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="수정">
-            <IconButton
-              color="primary"
-              aria-label="edit"
-              onClick={() => {
-                onListItemEditClick('edit', id);
-              }}
-            >
-              <Icon>edit</Icon>
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="삭제">
-            <IconButton
-              aria-label="delete"
-              onClick={() => {
-                onListItemDeleteClick([id]);
-              }}
-            >
-              <Icon>delete</Icon>
-            </IconButton>
-          </Tooltip>
-        </Grid>
+            {is_print && (
+              <Grid item md={12} lg={9}>
+                <span dangerouslySetInnerHTML={{ __html: printColor }} />
+              </Grid>
+            )}
+          </Grid>
+        </Hidden>
       </Grid>
+      <div className="list-body__item-buttons">
+        <Tooltip title="작업지시">
+          <IconButton
+            color="secondary"
+            aria-label="order"
+            onClick={() => {
+              onListItemOrderClick(id);
+            }}
+          >
+            <Icon>build</Icon>
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="수정">
+          <IconButton
+            color="primary"
+            aria-label="edit"
+            onClick={() => {
+              onListItemEditClick('edit', id);
+            }}
+          >
+            <Icon>edit</Icon>
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="삭제">
+          <IconButton
+            aria-label="delete"
+            onClick={() => {
+              onListItemDeleteClick([id]);
+            }}
+          >
+            <Icon>delete</Icon>
+          </IconButton>
+        </Tooltip>
+      </div>
     </li>
   );
 };

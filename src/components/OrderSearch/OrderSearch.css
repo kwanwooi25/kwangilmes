@@ -1,0 +1,15 @@
+.order-search__preset-buttons {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media (min-width: 960px) {
+  .order-search__preset-buttons {
+    justify-content: flex-start;
+  }
+
+  .order-search__preset-buttons button {
+    margin-right: 1rem;
+  }
+}

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { DatePicker } from 'material-ui-pickers';
 import Button from '@material-ui/core/Button';
 import Popover from '@material-ui/core/Popover';
 import Grid from '@material-ui/core/Grid';
@@ -21,6 +20,7 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FullScreenDialog from '../../components/FullScreenDialog/FullScreenDialog';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
+import CustomDatePicker from '../../components/CustomDatePicker/CustomDatePicker';
 import { PRODUCT_DETAIL_SECTIONS } from '../../helpers/constants';
 import { comma, uncomma } from '../../helpers/comma';
 import { getWeight } from '../../helpers/getWeight';
@@ -292,77 +292,23 @@ class ProductOrderForm extends Component {
             <ExpansionPanelDetails>
               <Grid container spacing={16}>
                 <Grid item xs={6} sm={3}>
-                  <DatePicker
-                    className="product-order-form__datepicker"
-                    keyboard
+                  <CustomDatePicker
                     label="발주일"
-                    format="YYYY/MM/DD"
                     disableFuture={true}
-                    shouldDisableDate={date => {
-                      if (date.day() === 0 || date.day() === 6) {
-                        return true;
-                      }
-                      return false;
-                    }}
-                    mask={value =>
-                      value
-                        ? [
-                            /\d/,
-                            /\d/,
-                            /\d/,
-                            /\d/,
-                            '/',
-                            /\d/,
-                            /\d/,
-                            '/',
-                            /\d/,
-                            /\d/
-                          ]
-                        : []
-                    }
                     value={this.state.ordered_at}
                     onChange={date => {
                       this.setState({ ordered_at: date });
                     }}
-                    disableOpenOnEnter
-                    animateYearScrolling={false}
                   />
                 </Grid>
                 <Grid item xs={6} sm={3}>
-                  <DatePicker
-                    keyboard
-                    className="product-order-form__datepicker"
+                  <CustomDatePicker
                     label="납기일"
-                    format="YYYY/MM/DD"
                     disablePast={true}
-                    shouldDisableDate={date => {
-                      if (date.day() === 0 || date.day() === 6) {
-                        return true;
-                      }
-                      return false;
-                    }}
-                    mask={value =>
-                      value
-                        ? [
-                            /\d/,
-                            /\d/,
-                            /\d/,
-                            /\d/,
-                            '/',
-                            /\d/,
-                            /\d/,
-                            '/',
-                            /\d/,
-                            /\d/
-                          ]
-                        : []
-                    }
                     value={this.state.deliver_by}
                     onChange={date => {
                       this.setState({ deliver_by: date });
                     }}
-                    disableOpenOnEnter
-                    animateYearScrolling={false}
                   />
                 </Grid>
                 <Grid item xs={7} sm={4}>

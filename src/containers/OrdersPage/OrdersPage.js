@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import {
   fetchOrders,
@@ -9,9 +10,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
 import PageHeader from '../../components/PageHeader/PageHeader';
-import ProductSearch from '../../components/ProductSearch/ProductSearch';
+import OrderSearch from '../../components/OrderSearch/OrderSearch';
 import ListHeader from '../../components/ListHeader/ListHeader';
 import ListBody from '../../components/ListBody/ListBody';
 import NoData from '../../components/NoData/NoData';
@@ -34,7 +34,8 @@ class OrdersPage extends Component {
       // productToEdit: '',
     };
 
-    // this.onSearchChange = this.onSearchChange.bind(this);
+    this.onSearchChange = this.onSearchChange.bind(this);
+    this.onDateChange = this.onDateChange.bind(this);
     this.onRowsPerPageChange = this.onRowsPerPageChange.bind(this);
     this.onPageChange = this.onPageChange.bind(this);
     this.onListItemChecked = this.onListItemChecked.bind(this);
@@ -54,28 +55,40 @@ class OrdersPage extends Component {
     this.props.fetchOrders(token, search);
   }
 
-  // onSearchChange = (name, event) => {
-  //   const { search } = this.props.products;
-  //   const token = this.props.auth.userToken;
-  //   search[name] = event.target.value.toLowerCase();
-  //   this.props.fetchProducts(token, search);
-  // };
-  //
-  // onSearchReset = () => {
-  //   const token = this.props.auth.userToken;
-  //   const search = {
-  //     account_name: '',
-  //     product_name: '',
-  //     product_thick: '',
-  //     product_length: '',
-  //     product_width: '',
-  //     ext_color: '',
-  //     print_color: '',
-  //     limit: 10,
-  //     offset: 0
-  //   };
-  //   this.props.fetchProducts(token, search);
-  // };
+  onSearchChange = (name, value) => {
+    const { search } = this.props.orders;
+    const token = this.props.auth.userToken;
+    search[name] = value;
+    this.props.fetchOrders(token, search);
+  };
+
+  onDateChange = (date_from, date_to) => {
+    const { search } = this.props.orders;
+    const token = this.props.auth.userToken;
+    search.date_from = date_from;
+    search.date_to = date_to;
+    this.props.fetchOrders(token, search);
+  }
+
+  onSearchReset = () => {
+    const token = this.props.auth.userToken;
+    const search = {
+      date_from: moment()
+        .subtract(14, 'days')
+        .format('YYYY-MM-DD'),
+      date_to: moment().format('YYYY-MM-DD'),
+      account_name: '',
+      product_name: '',
+      product_thick: '',
+      product_length: '',
+      product_width: '',
+      show_completed: false,
+      limit: 10,
+      offset: 0
+    }
+
+    this.props.fetchOrders(token, search);
+  };
 
   onRowsPerPageChange = limit => {
     const { search } = this.props.orders;
@@ -109,7 +122,7 @@ class OrdersPage extends Component {
       default:
         break;
     }
-    this.props.fetchProducts(token, search);
+    this.props.fetchOrders(token, search);
   };
 
   onDeleteAllClick = () => {
@@ -231,10 +244,11 @@ class OrdersPage extends Component {
           }
         />
         <Divider />
-        {/* <ProductSearch
+        <OrderSearch
           onInputChange={this.onSearchChange}
+          onDateChange={this.onDateChange}
           onReset={this.onSearchReset}
-        /> */}
+        />
         <ListHeader
           rowsPerPage={search.limit}
           isFirstPage={isFirstPage}
@@ -243,6 +257,7 @@ class OrdersPage extends Component {
           onPageChange={this.onPageChange}
           onDeleteAllClick={this.onDeleteAllClick}
           onSelectAllChange={this.onSelectAllChange}
+          selectAllDisabled={search.show_completed}
           selectedCount={selected.length}
           isSelectedAll={isSelectedAll}
           onCancelSelection={this.onCancelSelection}

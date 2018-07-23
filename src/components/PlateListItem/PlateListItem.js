@@ -63,56 +63,54 @@ const PlateListItem = ({
           color="primary"
         />
       </div>
-      <Grid container>
-        <Grid item xs={8} sm={10} className="plate-list-item__details">
-          <Grid item xs={12} md={3} className="plate-list-item__plate-size">
-            <PlateSize plate={plate} search={search} />
-          </Grid>
-          <Grid item xs={12} md={9} className="plate-list-item__product-list">
-            {products.length &&
-              products.map(({ id, name, size }) => {
-                if (id !== null && name !== null) {
-                  name = highlight(name, search.product_name);
-                  return (
-                    <div key={id} className="plate-list-item__product">
-                      <span
-                        className="plate-list-item__product-name"
-                        dangerouslySetInnerHTML={{ __html: name }}
-                      />
-                      <span className="plate-list-item__product-size">
-                        {size}
-                      </span>
-                    </div>
-                  );
-                }
-                return undefined;
-              })}
-          </Grid>
+      <Grid container className="list-body__item-details">
+        <Grid item xs={12} md={3} className="plate-list-item__plate-size">
+          <PlateSize plate={plate} search={search} />
         </Grid>
-        <Grid item xs={4} sm={2} className="button-group">
-          <Tooltip title="수정">
-            <IconButton
-              color="primary"
-              aria-label="edit"
-              onClick={() => {
-                onListItemEditClick('edit', id);
-              }}
-            >
-              <Icon>edit</Icon>
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="삭제">
-            <IconButton
-              aria-label="delete"
-              onClick={() => {
-                onListItemDeleteClick([id]);
-              }}
-            >
-              <Icon>delete</Icon>
-            </IconButton>
-          </Tooltip>
+        <Grid item xs={12} md={9} className="plate-list-item__product-list">
+          {products.length &&
+            products.map(({ id, name, size }) => {
+              if (id !== null && name !== null) {
+                name = highlight(name, search.product_name);
+                return (
+                  <div key={id} className="plate-list-item__product">
+                    <span
+                      className="plate-list-item__product-name"
+                      dangerouslySetInnerHTML={{ __html: name }}
+                    />
+                    <span className="plate-list-item__product-size">
+                      {size}
+                    </span>
+                  </div>
+                );
+              }
+                return undefined;
+            })}
         </Grid>
       </Grid>
+      <div className="list-body__item-buttons">
+        <Tooltip title="수정">
+          <IconButton
+            color="primary"
+            aria-label="edit"
+            onClick={() => {
+              onListItemEditClick('edit', id);
+            }}
+          >
+            <Icon>edit</Icon>
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="삭제">
+          <IconButton
+            aria-label="delete"
+            onClick={() => {
+              onListItemDeleteClick([id]);
+            }}
+          >
+            <Icon>delete</Icon>
+          </IconButton>
+        </Tooltip>
+      </div>
     </li>
   );
 };
