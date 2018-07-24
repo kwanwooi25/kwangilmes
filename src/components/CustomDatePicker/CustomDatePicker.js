@@ -2,7 +2,7 @@ import React from 'react';
 import { DatePicker } from 'material-ui-pickers';
 import './CustomDatePicker.css';
 
-const CustomDatePicker = ({ id, className, label, disabledFuture, disablePast, shouldDisableDate, value, onChange }) => {
+const CustomDatePicker = ({ id, className, label, disableFuture, disablePast, shouldDisableDate, value, onChange }) => {
   return (
     <DatePicker
       id={id}
@@ -10,7 +10,7 @@ const CustomDatePicker = ({ id, className, label, disabledFuture, disablePast, s
       keyboard
       label={label}
       format="YYYY/MM/DD"
-      disableFuture={disabledFuture}
+      disableFuture={disableFuture}
       disablePast={disablePast}
       shouldDisableDate={date => {
         if (date.day() === 0 || date.day() === 6) {
