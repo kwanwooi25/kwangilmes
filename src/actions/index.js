@@ -89,7 +89,7 @@ export const fetchAccountNames = userToken => dispatch => {
     .then(({ success, data }) => {
       if (success) dispatch({ type: FETCH_ACCOUNT_NAMES, payload: data });
     });
-}
+};
 
 export const updateAccount = (
   userToken,
@@ -186,7 +186,7 @@ export const fetchProducts = (userToken, search) => dispatch => {
         dispatch({ type: FETCH_PRODUCTS, payload: data });
       }
     });
-}
+};
 
 export const toggleProductChecked = id => dispatch => {
   dispatch({ type: TOGGLE_PRODUCT_CHECKED, payload: id });
@@ -276,7 +276,7 @@ export const fetchPlates = (userToken, search) => dispatch => {
         dispatch({ type: FETCH_PLATES, payload: data });
       }
     });
-}
+};
 
 export const deletePlates = (userToken, ids, search) => dispatch => {
   fetch(`${HOST}/plates/`, {
@@ -317,12 +317,7 @@ export const addPlates = (userToken, plates, search) => dispatch => {
     });
 };
 
-export const updatePlate = (
-  userToken,
-  plateId,
-  data,
-  search
-) => dispatch => {
+export const updatePlate = (userToken, plateId, data, search) => dispatch => {
   fetch(`${HOST}/plates/${plateId}`, {
     headers: {
       'Content-Type': 'application/json',
@@ -366,7 +361,7 @@ export const fetchOrders = (userToken, search) => dispatch => {
         dispatch({ type: FETCH_ORDERS, payload: data });
       }
     });
-}
+};
 
 export const addOrder = (userToken, order, search) => dispatch => {
   fetch(`${HOST}/orders/add`, {
@@ -385,12 +380,7 @@ export const addOrder = (userToken, order, search) => dispatch => {
     });
 };
 
-export const updateOrder = (
-  userToken,
-  orderId,
-  data,
-  search
-) => dispatch => {
+export const updateOrder = (userToken, orderId, data, search) => dispatch => {
   fetch(`${HOST}/orders/${orderId}`, {
     headers: {
       'Content-Type': 'application/json',
@@ -424,6 +414,26 @@ export const deleteOrders = (userToken, ids, search) => dispatch => {
         Promise.resolve(dispatch(fetchOrders(userToken, search))).then(() => {
           dispatch(showSnackbar('주문 취소 완료'));
           dispatch({ type: DELETE_ORDERS, payload: ids });
+        });
+      }
+    });
+};
+
+export const completeOrders = (userToken, data, search) => dispatch => {
+  fetch(`${HOST}/orders-complete`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'put',
+    body: JSON.stringify(data)
+  })
+    .then(response => response.json())
+    .then(({ success, error, data }) => {
+      if (success) {
+        Promise.resolve(dispatch(fetchOrders(userToken, search))).then(() => {
+          dispatch({ type: SET_ORDERS_UNCHECKED });
+          dispatch(showSnackbar(`${data.length}건 작업 완료`));
         });
       }
     });

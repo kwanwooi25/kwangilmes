@@ -35,12 +35,52 @@ class CompleteOrderModal extends Component {
   onClickOk = () => {
     const { orders } = this.state;
 
-    orders.forEach(order => {
-      order.completed_at = this.state.date;
-    });
+    if (this.validate()) {
+      let data = [];
 
-    // this.props.onClose(true, orders);
-  }
+      orders.forEach(order => {
+        data.push({
+          id: order.id,
+          completed_at: this.state.date.format('YYYY-MM-DD'),
+          completed_quantity: Number(uncomma(order.completed_quantity)),
+          is_completed: order.is_completed
+        })
+      });
+
+      this.props.onClose(true, data);
+    }
+  };
+
+  validate = (index, name) => {
+    let { orders } = this.state;
+    let isValid = true;
+
+    // validate on click ok
+    if (!name) {
+      orders = orders.map(order => {
+        if (!order.completed_quantity) {
+          order.completed_quantity_error = '완성수량을 입력하세요.';
+          isValid = isValid && false;
+        } else {
+          order.completed_quantity_error = '';
+        }
+
+        return order;
+      });
+
+      // validate on input change
+    } else {
+      if (name === 'completed_quantity' && orders[index][name] === '') {
+        orders[index]['completed_quantity_error'] = '완성수량을 입력하세요.';
+        isValid = isValid && false;
+      } else if (name === 'completed_quantity' && orders[index][name] !== '') {
+        orders[index]['completed_quantity_error'] = '';
+      }
+    }
+
+    this.setState({ orders });
+    return isValid;
+  };
 
   onInputChange = (index, name) => event => {
     const { orders } = this.state;
@@ -51,11 +91,17 @@ class CompleteOrderModal extends Component {
       const completedQuantity = Number(uncomma(orders[index][name]));
       if (completedQuantity >= orderQuantity) {
         orders[index]['is_completed'] = true;
+      } else {
+        orders[index]['is_completed'] = false;
       }
     } else if (name === 'is_completed') {
       orders[index][name] = event.target.checked;
     }
-  }
+
+    this.setState({ orders }, () => {
+      this.validate(index, name);
+    });
+  };
 
   renderFields = () => {
     const { orders } = this.state;
@@ -111,19 +157,26 @@ class CompleteOrderModal extends Component {
             <Grid item xs={12}>
               <FormControl
                 fullWidth
-                error={this.state.errors[index] !== undefined && this.state.errors[index] !== ''}
+                error={
+                  this.state.orders[index]['completed_quantity_error'] !==
+                    undefined &&
+                  this.state.orders[index]['completed_quantity_error'] !== ''
+                }
               >
                 <InputLabel htmlFor="completed_quantity">완성수량</InputLabel>
                 <Input
                   id="completed_quantity"
                   value={this.state.orders[index]['completed_quantity']}
-                  onChange={this.onInputChange(index, 'completed_quantity').bind(this)}
+                  onChange={this.onInputChange(
+                    index,
+                    'completed_quantity'
+                  ).bind(this)}
                   endAdornment={
                     <InputAdornment position="end">매</InputAdornment>
                   }
                 />
                 <FormHelperText id="completed_quantity">
-                  {this.state.errors[index]}
+                  {this.state.orders[index]['completed_quantity_error']}
                 </FormHelperText>
               </FormControl>
             </Grid>
@@ -132,7 +185,9 @@ class CompleteOrderModal extends Component {
                 control={
                   <Checkbox
                     checked={this.state.orders[index]['is_completed']}
-                    onChange={this.onInputChange(index, 'is_completed').bind(this)}
+                    onChange={this.onInputChange(index, 'is_completed').bind(
+                      this
+                    )}
                     color="primary"
                   />
                 }
@@ -176,10 +231,12 @@ class CompleteOrderModal extends Component {
         }
       >
         {this.renderFields()}
-        <Grid item xs={12}>
+        <Grid item xs={12} className="complete-order-modal__datepicker">
           <CustomDatePicker
             value={this.state.date}
-            onChange={date => { this.setState({ date })}}
+            onChange={date => {
+              this.setState({ date });
+            }}
           />
         </Grid>
       </CustomModal>

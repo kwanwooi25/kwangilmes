@@ -5,6 +5,7 @@ import {
   fetchOrders,
   updateOrder,
   deleteOrders,
+  completeOrders,
   toggleOrderChecked,
   toggleOrdersChecked,
 } from '../../actions';
@@ -193,12 +194,17 @@ class OrdersPage extends Component {
       });
   }
 
-  onCompleteOrderModalClose = result => {
-    console.log(result);
+  onCompleteOrderModalClose = (result, data) => {
     this.setState({
       isCompleteOrderModalOpen: false,
       selectedOrders: []
     })
+
+    if (result) {
+      const { search } = this.props.orders;
+      const token = this.props.auth.userToken;
+      this.props.completeOrders(token, data, search);
+    }
   }
 
   showProductOrderForm = orderId => {
@@ -339,6 +345,7 @@ export default connect(
     fetchOrders,
     updateOrder,
     deleteOrders,
+    completeOrders,
     toggleOrderChecked,
     toggleOrdersChecked
   }
