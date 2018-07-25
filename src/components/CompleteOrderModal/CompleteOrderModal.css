@@ -1,4 +1,69 @@
+.complete-order-modal {
+  width: 90%;
+  max-width: 600px;
+}
+
 .complete-order-modal__list-item {
   display: flex;
   flex-wrap: wrap;
+  padding: .5rem;
+  padding-top: 1rem;
+  border-bottom: 1px solid #cdcdcd;
+}
+
+.complete-order-modal__inputs {
+  align-items: flex-end;
+  display: flex;
+  flex-direction: column;
+}
+
+.complete-order-modal__account-name,
+.complete-order-modal__product-name,
+.complete-order-modal__product-size,
+.complete-order-modal__order-quantity {
+  padding: .25rem;
+}
+
+.complete-order-modal__account-name {
+  font-size: .9rem;
+  font-weight: bold;
+}
+
+.complete-order-modal__product-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.complete-order-modal__order-quantity {
+  font-size: 0.8rem;
+}
+
+.complete-order-modal__order-quantity span {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.complete-order-modal__is_completed {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.complete-order-modal__datepicker {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.complete-order-modal__datepicker > .custom-date-picker {
+  width: 10rem;
+}
+
+@media (min-width: 600px) {
+  .complete-order-modal__inputs {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }

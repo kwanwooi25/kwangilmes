@@ -2,11 +2,8 @@ import React, { Component } from 'react';
 import moment from 'moment';
 import { comma } from '../../helpers/comma';
 import { getWeight } from '../../helpers/getWeight';
-import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import Popover from '@material-ui/core/Popover';
 import CustomModal from '../../components/CustomModal/CustomModal';
-import { highlight } from '../../helpers/highlight';
 import './OrderId.css';
 
 const FIELDS = [
@@ -73,7 +70,6 @@ class OrderId extends Component {
 
         case 'order_quantity':
         case 'completed_quantity':
-          const { order_quantity, completed_quantity } = order;
           if (order[varName]) {
             const quantity = comma(order[varName]);
             const weight = comma(getWeight(order, order[varName]));

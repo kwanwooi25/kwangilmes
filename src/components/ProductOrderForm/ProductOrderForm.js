@@ -57,8 +57,6 @@ class ProductOrderForm extends Component {
 
   componentDidMount() {
     let data;
-    let product_id;
-    let order_id;
 
     if (this.props.product) {
       data = this.props.product;
@@ -324,7 +322,7 @@ class ProductOrderForm extends Component {
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
               <Grid container spacing={16}>
-                <Grid item xs={6} sm={3}>
+                <Grid item xs={6} sm={3} lg={2}>
                   <CustomDatePicker
                     label="발주일"
                     disableFuture={true}
@@ -334,7 +332,7 @@ class ProductOrderForm extends Component {
                     }}
                   />
                 </Grid>
-                <Grid item xs={6} sm={3}>
+                <Grid item xs={6} sm={3} lg={2}>
                   <CustomDatePicker
                     label="납기일"
                     disablePast={true}
@@ -344,7 +342,7 @@ class ProductOrderForm extends Component {
                     }}
                   />
                 </Grid>
-                <Grid item xs={7} sm={4}>
+                <Grid item xs={7} sm={4} lg={2}>
                   <FormControl
                     fullWidth
                     error={this.state.order_quantity_error !== ''}
@@ -363,7 +361,7 @@ class ProductOrderForm extends Component {
                     </FormHelperText>
                   </FormControl>
                 </Grid>
-                <Grid item xs={5} sm={2}>
+                <Grid item xs={5} sm={2} lg={2}>
                   <FormControl fullWidth>
                     <InputLabel htmlFor="order_quantity_weight">
                       중량
@@ -382,7 +380,7 @@ class ProductOrderForm extends Component {
                     />
                   </FormControl>
                 </Grid>
-                <Grid item xs={6} sm={3}>
+                <Grid item xs={6} sm={3} lg={2}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -394,7 +392,7 @@ class ProductOrderForm extends Component {
                     label="납기엄수"
                   />
                 </Grid>
-                <Grid item xs={6} sm={3}>
+                <Grid item xs={6} sm={3} lg={2}>
                   <FormControlLabel
                     control={
                       <Checkbox
@@ -406,7 +404,7 @@ class ProductOrderForm extends Component {
                     label="지급"
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} lg={4}>
                   <FormControl fullWidth component="fieldset">
                     <RadioGroup
                       aria-label="plate_status"
@@ -436,7 +434,7 @@ class ProductOrderForm extends Component {
                     </RadioGroup>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} lg={4}>
                   <FormControl fullWidth>
                     <InputLabel htmlFor="order_memo_work">작업참고</InputLabel>
                     <Input
@@ -447,7 +445,7 @@ class ProductOrderForm extends Component {
                     />
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} lg={4}>
                   <FormControl fullWidth>
                     <InputLabel htmlFor="order_memo_delivery">
                       납품참고

@@ -25,7 +25,7 @@ class ProductName extends Component {
     PRODUCT_DETAIL_SECTIONS.map(({ title, fields }) => {
       const hasInfo =
         fields
-          .map(({ varName }) => !!data[varName])
+          .map(({ varName }) => !!data[varName] || varName === 'history')
           .filter(value => value === true).length > 0;
 
       if (hasInfo) {

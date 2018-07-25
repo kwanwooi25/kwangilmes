@@ -166,7 +166,7 @@ const OrderListItem = ({
           )}
         </Grid>
       </Grid>
-      <div className="list-item__item-buttons order-list-item__buttons">
+      <div className="list-body__item-buttons order-list-item__buttons">
         <Tooltip title="출력">
           <IconButton
             color="primary"

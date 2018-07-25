@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
 import { comma, uncomma } from '../../helpers/comma';
-import { getWeight } from '../../helpers/getWeight';
-import Modal from '@material-ui/core/Modal';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
 import FormControl from '@material-ui/core/FormControl';
@@ -12,19 +10,18 @@ import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
-import { highlight } from '../../helpers/highlight';
 import CustomModal from '../../components/CustomModal/CustomModal';
 import CustomDatePicker from '../../components/CustomDatePicker/CustomDatePicker';
 import './CompleteOrderModal.css';
 
-const FIELDS = [
-  { varName: 'account_name', displayName: '업체명' },
-  { varName: 'product_name', displayName: '품명' },
-  { varName: 'product_size', displayName: '규격' },
-  { varName: 'order_quantity', displayName: '주문수량(중량)' },
-  { varName: 'completed_quantity', displayName: '완료수량(중량)' },
-  { varName: 'is_completed', displayName: '작업완료' }
-];
+// const FIELDS = [
+//   { varName: 'account_name', displayName: '업체명' },
+//   { varName: 'product_name', displayName: '품명' },
+//   { varName: 'product_size', displayName: '규격' },
+//   { varName: 'order_quantity', displayName: '주문수량(중량)' },
+//   { varName: 'completed_quantity', displayName: '완료수량(중량)' },
+//   { varName: 'is_completed', displayName: '작업완료' }
+// ];
 
 class CompleteOrderModal extends Component {
   state = {
@@ -113,10 +110,7 @@ class CompleteOrderModal extends Component {
         product_thick,
         product_length,
         product_width,
-        order_quantity,
-        completed_quantity,
-        completed_quantity_error,
-        is_completed
+        order_quantity
       } = order;
 
       const productSize = `${product_thick} x ${product_length} x ${product_width}`;
@@ -126,35 +120,34 @@ class CompleteOrderModal extends Component {
           <Grid
             item
             xs={7}
-            className="complete-order-modal__list-item__product-details"
+            sm={6}
+            className="complete-order-modal__product-details"
           >
             <Grid
               item
               xs={12}
-              className="complete-order-modal__list-item__product-details__names"
             >
-              <Grid item xs={12}>
+              <Grid item xs={12} className="complete-order-modal__account-name">
                 {account_name}
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12} className="complete-order-modal__product-name">
                 {product_name}
               </Grid>
             </Grid>
             <Grid
               item
               xs={12}
-              className="complete-order-modal__list-item__product-details__size"
             >
-              <Grid item xs={12}>
+              <Grid item xs={12} className="complete-order-modal__product-size">
                 {productSize}
               </Grid>
-              <Grid item xs={12}>
-                {`주문수량: ${comma(order_quantity)}`}
+              <Grid item xs={12} className="complete-order-modal__order-quantity">
+                주문수량: <span>{comma(order_quantity)}</span>매
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={5} className="complete-order-modal__list-item__inputs">
-            <Grid item xs={12}>
+          <Grid item xs={5} sm={6} className="complete-order-modal__inputs">
+            <Grid item xs={12} sm={6} className="complete-order-modal__quantity">
               <FormControl
                 fullWidth
                 error={
@@ -180,7 +173,7 @@ class CompleteOrderModal extends Component {
                 </FormHelperText>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6} className="complete-order-modal__is_completed">
               <FormControlLabel
                 control={
                   <Checkbox
@@ -201,7 +194,7 @@ class CompleteOrderModal extends Component {
   };
 
   render() {
-    const { open, onClose, orders } = this.props;
+    const { open, onClose } = this.props;
     return (
       <CustomModal
         className="complete-order-modal"

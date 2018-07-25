@@ -34,7 +34,7 @@ const AccountListItem = ({
           {phone && <span>{phone}</span>}
         </Grid>
       </Grid>
-      <div className="list-item__item-buttons">
+      <div className="list-body__item-buttons">
         <Tooltip title="수정">
           <IconButton
             color="primary"
