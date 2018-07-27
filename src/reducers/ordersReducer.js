@@ -1,4 +1,5 @@
 import {
+  SET_ORDERS_PENDING,
   FETCH_ORDERS,
   DELETE_ORDERS,
   TOGGLE_ORDER_CHECKED,
@@ -32,6 +33,9 @@ const INITIAL_STATE = {
 
 export default function(state = INITIAL_STATE, action) {
   switch (action.type) {
+
+    case SET_ORDERS_PENDING:
+      return Object.assign({}, state, { isPending: true });
 
     case FETCH_ORDERS:
       const { count, orders, ids, search } = action.payload;

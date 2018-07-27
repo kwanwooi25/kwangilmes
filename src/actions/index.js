@@ -1,6 +1,7 @@
 import {
   LOGIN_USER,
   LOGOUT_USER,
+  SET_ACCOUNTS_PENDING,
   FETCH_ACCOUNTS,
   FETCH_ACCOUNT,
   FETCH_ACCOUNT_NAMES,
@@ -10,16 +11,19 @@ import {
   SET_ACCOUNTS_UNCHECKED,
   SHOW_SNACKBAR,
   HIDE_SNACKBAR,
+  SET_PRODUCTS_PENDING,
   FETCH_PRODUCTS,
   DELETE_PRODUCTS,
   TOGGLE_PRODUCT_CHECKED,
   SET_PRODUCTS_CHECKED,
   SET_PRODUCTS_UNCHECKED,
+  SET_PLATES_PENDING,
   FETCH_PLATES,
   DELETE_PLATES,
   TOGGLE_PLATE_CHECKED,
   SET_PLATES_CHECKED,
   SET_PLATES_UNCHECKED,
+  SET_ORDERS_PENDING,
   FETCH_ORDERS,
   DELETE_ORDERS,
   TOGGLE_ORDER_CHECKED,
@@ -48,6 +52,7 @@ export const logoutUser = () => dispatch => {
 };
 
 export const fetchAccounts = (userToken, search) => dispatch => {
+  dispatch({ type: SET_ACCOUNTS_PENDING });
   fetch(`${HOST}/accounts`, {
     headers: {
       'Content-Type': 'application/json',
@@ -171,6 +176,7 @@ export const showSnackbar = message => dispatch => {
 };
 
 export const fetchProducts = (userToken, search) => dispatch => {
+  dispatch({ type: SET_PRODUCTS_PENDING });
   fetch(`${HOST}/products`, {
     headers: {
       'Content-Type': 'application/json',
@@ -261,6 +267,7 @@ export const deleteProducts = (userToken, ids, search) => dispatch => {
 };
 
 export const fetchPlates = (userToken, search) => dispatch => {
+  dispatch({ type: SET_PLATES_PENDING });
   fetch(`${HOST}/plates`, {
     headers: {
       'Content-Type': 'application/json',
@@ -346,6 +353,7 @@ export const togglePlatesChecked = checked => dispatch => {
 };
 
 export const fetchOrders = (userToken, search) => dispatch => {
+  dispatch({ type: SET_ORDERS_PENDING });
   fetch(`${HOST}/orders`, {
     headers: {
       'Content-Type': 'application/json',

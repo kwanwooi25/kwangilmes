@@ -23,6 +23,7 @@ import ProductListItem from '../../components/ProductListItem/ProductListItem';
 import ProductForm from '../../components/ProductForm/ProductForm';
 import ProductOrderForm from '../../components/ProductOrderForm/ProductOrderForm';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
+import Spinner from '../../components/Spinner/Spinner';
 import { exportCSV } from '../../helpers/exportCSV';
 import { calculateOffset } from '../../helpers/calculateOffset';
 import './ProductsPage.css';
@@ -262,7 +263,7 @@ class ProductsPage extends Component {
   };
 
   render() {
-    const { count, current, search, selected } = this.props.products;
+    const { isPending, count, current, search, selected } = this.props.products;
     const isFirstPage = search.offset === 0;
     const isLastPage = count <= search.offset + search.limit;
     const isSelectedAll = selected.length !== 0 && selected.length === count;
@@ -300,7 +301,9 @@ class ProductsPage extends Component {
           totalCount={count}
           offset={search.offset}
         />
-        {current.length === 0 ? (
+        {isPending ? (
+          <Spinner />
+        ) : current.length === 0 ? (
           <NoData />
         ) : (
           <ListBody>

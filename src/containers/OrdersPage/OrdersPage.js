@@ -7,7 +7,7 @@ import {
   deleteOrders,
   completeOrders,
   toggleOrderChecked,
-  toggleOrdersChecked,
+  toggleOrdersChecked
 } from '../../actions';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
@@ -22,7 +22,31 @@ import OrderListItem from '../../components/OrderListItem/OrderListItem';
 import CompleteOrderModal from '../../components/CompleteOrderModal/CompleteOrderModal';
 import ProductOrderForm from '../../components/ProductOrderForm/ProductOrderForm';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
+import Spinner from '../../components/Spinner/Spinner';
+import { exportCSV } from '../../helpers/exportCSV';
+import { calculateOffset } from '../../helpers/calculateOffset';
 import './OrdersPage.css';
+
+const CSV_HEADERS = [
+  { key: 'id', name: 'ID' },
+  { key: 'ordered_at', name: '발주일' },
+  { key: 'account_name', name: '업체명' },
+  { key: 'product_name', name: '품목명' },
+  { key: 'product_thick', name: '두께' },
+  { key: 'product_length', name: '길이(압출)' },
+  { key: 'product_width', name: '너비(가공)' },
+  { key: 'order_quantity', name: '주문수량' },
+  { key: 'order_quantity_weight', name: '주문중량' },
+  { key: 'plate_status', name: '동판' },
+  { key: 'deliver_by', name: '납기일' },
+  { key: 'is_delivery_strict', name: '납기엄수' },
+  { key: 'is_urgent', name: '지급' },
+  { key: 'order_memo_work', name: '작업메모' },
+  { key: 'order_memo_delivery', name: '납품메모' },
+  { key: 'completed_at', name: '완료일' },
+  { key: 'completed_quantity', name: '완성수량' },
+  { key: 'delivered_at', name: '납품일' }
+];
 
 class OrdersPage extends Component {
   constructor() {
@@ -51,6 +75,7 @@ class OrdersPage extends Component {
     this.onProductOrderFormClose = this.onProductOrderFormClose.bind(this);
     this.showProductOrderForm = this.showProductOrderForm.bind(this);
     this.showCompleteOrderModal = this.showCompleteOrderModal.bind(this);
+    this.onExportExcelClick = this.onExportExcelClick.bind(this);
   }
 
   componentDidMount() {
@@ -72,7 +97,7 @@ class OrdersPage extends Component {
     search.date_from = date_from;
     search.date_to = date_to;
     this.props.fetchOrders(token, search);
-  }
+  };
 
   onSearchReset = () => {
     const token = this.props.auth.userToken;
@@ -89,7 +114,7 @@ class OrdersPage extends Component {
       show_completed: false,
       limit: 10,
       offset: 0
-    }
+    };
 
     this.props.fetchOrders(token, search);
   };
@@ -105,27 +130,9 @@ class OrdersPage extends Component {
   onPageChange = change => {
     const { count, search } = this.props.orders;
     const token = this.props.auth.userToken;
-    switch (change) {
-      case 'prev':
-        search.offset -= search.limit;
-        break;
-      case 'next':
-        search.offset += search.limit;
-        break;
-      case 'first':
-        search.offset = 0;
-        break;
-      case 'last':
-        if (count % search.limit === 0) {
-          search.offset =
-            (parseInt(count / search.limit, 10) - 1) * search.limit;
-        } else {
-          search.offset = parseInt(count / search.limit, 10) * search.limit;
-        }
-        break;
-      default:
-        break;
-    }
+
+    search.offset = calculateOffset(change, search.offset, search.limit, count);
+
     this.props.fetchOrders(token, search);
   };
 
@@ -189,23 +196,23 @@ class OrdersPage extends Component {
           this.setState({
             isCompleteOrderModalOpen: true,
             selectedOrders: data
-          })
+          });
         }
       });
-  }
+  };
 
   onCompleteOrderModalClose = (result, data) => {
     this.setState({
       isCompleteOrderModalOpen: false,
       selectedOrders: []
-    })
+    });
 
     if (result) {
       const { search } = this.props.orders;
       const token = this.props.auth.userToken;
       this.props.completeOrders(token, data, search);
     }
-  }
+  };
 
   showProductOrderForm = orderId => {
     const { orders } = this.props;
@@ -232,8 +239,27 @@ class OrdersPage extends Component {
     }
   };
 
+  onExportExcelClick = () => {
+    const { search } = this.props.orders;
+    const token = this.props.auth.userToken;
+    fetch(`http://localhost:3000/orders/for-xls`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': token
+      },
+      method: 'post',
+      body: JSON.stringify(search)
+    })
+      .then(response => response.json())
+      .then(({ success, data }) => {
+        const { orders } = data;
+
+        exportCSV('광일_작업지시목록.csv', CSV_HEADERS, orders);
+      });
+  };
+
   render() {
-    const { count, current, search, selected } = this.props.orders;
+    const { isPending, count, current, search, selected } = this.props.orders;
     const isFirstPage = search.offset === 0;
     const isLastPage = count <= search.offset + search.limit;
     const isSelectedAll = selected.length !== 0 && selected.length === count;
@@ -243,7 +269,10 @@ class OrdersPage extends Component {
           title="작업내역"
           ToolButtons={
             <Tooltip title="엑셀 다운로드">
-              <IconButton aria-label="엑셀다운로드">
+              <IconButton
+                aria-label="엑셀다운로드"
+                onClick={this.onExportExcelClick}
+              >
                 <Icon>save_alt</Icon>
               </IconButton>
             </Tooltip>
@@ -272,10 +301,7 @@ class OrdersPage extends Component {
           Buttons={
             <div>
               <Tooltip title="출력">
-                <IconButton
-                  color="primary"
-                  aria-label="print"
-                >
+                <IconButton color="primary" aria-label="print">
                   <Icon>print</Icon>
                 </IconButton>
               </Tooltip>
@@ -283,7 +309,9 @@ class OrdersPage extends Component {
                 <IconButton
                   color="primary"
                   aria-label="complete"
-                  onClick={() => { this.showCompleteOrderModal(selected) }}
+                  onClick={() => {
+                    this.showCompleteOrderModal(selected);
+                  }}
                 >
                   <Icon>done</Icon>
                 </IconButton>
@@ -291,7 +319,9 @@ class OrdersPage extends Component {
             </div>
           }
         />
-        {current.length === 0 ? (
+        {isPending ? (
+          <Spinner />
+        ) : current.length === 0 ? (
           <NoData />
         ) : (
           <ListBody>

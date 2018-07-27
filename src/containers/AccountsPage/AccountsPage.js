@@ -20,6 +20,7 @@ import AccountListItem from '../../components/AccountListItem/AccountListItem';
 import NoData from '../../components/NoData/NoData';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import AccountForm from '../../components/AccountForm/AccountForm';
+import Spinner from '../../components/Spinner/Spinner';
 import { exportCSV } from '../../helpers/exportCSV';
 import { calculateOffset } from '../../helpers/calculateOffset';
 import './AccountsPage.css';
@@ -198,7 +199,7 @@ class AccountsPage extends Component {
   };
 
   render() {
-    const { count, current, search, selected } = this.props.accounts;
+    const { isPending, count, current, search, selected } = this.props.accounts;
     const isFirstPage = search.offset === 0;
     const isLastPage = count <= search.offset + search.limit;
     const isSelectedAll = selected.length !== 0 && selected.length === count;
@@ -234,7 +235,9 @@ class AccountsPage extends Component {
           totalCount={count}
           offset={search.offset}
         />
-        {current.length === 0 ? (
+        {isPending ? (
+          <Spinner />
+        ) : current.length === 0 ? (
           <NoData />
         ) : (
           <ListBody>

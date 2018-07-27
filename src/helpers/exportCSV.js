@@ -7,12 +7,17 @@ export const exportCSV = (filename, headers, data) => {
     .map(account => {
       return keys
         .map(key => {
-          if (account[key] === undefined || account[key] === null) {
+          if (
+            account[key] === undefined ||
+            account[key] === null ||
+            account[key] === false
+          ) {
             return '""';
           } else if (account[key] === true) {
             return '"Y"';
-          } else if (account[key] === false) {
-            return '"N"';
+          } else if (isDate(account[key])) {
+            const date = account[key].substring(0, 10);
+            return '"t"'.replace('t', date);
           } else {
             return '"t"'.replace('t', account[key]);
           }
@@ -32,6 +37,9 @@ export const exportCSV = (filename, headers, data) => {
     downloadAnchor(URL.createObjectURL(blob), filename);
   }
 };
+
+// check if the value is date
+const isDate = value => /^([0-9]{4})-([0-1][0-9])-([0-3][0-9])T/.test(value);
 
 // function to generate download anchor
 const downloadAnchor = (content, filename) => {

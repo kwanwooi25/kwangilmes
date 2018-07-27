@@ -1,4 +1,5 @@
 import {
+  SET_PLATES_PENDING,
   FETCH_PLATES,
   DELETE_PLATES,
   TOGGLE_PLATE_CHECKED,
@@ -25,6 +26,9 @@ const INITIAL_STATE = {
 
 export default function(state = INITIAL_STATE, action) {
   switch (action.type) {
+
+    case SET_PLATES_PENDING:
+      return Object.assign({}, state, { isPending: true });
 
     case FETCH_PLATES:
       const { count, plates, ids, search } = action.payload;

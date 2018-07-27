@@ -21,7 +21,31 @@ import NoData from '../../components/NoData/NoData';
 import PlateListItem from '../../components/PlateListItem/PlateListItem';
 import PlateForm from '../../components/PlateForm/PlateForm';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
+import Spinner from '../../components/Spinner/Spinner';
+import { exportCSV } from '../../helpers/exportCSV';
+import { calculateOffset } from '../../helpers/calculateOffset';
 import './PlatesPage.css';
+
+const CSV_HEADERS = [
+  { key: 'id', name: 'ID' },
+  { key: 'plate_round', name: '둘레' },
+  { key: 'plate_length', name: '기장' },
+  { key: 'plate_material', name: '재질' },
+  { key: 'storage_location', name: '보관위치' },
+  { key: 'product_1_name', name: '품목1' },
+  { key: 'product_1_thick', name: '품목1두께' },
+  { key: 'product_1_length', name: '품목1길이' },
+  { key: 'product_1_width', name: '품목1너비' },
+  { key: 'product_2_name', name: '품목2' },
+  { key: 'product_2_thick', name: '품목2두께' },
+  { key: 'product_2_length', name: '품목2길이' },
+  { key: 'product_2_width', name: '품목2너비' },
+  { key: 'product_3_name', name: '품목3' },
+  { key: 'product_3_thick', name: '품목3두께' },
+  { key: 'product_3_length', name: '품목3길이' },
+  { key: 'product_3_width', name: '품목3너비' },
+  { key: 'memo', name: '메모' }
+];
 
 class PlatesPage extends Component {
   constructor() {
@@ -48,6 +72,7 @@ class PlatesPage extends Component {
     this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
     this.showPlateForm = this.showPlateForm.bind(this);
     this.onPlateFormClose = this.onPlateFormClose.bind(this);
+    this.onExportExcelClick = this.onExportExcelClick.bind(this);
   }
 
   componentDidMount() {
@@ -87,27 +112,9 @@ class PlatesPage extends Component {
   onPageChange = change => {
     const { count, search } = this.props.plates;
     const token = this.props.auth.userToken;
-    switch (change) {
-      case 'prev':
-        search.offset -= search.limit;
-        break;
-      case 'next':
-        search.offset += search.limit;
-        break;
-      case 'first':
-        search.offset = 0;
-        break;
-      case 'last':
-        if (count % search.limit === 0) {
-          search.offset =
-            (parseInt(count / search.limit, 10) - 1) * search.limit;
-        } else {
-          search.offset = parseInt(count / search.limit, 10) * search.limit;
-        }
-        break;
-      default:
-        break;
-    }
+
+    search.offset = calculateOffset(change, search.offset, search.limit, count);
+
     this.props.fetchPlates(token, search);
   };
 
@@ -188,8 +195,27 @@ class PlatesPage extends Component {
     }
   };
 
+  onExportExcelClick = () => {
+    const { search } = this.props.plates;
+    const token = this.props.auth.userToken;
+    fetch(`http://localhost:3000/plates/for-xls`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': token
+      },
+      method: 'post',
+      body: JSON.stringify(search)
+    })
+      .then(response => response.json())
+      .then(({ success, data }) => {
+        const { plates } = data;
+
+        exportCSV('광일_동판목록.csv', CSV_HEADERS, plates);
+      });
+  };
+
   render() {
-    const { count, current, search, selected } = this.props.plates;
+    const { isPending, count, current, search, selected } = this.props.plates;
     const isFirstPage = search.offset === 0;
     const isLastPage = count <= search.offset + search.limit;
     const isSelectedAll = selected.length !== 0 && selected.length === count;
@@ -199,7 +225,10 @@ class PlatesPage extends Component {
           title="동판관리"
           ToolButtons={
             <Tooltip title="엑셀 다운로드">
-              <IconButton aria-label="엑셀다운로드">
+              <IconButton
+                aria-label="엑셀다운로드"
+                onClick={this.onExportExcelClick}
+              >
                 <Icon>save_alt</Icon>
               </IconButton>
             </Tooltip>
@@ -224,22 +253,22 @@ class PlatesPage extends Component {
           totalCount={count}
           offset={search.offset}
         />
-        {current.length === 0 ? (
+        {isPending ? (
+          <Spinner />
+        ) : current.length === 0 ? (
           <NoData />
         ) : (
           <ListBody>
-            {current.map(plate => {
-              return (
-                <PlateListItem
-                  key={plate.id}
-                  search={search}
-                  plate={plate}
-                  onListItemChecked={this.onListItemChecked}
-                  onListItemEditClick={this.showPlateForm}
-                  onListItemDeleteClick={this.showConfirmDeleteModal}
-                />
-              );
-            })}
+            {current.map(plate => (
+              <PlateListItem
+                key={plate.id}
+                search={search}
+                plate={plate}
+                onListItemChecked={this.onListItemChecked}
+                onListItemEditClick={this.showPlateForm}
+                onListItemDeleteClick={this.showConfirmDeleteModal}
+              />
+            ))}
           </ListBody>
         )}
         <div className="fab-add">

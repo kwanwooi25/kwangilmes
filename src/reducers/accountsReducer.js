@@ -1,4 +1,5 @@
 import {
+  SET_ACCOUNTS_PENDING,
   FETCH_ACCOUNTS,
   FETCH_ACCOUNT,
   FETCH_ACCOUNT_NAMES,
@@ -25,6 +26,9 @@ const INITIAL_STATE = {
 
 export default function(state = INITIAL_STATE, action) {
   switch (action.type) {
+
+    case SET_ACCOUNTS_PENDING:
+      return Object.assign({}, state, { isPending: true });
 
     case FETCH_ACCOUNTS:
       const { count, accounts, ids, search } = action.payload;

@@ -1,4 +1,5 @@
 import {
+  SET_PRODUCTS_PENDING,
   FETCH_PRODUCTS,
   DELETE_PRODUCTS,
   TOGGLE_PRODUCT_CHECKED,
@@ -28,6 +29,9 @@ const INITIAL_STATE = {
 
 export default function(state = INITIAL_STATE, action) {
   switch (action.type) {
+
+    case SET_PRODUCTS_PENDING:
+      return Object.assign({}, state, { isPending: true });
 
     case FETCH_PRODUCTS:
       const { count, products, ids, search } = action.payload;
