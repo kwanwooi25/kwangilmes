@@ -9,7 +9,6 @@ import {
   deleteAccounts
 } from '../../actions';
 import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
@@ -21,6 +20,7 @@ import NoData from '../../components/NoData/NoData';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import AccountForm from '../../components/AccountForm/AccountForm';
 import Spinner from '../../components/Spinner/Spinner';
+import FabAdd from '../../components/FabAdd/FabAdd';
 import { exportCSV } from '../../helpers/exportCSV';
 import { calculateOffset } from '../../helpers/calculateOffset';
 import './AccountsPage.css';
@@ -253,20 +253,10 @@ class AccountsPage extends Component {
             ))}
           </ListBody>
         )}
-        <div className="fab-add">
-          <Tooltip title="업체 추가">
-            <Button
-              variant="fab"
-              color="primary"
-              aria-label="add"
-              onClick={() => {
-                this.showAccountForm('new');
-              }}
-            >
-              <Icon>add</Icon>
-            </Button>
-          </Tooltip>
-        </div>
+        <FabAdd
+          title="업체 추가"
+          onClick={() => { this.showAccountForm('new') }}
+        />
         {this.state.isConfirmModalOpen && (
           <ConfirmModal
             open={this.state.isConfirmModalOpen}

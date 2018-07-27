@@ -13,7 +13,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ProductSearch from '../../components/ProductSearch/ProductSearch';
 import ListHeader from '../../components/ListHeader/ListHeader';
@@ -24,6 +23,7 @@ import ProductForm from '../../components/ProductForm/ProductForm';
 import ProductOrderForm from '../../components/ProductOrderForm/ProductOrderForm';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import Spinner from '../../components/Spinner/Spinner';
+import FabAdd from '../../components/FabAdd/FabAdd';
 import { exportCSV } from '../../helpers/exportCSV';
 import { calculateOffset } from '../../helpers/calculateOffset';
 import './ProductsPage.css';
@@ -320,20 +320,10 @@ class ProductsPage extends Component {
             ))}
           </ListBody>
         )}
-        <div className="fab-add">
-          <Tooltip title="품목 추가">
-            <Button
-              variant="fab"
-              color="primary"
-              aria-label="add"
-              onClick={() => {
-                this.showProductForm('new');
-              }}
-            >
-              <Icon>add</Icon>
-            </Button>
-          </Tooltip>
-        </div>
+        <FabAdd
+          title="품목 추가"
+          onClick={() => { this.showProductForm('new') }}
+        />
         {this.state.isConfirmModalOpen && (
           <ConfirmModal
             open={this.state.isConfirmModalOpen}

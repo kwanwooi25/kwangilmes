@@ -12,7 +12,6 @@ import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
-import Button from '@material-ui/core/Button';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import PlateSearch from '../../components/PlateSearch/PlateSearch';
 import ListHeader from '../../components/ListHeader/ListHeader';
@@ -22,6 +21,7 @@ import PlateListItem from '../../components/PlateListItem/PlateListItem';
 import PlateForm from '../../components/PlateForm/PlateForm';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import Spinner from '../../components/Spinner/Spinner';
+import FabAdd from '../../components/FabAdd/FabAdd';
 import { exportCSV } from '../../helpers/exportCSV';
 import { calculateOffset } from '../../helpers/calculateOffset';
 import './PlatesPage.css';
@@ -271,20 +271,10 @@ class PlatesPage extends Component {
             ))}
           </ListBody>
         )}
-        <div className="fab-add">
-          <Tooltip title="동판 추가">
-            <Button
-              variant="fab"
-              color="primary"
-              aria-label="add"
-              onClick={() => {
-                this.showPlateForm('new');
-              }}
-            >
-              <Icon>add</Icon>
-            </Button>
-          </Tooltip>
-        </div>
+        <FabAdd
+          title="동판 추가"
+          onClick={() => { this.showPlateForm('new') }}
+        />
         {this.state.isConfirmModalOpen && (
           <ConfirmModal
             open={this.state.isConfirmModalOpen}
