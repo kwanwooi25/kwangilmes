@@ -23,7 +23,45 @@ import ProductListItem from '../../components/ProductListItem/ProductListItem';
 import ProductForm from '../../components/ProductForm/ProductForm';
 import ProductOrderForm from '../../components/ProductOrderForm/ProductOrderForm';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
+import { exportCSV } from '../../helpers/exportCSV';
+import { calculateOffset } from '../../helpers/calculateOffset';
 import './ProductsPage.css';
+
+const CSV_HEADERS = [
+  { key: 'id', name: 'ID' },
+  { key: 'account_name', name: '업체명' },
+  { key: 'product_name', name: '품목명' },
+  { key: 'product_thick', name: '두께' },
+  { key: 'product_length', name: '길이(압출)' },
+  { key: 'product_width', name: '너비(가공)' },
+  { key: 'is_print', name: '무지/인쇄' },
+  { key: 'ext_color', name: '원단색상' },
+  { key: 'ext_antistatic', name: '대전방지' },
+  { key: 'ext_pretreat', name: '처리' },
+  { key: 'ext_memo', name: '압출메모' },
+  { key: 'print_front_color_count', name: '전면도수' },
+  { key: 'print_front_color', name: '전면색상' },
+  { key: 'print_front_position', name: '전면인쇄위치' },
+  { key: 'print_back_color_count', name: '후면도수' },
+  { key: 'print_back_color', name: '후면색상' },
+  { key: 'print_back_position', name: '후면인쇄위치' },
+  { key: 'print_image_url', name: '도안URL' },
+  { key: 'print_memo', name: '인쇄메모' },
+  { key: 'cut_position', name: '가공위치' },
+  { key: 'cut_ultrasonic', name: '초음파가공' },
+  { key: 'cut_powder_pack', name: '가루포장' },
+  { key: 'cut_is_punched', name: '바람구멍' },
+  { key: 'cut_punch_count', name: '바람구멍개수' },
+  { key: 'cut_punch_size', name: '바람구멍크기' },
+  { key: 'cut_punch_position', name: '바람구멍위치' },
+  { key: 'cut_memo', name: '가공메모' },
+  { key: 'pack_material', name: '포장방법' },
+  { key: 'pack_unit', name: '포장단위' },
+  { key: 'pack_deliver_all', name: '전량납품' },
+  { key: 'pack_memo', name: '포장메모' },
+  { key: 'unit_price', name: '단가' },
+  { key: 'product_memo', name: '메모' },
+];
 
 class ProductsPage extends Component {
   constructor() {
@@ -54,6 +92,7 @@ class ProductsPage extends Component {
     this.onProductOrderFormClose = this.onProductOrderFormClose.bind(this);
     this.showProductForm = this.showProductForm.bind(this);
     this.onProductFormClose = this.onProductFormClose.bind(this);
+    this.onExportExcelClick = this.onExportExcelClick.bind(this);
   }
 
   componentDidMount() {
@@ -96,29 +135,11 @@ class ProductsPage extends Component {
   onPageChange = change => {
     const { count, search } = this.props.products;
     const token = this.props.auth.userToken;
-    switch (change) {
-      case 'prev':
-        search.offset -= search.limit;
-        break;
-      case 'next':
-        search.offset += search.limit;
-        break;
-      case 'first':
-        search.offset = 0;
-        break;
-      case 'last':
-        if (count % search.limit === 0) {
-          search.offset =
-            (parseInt(count / search.limit, 10) - 1) * search.limit;
-        } else {
-          search.offset = parseInt(count / search.limit, 10) * search.limit;
-        }
-        break;
-      default:
-        break;
-    }
+
+    search.offset = calculateOffset(change, search.offset, search.limit, count);
+
     this.props.fetchProducts(token, search);
-  };
+  }
 
   onDeleteAllClick = () => {
     const { selected } = this.props.products;
@@ -221,6 +242,25 @@ class ProductsPage extends Component {
     }
   };
 
+  onExportExcelClick = () => {
+    const { search } = this.props.products;
+    const token = this.props.auth.userToken;
+    fetch(`http://localhost:3000/products/for-xls`, {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-access-token': token
+      },
+      method: 'post',
+      body: JSON.stringify(search)
+    })
+      .then(response => response.json())
+      .then(({ success, data }) => {
+        const { products } = data;
+
+        exportCSV('광일_제품목록.csv', CSV_HEADERS, products);
+      });
+  };
+
   render() {
     const { count, current, search, selected } = this.props.products;
     const isFirstPage = search.offset === 0;
@@ -232,7 +272,10 @@ class ProductsPage extends Component {
           title="품목관리"
           ToolButtons={
             <Tooltip title="엑셀 다운로드">
-              <IconButton aria-label="엑셀다운로드">
+              <IconButton
+                aria-label="엑셀다운로드"
+                onClick={this.onExportExcelClick}
+              >
                 <Icon>save_alt</Icon>
               </IconButton>
             </Tooltip>
