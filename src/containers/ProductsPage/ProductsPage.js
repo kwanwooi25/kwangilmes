@@ -246,7 +246,7 @@ class ProductsPage extends Component {
   onExportExcelClick = () => {
     const { search } = this.props.products;
     const token = this.props.auth.userToken;
-    fetch(`http://localhost:3000/products/for-xls`, {
+    fetch(`http://localhost:3000/products-for-xls`, {
       headers: {
         'Content-Type': 'application/json',
         'x-access-token': token

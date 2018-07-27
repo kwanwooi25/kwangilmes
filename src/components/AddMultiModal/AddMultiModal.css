@@ -1,0 +1,15 @@
+.add-multi-modal {
+  max-width: 480px;
+}
+
+.add-multi-modal__file-input {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.add-multi-modal__file-input__filename {
+  flex: 1;
+  padding: 1rem 1rem 0 !important;
+}

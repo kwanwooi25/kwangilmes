@@ -198,7 +198,7 @@ class PlatesPage extends Component {
   onExportExcelClick = () => {
     const { search } = this.props.plates;
     const token = this.props.auth.userToken;
-    fetch(`http://localhost:3000/plates/for-xls`, {
+    fetch(`http://localhost:3000/plates-for-xls`, {
       headers: {
         'Content-Type': 'application/json',
         'x-access-token': token

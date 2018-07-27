@@ -19,10 +19,12 @@ import AccountListItem from '../../components/AccountListItem/AccountListItem';
 import NoData from '../../components/NoData/NoData';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import AccountForm from '../../components/AccountForm/AccountForm';
+import AddMultiModal from '../../components/AddMultiModal/AddMultiModal';
 import Spinner from '../../components/Spinner/Spinner';
 import FabAdd from '../../components/FabAdd/FabAdd';
 import { exportCSV } from '../../helpers/exportCSV';
 import { calculateOffset } from '../../helpers/calculateOffset';
+import AccountsTemplate from '../../assets/accounts_template.xlsx';
 import './AccountsPage.css';
 
 const CSV_HEADERS = [
@@ -54,7 +56,8 @@ class AccountsPage extends Component {
       confirmModalDescription: '',
       isAccountFormOpen: false,
       accountFormTitle: '',
-      accountToEdit: ''
+      accountToEdit: '',
+      isAddMultiModalOpen: false
     };
 
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -69,6 +72,8 @@ class AccountsPage extends Component {
     this.showAccountForm = this.showAccountForm.bind(this);
     this.onAccountFormClose = this.onAccountFormClose.bind(this);
     this.onExportExcelClick = this.onExportExcelClick.bind(this);
+    this.showAddMultiModal = this.showAddMultiModal.bind(this);
+    this.onAddMultiModalClose = this.onAddMultiModalClose.bind(this);
   }
 
   componentDidMount() {
@@ -179,10 +184,45 @@ class AccountsPage extends Component {
     }
   }
 
+  showAddMultiModal = () => {
+    this.setState({ isAddMultiModalOpen: true });
+  };
+
+  onAddMultiModalClose = (result, rows) => {
+    this.setState({ isAddMultiModalOpen: false });
+
+    if (result) {
+      // header row
+      const header = rows[0].map(
+        column => CSV_HEADERS.find(({ name }) => name === column).key
+      );
+
+      // body rows
+      rows.shift();
+
+      // generate json array
+      const accounts = rows.map(row => {
+        const json = `{ ${row
+          .map((column, index) => {
+            const value = column !== null ? column : '';
+            return `"${header[index]}": "${value}"`;
+          })
+          .join(',')} }`;
+
+        return JSON.parse(json);
+      });
+
+      // add accounts
+      const { search } = this.props.accounts;
+      const token = this.props.auth.userToken;
+      this.props.addAccounts(token, accounts, search);
+    }
+  };
+
   onExportExcelClick = () => {
     const { search } = this.props.accounts;
     const token = this.props.auth.userToken;
-    fetch(`http://localhost:3000/accounts/for-xls`, {
+    fetch(`http://localhost:3000/accounts-for-xls`, {
       headers: {
         'Content-Type': 'application/json',
         'x-access-token': token
@@ -210,14 +250,25 @@ class AccountsPage extends Component {
           searchBox
           onSearchChange={this.onSearchChange}
           ToolButtons={
-            <Tooltip title="엑셀 다운로드">
-              <IconButton
-                aria-label="엑셀다운로드"
-                onClick={this.onExportExcelClick}
-              >
-                <Icon>save_alt</Icon>
-              </IconButton>
-            </Tooltip>
+            <div>
+              <Tooltip title="엑셀 업로드">
+                <IconButton
+                  aria-label="엑셀업로드"
+                  component="span"
+                  onClick={this.showAddMultiModal}
+                >
+                  <Icon>publish</Icon>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="엑셀 다운로드">
+                <IconButton
+                  aria-label="엑셀다운로드"
+                  onClick={this.onExportExcelClick}
+                >
+                  <Icon>save_alt</Icon>
+                </IconButton>
+              </Tooltip>
+            </div>
           }
         />
         <Divider />
@@ -255,7 +306,9 @@ class AccountsPage extends Component {
         )}
         <FabAdd
           title="업체 추가"
-          onClick={() => { this.showAccountForm('new') }}
+          onClick={() => {
+            this.showAccountForm('new');
+          }}
         />
         {this.state.isConfirmModalOpen && (
           <ConfirmModal
@@ -271,6 +324,13 @@ class AccountsPage extends Component {
             open={this.state.isAccountFormOpen}
             title={this.state.accountFormTitle}
             onClose={this.onAccountFormClose}
+          />
+        )}
+        {this.state.isAddMultiModalOpen && (
+          <AddMultiModal
+            open={this.state.isAddMultiModalOpen}
+            template={AccountsTemplate}
+            onClose={this.onAddMultiModalClose}
           />
         )}
       </main>

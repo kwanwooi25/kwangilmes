@@ -242,7 +242,7 @@ class OrdersPage extends Component {
   onExportExcelClick = () => {
     const { search } = this.props.orders;
     const token = this.props.auth.userToken;
-    fetch(`http://localhost:3000/orders/for-xls`, {
+    fetch(`http://localhost:3000/orders-for-xls`, {
       headers: {
         'Content-Type': 'application/json',
         'x-access-token': token
