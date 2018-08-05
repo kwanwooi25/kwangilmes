@@ -1,41 +1,52 @@
-export const exportCSV = (filename, headers, data) => {
-  const keys = headers.map(({ key }) => key);
-  const headerCSV = headers.map(({ name }) => name).join(',');
+export const exportCSV = (filename, headers, target, search, userToken) => {
+  fetch(`http://localhost:3000/${target}-for-xls`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'post',
+    body: JSON.stringify(search)
+  })
+    .then(response => response.json())
+    .then(({ success, data }) => {
+      const keys = headers.map(({ key }) => key);
+      const headerCSV = headers.map(({ name }) => name).join(',');
 
-  // generate body csv from data
-  const bodyCSV = data
-    .map(account => {
-      return keys
-        .map(key => {
-          if (
-            account[key] === undefined ||
-            account[key] === null ||
-            account[key] === false
-          ) {
-            return '""';
-          } else if (account[key] === true) {
-            return '"Y"';
-          } else if (isDate(account[key])) {
-            const date = account[key].substring(0, 10);
-            return '"t"'.replace('t', date);
-          } else {
-            return '"t"'.replace('t', account[key]);
-          }
+      // generate body csv from data
+      const bodyCSV = data[target]
+        .map(item => {
+          return keys
+            .map(key => {
+              if (
+                item[key] === undefined ||
+                item[key] === null ||
+                item[key] === false
+              ) {
+                return '""';
+              } else if (item[key] === true) {
+                return '"Y"';
+              } else if (isDate(item[key])) {
+                const date = item[key].substring(0, 10);
+                return '"t"'.replace('t', date);
+              } else {
+                return '"t"'.replace('t', item[key]);
+              }
+            })
+            .join(',');
         })
-        .join(',');
-    })
-    .join('\r\n');
+        .join('\r\n');
 
-  // ** must add '\ueff' to prevent broken korean font
-  const blob = new Blob(['\ufeff' + headerCSV + '\r\n' + bodyCSV], {
-    type: 'text/csv;charset=utf-8;'
-  });
+      // ** must add '\ueff' to prevent broken korean font
+      const blob = new Blob(['\ufeff' + headerCSV + '\r\n' + bodyCSV], {
+        type: 'text/csv;charset=utf-8;'
+      });
 
-  if (navigator.msSaveOrOpenBlob) {
-    navigator.msSaveOrOpenBlob(blob, filename);
-  } else {
-    downloadAnchor(URL.createObjectURL(blob), filename);
-  }
+      if (navigator.msSaveOrOpenBlob) {
+        navigator.msSaveOrOpenBlob(blob, filename);
+      } else {
+        downloadAnchor(URL.createObjectURL(blob), filename);
+      }
+    });
 };
 
 // check if the value is date

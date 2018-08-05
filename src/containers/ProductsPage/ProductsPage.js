@@ -9,59 +9,57 @@ import {
   deleteProducts,
   addOrder
 } from '../../actions';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ProductSearch from '../../components/ProductSearch/ProductSearch';
 import ListHeader from '../../components/ListHeader/ListHeader';
 import ListBody from '../../components/ListBody/ListBody';
-import NoData from '../../components/NoData/NoData';
 import ProductListItem from '../../components/ProductListItem/ProductListItem';
 import ProductForm from '../../components/ProductForm/ProductForm';
 import ProductOrderForm from '../../components/ProductOrderForm/ProductOrderForm';
+import AddMultiModal from '../../components/AddMultiModal/AddMultiModal';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
-import Spinner from '../../components/Spinner/Spinner';
 import FabAdd from '../../components/FabAdd/FabAdd';
 import { exportCSV } from '../../helpers/exportCSV';
 import { calculateOffset } from '../../helpers/calculateOffset';
+import { convertExcelToJSON } from '../../helpers/convertExcelToJSON';
+import ProductsTemplate from '../../assets/products_template.xlsx';
 import './ProductsPage.css';
 
 const CSV_HEADERS = [
-  { key: 'id', name: 'ID' },
-  { key: 'account_name', name: '업체명' },
-  { key: 'product_name', name: '품목명' },
-  { key: 'product_thick', name: '두께' },
-  { key: 'product_length', name: '길이(압출)' },
-  { key: 'product_width', name: '너비(가공)' },
-  { key: 'is_print', name: '무지/인쇄' },
-  { key: 'ext_color', name: '원단색상' },
-  { key: 'ext_antistatic', name: '대전방지' },
-  { key: 'ext_pretreat', name: '처리' },
-  { key: 'ext_memo', name: '압출메모' },
-  { key: 'print_front_color_count', name: '전면도수' },
-  { key: 'print_front_color', name: '전면색상' },
-  { key: 'print_front_position', name: '전면인쇄위치' },
-  { key: 'print_back_color_count', name: '후면도수' },
-  { key: 'print_back_color', name: '후면색상' },
-  { key: 'print_back_position', name: '후면인쇄위치' },
-  { key: 'print_image_url', name: '도안URL' },
-  { key: 'print_memo', name: '인쇄메모' },
-  { key: 'cut_position', name: '가공위치' },
-  { key: 'cut_ultrasonic', name: '초음파가공' },
-  { key: 'cut_powder_pack', name: '가루포장' },
-  { key: 'cut_is_punched', name: '바람구멍' },
-  { key: 'cut_punch_count', name: '바람구멍개수' },
-  { key: 'cut_punch_size', name: '바람구멍크기' },
-  { key: 'cut_punch_position', name: '바람구멍위치' },
-  { key: 'cut_memo', name: '가공메모' },
-  { key: 'pack_material', name: '포장방법' },
-  { key: 'pack_unit', name: '포장단위' },
-  { key: 'pack_deliver_all', name: '전량납품' },
-  { key: 'pack_memo', name: '포장메모' },
-  { key: 'unit_price', name: '단가' },
-  { key: 'product_memo', name: '메모' },
+  { key: 'id', name: 'ID', type: 'integer' },
+  { key: 'account_name', name: '업체명', type: 'string' },
+  { key: 'product_name', name: '품목명', type: 'string' },
+  { key: 'product_thick', name: '두께', type: 'string' },
+  { key: 'product_length', name: '길이(압출)', type: 'string' },
+  { key: 'product_width', name: '너비(가공)', type: 'string' },
+  { key: 'is_print', name: '무지/인쇄', type: 'boolean' },
+  { key: 'ext_color', name: '원단색상', type: 'string' },
+  { key: 'ext_antistatic', name: '대전방지', type: 'boolean' },
+  { key: 'ext_pretreat', name: '처리', type: 'string' },
+  { key: 'ext_memo', name: '압출메모', type: 'string' },
+  { key: 'print_front_color_count', name: '전면도수', type: 'integer' },
+  { key: 'print_front_color', name: '전면색상', type: 'string' },
+  { key: 'print_front_position', name: '전면인쇄위치', type: 'string' },
+  { key: 'print_back_color_count', name: '후면도수', type: 'integer' },
+  { key: 'print_back_color', name: '후면색상', type: 'string' },
+  { key: 'print_back_position', name: '후면인쇄위치', type: 'string' },
+  { key: 'print_image_url', name: '도안URL', type: 'string' },
+  { key: 'print_memo', name: '인쇄메모', type: 'string' },
+  { key: 'cut_position', name: '가공위치', type: 'string' },
+  { key: 'cut_ultrasonic', name: '초음파가공', type: 'boolean' },
+  { key: 'cut_powder_pack', name: '가루포장', type: 'boolean' },
+  { key: 'cut_is_punched', name: '바람구멍', type: 'boolean' },
+  { key: 'cut_punch_count', name: '바람구멍개수', type: 'integer' },
+  { key: 'cut_punch_size', name: '바람구멍크기', type: 'string' },
+  { key: 'cut_punch_position', name: '바람구멍위치', type: 'string' },
+  { key: 'cut_memo', name: '가공메모', type: 'string' },
+  { key: 'pack_material', name: '포장방법', type: 'string' },
+  { key: 'pack_unit', name: '포장단위', type: 'integer' },
+  { key: 'pack_deliver_all', name: '전량납품', type: 'boolean' },
+  { key: 'pack_memo', name: '포장메모', type: 'string' },
+  { key: 'unit_price', name: '단가', type: 'float' },
+  { key: 'product_memo', name: '메모', type: 'string' }
 ];
 
 class ProductsPage extends Component {
@@ -77,7 +75,8 @@ class ProductsPage extends Component {
       productFormTitle: '',
       productToEdit: '',
       isProductOrderFormOpen: false,
-      productToOrder: {}
+      productToOrder: {},
+      isAddMultiModalOpen: false
     };
 
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -140,7 +139,7 @@ class ProductsPage extends Component {
     search.offset = calculateOffset(change, search.offset, search.limit, count);
 
     this.props.fetchProducts(token, search);
-  }
+  };
 
   onDeleteAllClick = () => {
     const { selected } = this.props.products;
@@ -243,23 +242,28 @@ class ProductsPage extends Component {
     }
   };
 
+  showAddMultiModal = () => {
+    this.setState({ isAddMultiModalOpen: true });
+  };
+
+  onAddMultiModalClose = (result, rows) => {
+    this.setState({ isAddMultiModalOpen: false });
+
+    if (result) {
+      const products = convertExcelToJSON(rows, CSV_HEADERS);
+
+      // add products
+      const { search } = this.props.products;
+      const token = this.props.auth.userToken;
+      this.props.addProducts(token, products, search);
+    }
+  };
+
   onExportExcelClick = () => {
     const { search } = this.props.products;
     const token = this.props.auth.userToken;
-    fetch(`http://localhost:3000/products-for-xls`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': token
-      },
-      method: 'post',
-      body: JSON.stringify(search)
-    })
-      .then(response => response.json())
-      .then(({ success, data }) => {
-        const { products } = data;
 
-        exportCSV('광일_제품목록.csv', CSV_HEADERS, products);
-      });
+    exportCSV('광일_제품목록.csv', CSV_HEADERS, 'products', search, token);
   };
 
   render() {
@@ -271,16 +275,10 @@ class ProductsPage extends Component {
       <main>
         <PageHeader
           title="품목관리"
-          ToolButtons={
-            <Tooltip title="엑셀 다운로드">
-              <IconButton
-                aria-label="엑셀다운로드"
-                onClick={this.onExportExcelClick}
-              >
-                <Icon>save_alt</Icon>
-              </IconButton>
-            </Tooltip>
-          }
+          uploadButton={true}
+          onUploadButtonClick={this.showAddMultiModal}
+          exportButton={true}
+          onExportButtonClick={this.onExportExcelClick}
         />
         <Divider />
         <ProductSearch
@@ -301,28 +299,24 @@ class ProductsPage extends Component {
           totalCount={count}
           offset={search.offset}
         />
-        {isPending ? (
-          <Spinner />
-        ) : current.length === 0 ? (
-          <NoData />
-        ) : (
-          <ListBody>
-            {current.map(product => (
-              <ProductListItem
-                key={product.id}
-                search={search}
-                product={product}
-                onListItemChecked={this.onListItemChecked}
-                onListItemOrderClick={this.showProductOrderForm}
-                onListItemEditClick={this.showProductForm}
-                onListItemDeleteClick={this.showConfirmDeleteModal}
-              />
-            ))}
-          </ListBody>
-        )}
+        <ListBody isPending={isPending} hasData={current.length !== 0}>
+          {current.map(product => (
+            <ProductListItem
+              key={product.id}
+              search={search}
+              product={product}
+              onListItemChecked={this.onListItemChecked}
+              onListItemOrderClick={this.showProductOrderForm}
+              onListItemEditClick={this.showProductForm}
+              onListItemDeleteClick={this.showConfirmDeleteModal}
+            />
+          ))}
+        </ListBody>
         <FabAdd
           title="품목 추가"
-          onClick={() => { this.showProductForm('new') }}
+          onClick={() => {
+            this.showProductForm('new');
+          }}
         />
         {this.state.isConfirmModalOpen && (
           <ConfirmModal
@@ -345,6 +339,13 @@ class ProductsPage extends Component {
             product={this.state.productToOrder}
             open={this.state.isProductOrderFormOpen}
             onClose={this.onProductOrderFormClose}
+          />
+        )}
+        {this.state.isAddMultiModalOpen && (
+          <AddMultiModal
+            open={this.state.isAddMultiModalOpen}
+            template={ProductsTemplate}
+            onClose={this.onAddMultiModalClose}
           />
         )}
       </main>

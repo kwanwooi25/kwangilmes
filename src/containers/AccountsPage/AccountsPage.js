@@ -9,18 +9,13 @@ import {
   deleteAccounts
 } from '../../actions';
 import Divider from '@material-ui/core/Divider';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ListHeader from '../../components/ListHeader/ListHeader';
 import ListBody from '../../components/ListBody/ListBody';
 import AccountListItem from '../../components/AccountListItem/AccountListItem';
-import NoData from '../../components/NoData/NoData';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import AccountForm from '../../components/AccountForm/AccountForm';
 import AddMultiModal from '../../components/AddMultiModal/AddMultiModal';
-import Spinner from '../../components/Spinner/Spinner';
 import FabAdd from '../../components/FabAdd/FabAdd';
 import { exportCSV } from '../../helpers/exportCSV';
 import { calculateOffset } from '../../helpers/calculateOffset';
@@ -222,20 +217,8 @@ class AccountsPage extends Component {
   onExportExcelClick = () => {
     const { search } = this.props.accounts;
     const token = this.props.auth.userToken;
-    fetch(`http://localhost:3000/accounts-for-xls`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': token
-      },
-      method: 'post',
-      body: JSON.stringify(search)
-    })
-      .then(response => response.json())
-      .then(({ success, data }) => {
-        const { accounts } = data;
 
-        exportCSV('광일_거래처목록.csv', CSV_HEADERS, accounts);
-      });
+    exportCSV('광일_거래처목록.csv', CSV_HEADERS, 'accounts', search, token);
   };
 
   render() {
@@ -249,27 +232,10 @@ class AccountsPage extends Component {
           title="업체관리"
           searchBox
           onSearchChange={this.onSearchChange}
-          ToolButtons={
-            <div>
-              <Tooltip title="엑셀 업로드">
-                <IconButton
-                  aria-label="엑셀업로드"
-                  component="span"
-                  onClick={this.showAddMultiModal}
-                >
-                  <Icon>publish</Icon>
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="엑셀 다운로드">
-                <IconButton
-                  aria-label="엑셀다운로드"
-                  onClick={this.onExportExcelClick}
-                >
-                  <Icon>save_alt</Icon>
-                </IconButton>
-              </Tooltip>
-            </div>
-          }
+          uploadButton={true}
+          onUploadButtonClick={this.showAddMultiModal}
+          exportButton={true}
+          onExportButtonClick={this.onExportExcelClick}
         />
         <Divider />
         <ListHeader
@@ -286,24 +252,18 @@ class AccountsPage extends Component {
           totalCount={count}
           offset={search.offset}
         />
-        {isPending ? (
-          <Spinner />
-        ) : current.length === 0 ? (
-          <NoData />
-        ) : (
-          <ListBody>
-            {current.map(account => (
-              <AccountListItem
-                key={account.id}
-                searchTerm={search.account_name}
-                account={account}
-                onListItemChecked={this.onListItemChecked}
-                onListItemEditClick={this.showAccountForm}
-                onListItemDeleteClick={this.showConfirmDeleteModal}
-              />
-            ))}
-          </ListBody>
-        )}
+        <ListBody isPending={isPending} hasData={current.length !== 0}>
+          {current.map(account => (
+            <AccountListItem
+              key={account.id}
+              searchTerm={search.account_name}
+              account={account}
+              onListItemChecked={this.onListItemChecked}
+              onListItemEditClick={this.showAccountForm}
+              onListItemDeleteClick={this.showConfirmDeleteModal}
+            />
+          ))}
+        </ListBody>
         <FabAdd
           title="업체 추가"
           onClick={() => {

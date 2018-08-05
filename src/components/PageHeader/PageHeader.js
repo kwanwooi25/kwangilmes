@@ -4,9 +4,10 @@ import Input from '@material-ui/core/Input';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 import './PageHeader.css';
 
-const PageHeader = ({ title, searchBox, onSearchChange, ToolButtons }) => {
+const PageHeader = ({ title, searchBox, onSearchChange, uploadButton, onUploadButtonClick, exportButton, onExportButtonClick }) => {
   return (
     <Grid container className="page-header">
       <Grid item xs={4} sm={6} md={7}>
@@ -39,7 +40,27 @@ const PageHeader = ({ title, searchBox, onSearchChange, ToolButtons }) => {
           )}
         </div>
         <div className="page-header__buttons">
-          {ToolButtons}
+          {uploadButton && (
+            <Tooltip title="엑셀 업로드">
+              <IconButton
+                aria-label="엑셀업로드"
+                component="span"
+                onClick={onUploadButtonClick}
+              >
+                <Icon>publish</Icon>
+              </IconButton>
+            </Tooltip>
+          )}
+          {exportButton && (
+            <Tooltip title="엑셀 다운로드">
+              <IconButton
+                aria-label="엑셀다운로드"
+                onClick={onExportButtonClick}
+              >
+                <Icon>save_alt</Icon>
+              </IconButton>
+            </Tooltip>
+          )}
         </div>
       </Grid>
     </Grid>

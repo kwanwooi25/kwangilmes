@@ -8,9 +8,6 @@ import {
   togglePlatesChecked,
   togglePlateChecked
 } from '../../actions';
-import Tooltip from '@material-ui/core/Tooltip';
-import IconButton from '@material-ui/core/IconButton';
-import Icon from '@material-ui/core/Icon';
 import Divider from '@material-ui/core/Divider';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import PlateSearch from '../../components/PlateSearch/PlateSearch';
@@ -19,11 +16,14 @@ import ListBody from '../../components/ListBody/ListBody';
 import NoData from '../../components/NoData/NoData';
 import PlateListItem from '../../components/PlateListItem/PlateListItem';
 import PlateForm from '../../components/PlateForm/PlateForm';
+import AddMultiModal from '../../components/AddMultiModal/AddMultiModal';
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import Spinner from '../../components/Spinner/Spinner';
 import FabAdd from '../../components/FabAdd/FabAdd';
 import { exportCSV } from '../../helpers/exportCSV';
 import { calculateOffset } from '../../helpers/calculateOffset';
+import { convertExcelToJSON } from '../../helpers/convertExcelToJSON';
+import PlatesTemplate from '../../assets/plates_template.xlsx';
 import './PlatesPage.css';
 
 const CSV_HEADERS = [
@@ -32,15 +32,18 @@ const CSV_HEADERS = [
   { key: 'plate_length', name: '기장' },
   { key: 'plate_material', name: '재질' },
   { key: 'storage_location', name: '보관위치' },
-  { key: 'product_1_name', name: '품목1' },
+  { key: 'product_1_account_name', name: '품목1업체명' },
+  { key: 'product_1_name', name: '품목1품목명' },
   { key: 'product_1_thick', name: '품목1두께' },
   { key: 'product_1_length', name: '품목1길이' },
   { key: 'product_1_width', name: '품목1너비' },
-  { key: 'product_2_name', name: '품목2' },
+  { key: 'product_2_account_name', name: '품목2업체명' },
+  { key: 'product_2_name', name: '품목2품목명' },
   { key: 'product_2_thick', name: '품목2두께' },
   { key: 'product_2_length', name: '품목2길이' },
   { key: 'product_2_width', name: '품목2너비' },
-  { key: 'product_3_name', name: '품목3' },
+  { key: 'product_3_account_name', name: '품목3업체명' },
+  { key: 'product_3_name', name: '품목3품목명' },
   { key: 'product_3_thick', name: '품목3두께' },
   { key: 'product_3_length', name: '품목3길이' },
   { key: 'product_3_width', name: '품목3너비' },
@@ -58,7 +61,8 @@ class PlatesPage extends Component {
       confirmModalDescription: '',
       isPlateFormOpen: false,
       plateFormTitle: '',
-      plateToEdit: ''
+      plateToEdit: '',
+      isAddMultiModalOpen: false
     };
 
     this.onSearchChange = this.onSearchChange.bind(this);
@@ -195,23 +199,28 @@ class PlatesPage extends Component {
     }
   };
 
+  showAddMultiModal = () => {
+    this.setState({ isAddMultiModalOpen: true });
+  };
+
+  onAddMultiModalClose = (result, rows) => {
+    this.setState({ isAddMultiModalOpen: false });
+
+    if (result) {
+      const plates = convertExcelToJSON(rows, CSV_HEADERS);
+
+      // add plates
+      const { search } = this.props.plates;
+      const token = this.props.auth.userToken;
+      this.props.addPlates(token, plates, search);
+    }
+  };
+
   onExportExcelClick = () => {
     const { search } = this.props.plates;
     const token = this.props.auth.userToken;
-    fetch(`http://localhost:3000/plates-for-xls`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': token
-      },
-      method: 'post',
-      body: JSON.stringify(search)
-    })
-      .then(response => response.json())
-      .then(({ success, data }) => {
-        const { plates } = data;
 
-        exportCSV('광일_동판목록.csv', CSV_HEADERS, plates);
-      });
+    exportCSV('광일_동판목록.csv', CSV_HEADERS, 'plates', search, token);
   };
 
   render() {
@@ -223,16 +232,10 @@ class PlatesPage extends Component {
       <main>
         <PageHeader
           title="동판관리"
-          ToolButtons={
-            <Tooltip title="엑셀 다운로드">
-              <IconButton
-                aria-label="엑셀다운로드"
-                onClick={this.onExportExcelClick}
-              >
-                <Icon>save_alt</Icon>
-              </IconButton>
-            </Tooltip>
-          }
+          uploadButton={true}
+          onUploadButtonClick={this.showAddMultiModal}
+          exportButton={true}
+          onExportButtonClick={this.onExportExcelClick}
         />
         <Divider />
         <PlateSearch
@@ -289,6 +292,13 @@ class PlatesPage extends Component {
             open={this.state.isPlateFormOpen}
             title={this.state.plateFormTitle}
             onClose={this.onPlateFormClose}
+          />
+        )}
+        {this.state.isAddMultiModalOpen && (
+          <AddMultiModal
+            open={this.state.isAddMultiModalOpen}
+            template={PlatesTemplate}
+            onClose={this.onAddMultiModalClose}
           />
         )}
       </main>
