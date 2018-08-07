@@ -30,14 +30,9 @@ const SEARCH_FIELDS = [
 ];
 
 class OrderSearch extends Component {
-  state = {
-    date_from: moment().subtract(14, 'days'),
-    date_to: moment(),
-    show_completed: false
-  };
 
   onDateChange = (varName, date) => {
-    let { date_from, date_to } = this.state;
+    let { date_from, date_to } = this.props.searchValues;
     if (varName === 'date_from') {
       date_from = date;
       if (date > date_to) date_to = date;
@@ -46,20 +41,17 @@ class OrderSearch extends Component {
       if (date < date_from) date_from = date;
     }
 
-    this.setState({ date_from, date_to }, () => {
-      this.props.onDateChange(date_from, date_to);
-    });
+    this.props.onDateChange(date_from, date_to);
   };
 
   onDatePresetClick = (number, string) => {
-    let date_from = moment().subtract(number, string);
+    const date_from = moment().subtract(number, string);
+    const date_to = moment();
 
-    this.setState({ date_from, date_to: moment() }, () => {
-      this.props.onDateChange(this.state.date_from, this.state.date_to);
-    });
+    this.props.onDateChange(date_from, date_to);
   };
 
-  renderFields = () => {
+  renderFields = (searchValues) => {
     return SEARCH_FIELDS.map(({ varName, displayName, xs, sm, md, lg }) => {
       switch (varName) {
         case 'date_from':
@@ -69,7 +61,7 @@ class OrderSearch extends Component {
               <CustomDatePicker
                 id={varName}
                 label={displayName}
-                value={this.state[varName]}
+                value={searchValues[varName]}
                 onChange={date => {
                   this.onDateChange(varName, date);
                 }}
@@ -134,9 +126,8 @@ class OrderSearch extends Component {
                 control={
                   <Checkbox
                     color="primary"
-                    checked={this.state[varName]}
+                    checked={searchValues[varName]}
                     onChange={event => {
-                      this.setState({ [varName]: event.target.checked });
                       this.props.onInputChange(varName, event.target.checked);
                     }}
                   />
@@ -159,6 +150,7 @@ class OrderSearch extends Component {
                     event.target.value.toLowerCase()
                   );
                 }}
+                value={searchValues[varName]}
               />
             </Grid>
           );
@@ -167,11 +159,11 @@ class OrderSearch extends Component {
   };
 
   render() {
-    const { onReset } = this.props;
+    const { onReset, searchValues } = this.props;
     return (
       <Grid container spacing={24} className="search-wrapper">
         <Grid container spacing={16} className="search-inputs">
-          {this.renderFields()}
+          {this.renderFields(searchValues)}
         </Grid>
         <Grid item className="search-buttons">
           <Tooltip title="초기화">
@@ -184,16 +176,7 @@ class OrderSearch extends Component {
                   if (target) target.value = '';
                 });
 
-                this.setState(
-                  {
-                    date_from: moment().subtract(14, 'days'),
-                    date_to: moment(),
-                    show_completed: false
-                  },
-                  () => {
-                    onReset();
-                  }
-                );
+                onReset();
               }}
             >
               <Icon>refresh</Icon>

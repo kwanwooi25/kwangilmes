@@ -38,32 +38,30 @@ const PLATE_FORM_REQUIRED = [
   { varName: 'plate_material', error: '동판재질을 선택하세요.' }
 ];
 
-const PLATE_FORM_INITIAL_STATE = {
-  isConfirmModalOpen: false,
-  confirmDescription: '',
-
-  // plate props
-  plate_round: '',
-  plate_length: '',
-  plate_material: '',
-  storage_location: '',
-  products: [],
-  memo: '',
-
-  // error message
-  plate_round_error: '',
-  plate_length_error: '',
-  plate_material_error: '',
-  product_search_error: '',
-
-  // search input
-  product_search: '',
-  product_search_result: [],
-  selectedProduct: null
-};
-
 class PlateForm extends Component {
-  state = PLATE_FORM_INITIAL_STATE;
+  state = {
+    isConfirmModalOpen: false,
+    confirmDescription: '',
+
+    // plate props
+    plate_round: '',
+    plate_length: '',
+    plate_material: '',
+    storage_location: '',
+    products: [],
+    memo: '',
+
+    // error message
+    plate_round_error: '',
+    plate_length_error: '',
+    plate_material_error: '',
+    product_search_error: '',
+
+    // search input
+    product_search: '',
+    product_search_result: [],
+    selectedProduct: null
+  }
 
   componentDidMount() {
     const { plateId, plates } = this.props;
@@ -82,7 +80,7 @@ class PlateForm extends Component {
         }
       }
 
-      this.setState(Object.assign({}, PLATE_FORM_INITIAL_STATE, plate));
+      this.setState(Object.assign(this.state, plate));
     }
   }
 
@@ -115,7 +113,29 @@ class PlateForm extends Component {
         memo: ''
       };
 
-      this.setState(Object.assign({}, PLATE_FORM_INITIAL_STATE));
+      this.setState({
+        isConfirmModalOpen: false,
+        confirmDescription: '',
+
+        // plate props
+        plate_round: '',
+        plate_length: '',
+        plate_material: '',
+        storage_location: '',
+        products: [],
+        memo: '',
+
+        // error message
+        plate_round_error: '',
+        plate_length_error: '',
+        plate_material_error: '',
+        product_search_error: '',
+
+        // search input
+        product_search: '',
+        product_search_result: [],
+        selectedProduct: null
+      });
       this.props.onClose(true, data, this.state.id);
     }
   };

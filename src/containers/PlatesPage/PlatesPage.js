@@ -241,6 +241,7 @@ class PlatesPage extends Component {
         <PlateSearch
           onInputChange={this.onSearchChange}
           onReset={this.onSearchReset}
+          searchValues={search}
         />
         <ListHeader
           rowsPerPage={search.limit}

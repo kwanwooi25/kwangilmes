@@ -231,6 +231,7 @@ class AccountsPage extends Component {
         <PageHeader
           title="업체관리"
           searchBox
+          searchValue={search.account_name}
           onSearchChange={this.onSearchChange}
           uploadButton={true}
           onUploadButtonClick={this.showAddMultiModal}

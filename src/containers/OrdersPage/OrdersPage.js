@@ -217,9 +217,9 @@ class OrdersPage extends Component {
   showProductOrderForm = orderId => {
     const { orders } = this.props;
     const order = orders.current.find(({ id }) => id === orderId);
-    Object.keys(order).forEach(key => {
-      if (order[key] === null) delete order[key];
-    });
+    // Object.keys(order).forEach(key => {
+    //   if (order[key] === null) delete order[key];
+    // });
     this.setState({
       isProductOrderFormOpen: true,
       orderToEdit: order
@@ -232,30 +232,21 @@ class OrdersPage extends Component {
       orderToEdit: {}
     });
 
+    const { search } = this.props.orders;
+    const token = this.props.auth.userToken;
+
     if (result) {
-      const { search } = this.props.orders;
-      const token = this.props.auth.userToken;
       this.props.updateOrder(token, data.id, data, search);
+    } else {
+      this.props.fetchOrders(token, search);
     }
   };
 
   onExportExcelClick = () => {
     const { search } = this.props.orders;
     const token = this.props.auth.userToken;
-    fetch(`http://localhost:3000/orders-for-xls`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': token
-      },
-      method: 'post',
-      body: JSON.stringify(search)
-    })
-      .then(response => response.json())
-      .then(({ success, data }) => {
-        const { orders } = data;
 
-        exportCSV('광일_작업지시목록.csv', CSV_HEADERS, orders);
-      });
+    exportCSV('광일_작업지시목록.csv', CSV_HEADERS, 'orders', search, token);
   };
 
   render() {
@@ -266,23 +257,18 @@ class OrdersPage extends Component {
     return (
       <main>
         <PageHeader
-          title="작업내역"
-          ToolButtons={
-            <Tooltip title="엑셀 다운로드">
-              <IconButton
-                aria-label="엑셀다운로드"
-                onClick={this.onExportExcelClick}
-              >
-                <Icon>save_alt</Icon>
-              </IconButton>
-            </Tooltip>
-          }
+          title="작업지시내역"
+          // uploadButton={true}
+          // onUploadButtonClick={this.showAddMultiModal}
+          exportButton={true}
+          onExportButtonClick={this.onExportExcelClick}
         />
         <Divider />
         <OrderSearch
           onInputChange={this.onSearchChange}
           onDateChange={this.onDateChange}
           onReset={this.onSearchReset}
+          searchValues={search}
         />
         <ListHeader
           rowsPerPage={search.limit}

@@ -35,7 +35,7 @@ class ProductForm extends Component {
     if (productId !== '') {
       const product = products.current.find(({ id }) => id === productId);
       Object.keys(product).forEach(key => {
-        if (product[key] === null) delete product[key];
+        // if (product[key] === null) delete product[key];
         if (key === 'is_print') {
           product[key] = product[key] ? 'is_print_true' : 'is_print_false';
         }

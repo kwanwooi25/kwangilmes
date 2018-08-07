@@ -81,6 +81,8 @@ class ProductOrderForm extends Component {
       });
     }
 
+    console.log(data);
+
     this.setState(Object.assign({}, this.state, data));
   }
 

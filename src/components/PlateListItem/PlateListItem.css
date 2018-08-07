@@ -11,9 +11,14 @@
   padding-left: 1rem;
 }
 
+.plate-list-item__account-name,
 .plate-list-item__product-name,
 .plate-list-item__product-size {
   width: 100%;
+}
+
+.plate-list-item__account-name {
+  font-size: 0.8rem;
 }
 
 .plate-list-item__product-name {
@@ -28,6 +33,15 @@
 @media (min-width: 600px) {
   .plate-list-item__product {
     flex-direction: row;
+  }
+
+  .plate-list-item__account-name {
+    flex: 1;
+  }
+
+  .plate-list-item__product-name,
+  .plate-list-item__product-size {
+    flex: 2;
   }
 }
 

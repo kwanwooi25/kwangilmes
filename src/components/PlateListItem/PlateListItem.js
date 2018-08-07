@@ -19,16 +19,19 @@ const PlateListItem = ({
     id,
     checked,
     product_1,
+    product_1_account_name,
     product_1_name,
     product_1_thick,
     product_1_length,
     product_1_width,
     product_2,
+    product_2_account_name,
     product_2_name,
     product_2_thick,
     product_2_length,
     product_2_width,
     product_3,
+    product_3_account_name,
     product_3_name,
     product_3_thick,
     product_3_length,
@@ -37,16 +40,19 @@ const PlateListItem = ({
   const products = [
     {
       id: product_1,
+      account_name: product_1_account_name,
       name: product_1_name,
       size: `${product_1_thick} x ${product_1_length} x ${product_1_width}`
     },
     {
       id: product_2,
+      account_name: product_2_account_name,
       name: product_2_name,
       size: `${product_2_thick} x ${product_2_length} x ${product_2_width}`
     },
     {
       id: product_3,
+      account_name: product_3_account_name,
       name: product_3_name,
       size: `${product_3_thick} x ${product_3_length} x ${product_3_width}`
     }
@@ -69,11 +75,14 @@ const PlateListItem = ({
         </Grid>
         <Grid item xs={12} md={9} className="plate-list-item__product-list">
           {products.length &&
-            products.map(({ id, name, size }) => {
+            products.map(({ id, account_name, name, size }) => {
               if (id !== null && name !== null) {
                 name = highlight(name, search.product_name);
                 return (
                   <div key={id} className="plate-list-item__product">
+                    <span className="plate-list-item__account-name">
+                      {account_name}
+                    </span>
                     <span
                       className="plate-list-item__product-name"
                       dangerouslySetInnerHTML={{ __html: name }}

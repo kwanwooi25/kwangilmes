@@ -38,12 +38,16 @@ class PlateSize extends Component {
         case 'products':
           for (let i = 1; i < 4; i++) {
             if (plate[`product_${i}`]) {
+              let account_name = plate[`product_${i}_account_name`];
               let name = plate[`product_${i}_name`];
               let thick = plate[`product_${i}_thick`];
               let length = plate[`product_${i}_length`];
               let width = plate[`product_${i}_width`];
               value += `
                 <span class="plate-detail-view__product">
+                  <span class="plate-detail-view__account-name">
+                    ${account_name}
+                  </span>
                   <span class="plate-detail-view__product-name">
                     ${name}
                   </span>

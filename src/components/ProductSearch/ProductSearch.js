@@ -20,7 +20,7 @@ const SEARCH_FIELDS_MD_UP = [
   { varName: 'print_color', displayName: '인쇄색상', xs: 6, md: 3, lg: 2 }
 ];
 
-const renderFields = (elements, onInputChange) => {
+const renderFields = (elements, onInputChange, searchValues) => {
   return elements.map(({ varName, displayName, xs, sm, md, lg }) => {
     return (
       <Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
@@ -31,13 +31,14 @@ const renderFields = (elements, onInputChange) => {
           onChange={event => {
             onInputChange(varName, event);
           }}
+          value={searchValues[varName]}
         />
       </Grid>
     );
   });
 };
 
-const renderFieldsMdUp = (elements, onInputChange) => {
+const renderFieldsMdUp = (elements, onInputChange, searchValues) => {
   return elements.map(({ varName, displayName, xs, sm, md, lg }) => {
     return (
       <Hidden smDown key={varName}>
@@ -49,6 +50,7 @@ const renderFieldsMdUp = (elements, onInputChange) => {
             onChange={event => {
               onInputChange(varName, event);
             }}
+            value={searchValues[varName]}
           />
         </Grid>
       </Hidden>
@@ -56,12 +58,12 @@ const renderFieldsMdUp = (elements, onInputChange) => {
   });
 };
 
-const ProductSearch = ({ onInputChange, onReset }) => {
+const ProductSearch = ({ onInputChange, onReset, searchValues }) => {
   return (
     <Grid container spacing={24} className="search-wrapper">
       <Grid container spacing={16} className="search-inputs">
-        {renderFields(SEARCH_FIELDS, onInputChange)}
-        {renderFieldsMdUp(SEARCH_FIELDS_MD_UP, onInputChange)}
+        {renderFields(SEARCH_FIELDS, onInputChange, searchValues)}
+        {renderFieldsMdUp(SEARCH_FIELDS_MD_UP, onInputChange, searchValues)}
       </Grid>
       <Grid item className="search-buttons">
         <Tooltip title="초기화">

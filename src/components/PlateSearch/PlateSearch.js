@@ -12,7 +12,7 @@ const SEARCH_FIELDS = [
   { varName: 'plate_length', displayName: '기장', xs: 6, sm: 3 }
 ];
 
-const renderFields = (elements, onInputChange) => {
+const renderFields = (elements, onInputChange, searchValues) => {
   return elements.map(({ varName, displayName, xs, sm, md, lg }) => {
     return (
       <Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
@@ -23,17 +23,18 @@ const renderFields = (elements, onInputChange) => {
           onChange={event => {
             onInputChange(varName, event);
           }}
+          value={searchValues[varName]}
         />
       </Grid>
     );
   });
 };
 
-const PlateSearch = ({ onInputChange, onReset }) => {
+const PlateSearch = ({ onInputChange, onReset, searchValues }) => {
   return (
     <Grid container spacing={24} className="search-wrapper">
       <Grid container spacing={16} className="search-inputs">
-        {renderFields(SEARCH_FIELDS, onInputChange)}
+        {renderFields(SEARCH_FIELDS, onInputChange, searchValues)}
       </Grid>
       <Grid item className="search-buttons">
         <Tooltip title="초기화">
