@@ -1,1 +1,8 @@
+.dashboard-tabs {
+	border-bottom: 1px solid #cdcdcd;
+}
 
+.dashboard-tab span {
+	font-size: 1.2rem;
+	font-weight: bold;
+}

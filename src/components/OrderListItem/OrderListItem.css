@@ -1,19 +1,19 @@
 .order-list-item {
-  flex-direction: column;
-  flex-wrap: wrap;
+	flex-direction: column;
+	flex-wrap: wrap;
 }
 
 .completed {
-  background: #dedede;
-  color: #ababab;
+	background: #dedede;
+	color: #ababab;
 }
 
 .order-list-item__checkbox {
-  align-self: flex-start;
+	align-self: flex-start;
 }
 
 .order-list-item__buttons {
-  align-self: flex-end;
+	align-self: flex-end;
 }
 
 .order-list-item__delivery-remark-wrapper,
@@ -23,70 +23,75 @@
 .order-list-item__product-size-wrapper,
 .order-list-item__print-info-wrapper,
 .order-list-item__quantity-wrapper {
-  padding: .2rem 0;
+	padding: .2rem 0;
+}
+
+.order-list-item__delivery-remark-wrapper {
+	padding-bottom: .5rem;
 }
 
 .order-list-item__delivery-remark {
-  background: #f50057;
-  border-radius: .25rem;
-  color: white;
-  font-size: .75rem;
-  padding: .25rem;
-  margin-left: .5rem;
+	background: #f50057;
+	border-radius: 12.1px;
+	color: white;
+	font-size: .7rem;
+	font-weight: bold;
+	padding: .35rem .5rem;
+	margin-left: .35rem;
 }
 
 .order-list-item__delivery-remark.modified {
-  background: #ffc400;
-  color: black;
+	background: #ffc400;
+	color: black;
 }
 
 .order-list-item__delivery-remark.completed {
-  background: #909090;
-  color: #efefef;
+	background: #909090;
+	color: #efefef;
 }
 
 .order-list-item__delivery-remark:first-child {
-  margin-left: 0;
+	margin-left: 0;
 }
 
 .order-list-item__dates-wrapper,
 .order-list-item__quantity-wrapper {
-  align-items: baseline;
-  display: flex;
-  justify-content: flex-end;
-  flex-wrap: wrap;
+	align-items: baseline;
+	display: flex;
+	justify-content: flex-end;
+	flex-wrap: wrap;
 }
 
 .order-list-item__dates,
 .order-list-item__quantity-weight {
-  font-size: .8rem;
+	font-size: .8rem;
 }
 
 .order-list-item__account-name,
 .order-list-item__print-info {
-  font-size: .9rem;
+	font-size: .9rem;
 }
 
 .order-list-item__quantity-title {
-  font-size: .75rem;
+	font-size: .75rem;
 }
 
 @media (min-width: 960px) {
-  .order-list-item {
-    align-items: center;
-    flex-direction: row;
-  }
+	.order-list-item {
+		align-items: center;
+		flex-direction: row;
+	}
 
-  .order-list-item__checkbox,
-  .order-list-item__buttons {
-    align-self: center;
-  }
+	.order-list-item__checkbox,
+	.order-list-item__buttons {
+		align-self: center;
+	}
 }
 
 @media (min-width: 1280px) {
-  .order-list-item__dates-wrapper,
-  .order-list-item__quantity-wrapper {
-    justify-content: flex-start;
-    margin-left: 1rem;
-  }
+	.order-list-item__dates-wrapper,
+	.order-list-item__quantity-wrapper {
+		justify-content: flex-start;
+		margin-left: 1rem;
+	}
 }

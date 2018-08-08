@@ -12,122 +12,115 @@ import ProductSize from '../ProductSize/ProductSize';
 import './ProductListItem.css';
 
 const ProductListItem = ({
-  search,
-  product,
-  onListItemChecked,
-  onListItemOrderClick,
-  onListItemEditClick,
-  onListItemDeleteClick
+	search,
+	product,
+	onListItemChecked,
+	onListItemOrderClick,
+	onListItemEditClick,
+	onListItemDeleteClick
 }) => {
-  const {
-    id,
-    checked,
-    ext_color,
-    is_print,
-    print_front_color_count,
-    print_front_color,
-    print_back_color_count,
-    print_back_color
-  } = product;
-  const extColor = highlight(ext_color, search.ext_color);
-  let printCount;
-  let printFront;
-  let printBack;
-  let printColor;
-  if (is_print) {
-    printCount =
-      Number(print_front_color_count) + Number(print_back_color_count);
-    if (Number(print_back_color_count) > 0) {
-      printFront = `전면: ${print_front_color}`;
-      printBack = `후면: ${print_back_color}`;
-      printColor = highlight(
-        `인쇄 ${printCount}도 (${printFront} / ${printBack})`,
-        search.print_color
-      );
-    } else {
-      printColor = highlight(
-        `인쇄 ${printCount}도 (${print_front_color})`,
-        search.print_color
-      );
-    }
-  }
+	const {
+		id,
+		checked,
+		ext_color,
+		is_print,
+		print_front_color_count,
+		print_front_color,
+		print_back_color_count,
+		print_back_color
+	} = product;
+	const extColor = highlight(ext_color, search.ext_color);
+	let printCount;
+	let printFront;
+	let printBack;
+	let printColor;
+	if (is_print) {
+		printCount = Number(print_front_color_count) + Number(print_back_color_count);
+		if (Number(print_back_color_count) > 0) {
+			printFront = `전면: ${print_front_color}`;
+			printBack = `후면: ${print_back_color}`;
+			printColor = highlight(`인쇄 ${printCount}도 (${printFront} / ${printBack})`, search.print_color);
+		} else {
+			printColor = highlight(`인쇄 ${printCount}도 (${print_front_color})`, search.print_color);
+		}
+	}
 
-  return (
-    <li key={id} className="list-body__item">
-      <div>
-        <Checkbox
-          checked={checked}
-          onChange={() => {
-            onListItemChecked(id);
-          }}
-          color="primary"
-        />
-      </div>
-      <Grid container className="list-body__item-details">
-        <Grid item xs={12} md={9} className="product-list-item__names">
-          <Grid item xs={12} sm={4}>
-            <AccountName
-              account={product}
-              searchTerm={search.account_name}
-              className="product-list-item__account-name"
-            />
-          </Grid>
-          <Grid item xs={12} sm={5}>
-            <ProductName product={product} searchTerm={search.product_name} />
-          </Grid>
-          <Grid item xs={12} sm={3}>
-            <ProductSize product={product} search={search} />
-          </Grid>
-        </Grid>
-        <Hidden smDown>
-          <Grid item md={3} className="product-list-item__colors">
-            <Grid item md={12} lg={3}>
-              <span dangerouslySetInnerHTML={{ __html: extColor }} />
-            </Grid>
-            {is_print && (
-              <Grid item md={12} lg={9}>
-                <span dangerouslySetInnerHTML={{ __html: printColor }} />
-              </Grid>
-            )}
-          </Grid>
-        </Hidden>
-      </Grid>
-      <div className="list-body__item-buttons">
-        <Tooltip title="작업지시">
-          <IconButton
-            color="secondary"
-            aria-label="order"
-            onClick={() => {
-              onListItemOrderClick(id);
-            }}
-          >
-            <Icon>build</Icon>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="수정">
-          <IconButton
-            color="primary"
-            aria-label="edit"
-            onClick={() => {
-              onListItemEditClick('edit', id);
-            }}
-          >
-            <Icon>edit</Icon>
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="삭제">
-          <IconButton
-            aria-label="delete"
-            onClick={() => {
-              onListItemDeleteClick([id]);
-            }}
-          >
-            <Icon>delete</Icon>
-          </IconButton>
-        </Tooltip>
-      </div>
-    </li>
-  );
+	return (
+		<li key={id} className="list-body__item">
+			<div>
+				<Checkbox
+					checked={checked}
+					onChange={() => {
+						onListItemChecked(id);
+					}}
+					color="primary"
+				/>
+			</div>
+			<Grid container className="list-body__item-details">
+				<Grid item xs={12} md={9} className="product-list-item__names">
+					<Grid item xs={12} sm={4}>
+						<AccountName
+							account={product}
+							searchTerm={search.account_name}
+							className="product-list-item__account-name"
+						/>
+					</Grid>
+					<Grid item xs={12} sm={5}>
+						<ProductName product={product} searchTerm={search.product_name} />
+					</Grid>
+					<Grid item xs={12} sm={3}>
+						<ProductSize product={product} search={search} />
+					</Grid>
+				</Grid>
+				<Hidden smDown>
+					<Grid item md={3} className="product-list-item__colors">
+						<Grid item md={12} lg={3}>
+							<span dangerouslySetInnerHTML={{ __html: extColor }} />
+						</Grid>
+						{is_print && (
+							<Grid item md={12} lg={9}>
+								<span dangerouslySetInnerHTML={{ __html: printColor }} />
+							</Grid>
+						)}
+					</Grid>
+				</Hidden>
+			</Grid>
+			<div className="list-body__item-buttons">
+				<Tooltip title="작업지시">
+					<IconButton
+						color="secondary"
+						aria-label="order"
+						onClick={() => {
+							onListItemOrderClick(id);
+						}}
+					>
+						<Icon>build</Icon>
+					</IconButton>
+				</Tooltip>
+				<Tooltip title="수정">
+					<IconButton
+						color="primary"
+						aria-label="edit"
+						onClick={() => {
+							onListItemEditClick('edit', id);
+						}}
+					>
+						<Icon>edit</Icon>
+					</IconButton>
+				</Tooltip>
+				<Tooltip title="삭제">
+					<IconButton
+						aria-label="delete"
+						onClick={() => {
+							onListItemDeleteClick([ id ]);
+						}}
+					>
+						<Icon>delete</Icon>
+					</IconButton>
+				</Tooltip>
+			</div>
+		</li>
+	);
 };
 
 export default ProductListItem;

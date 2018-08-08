@@ -1,0 +1,63 @@
+.orders-need-plate-list {
+	max-width: 960px;
+	margin: 0 auto;
+}
+
+.orders-need-plate {
+	display: flex;
+	flex-direction: column;
+}
+
+.orders-need-plate__account-name,
+.orders-need-plate__product-name,
+.orders-need-plate__product-size {
+	width: 100%;
+}
+
+.orders-need-plate__account-name {
+	font-size: 0.9rem;
+}
+
+.orders-need-plate__product-name {
+	font-size: 1.2rem;
+	font-weight: bold;
+}
+
+.orders-need-plate__plate-status {
+	align-items: center;
+	display: flex;
+	justify-content: center;
+}
+
+.orders-need-plate__plate-status .plate-new,
+.orders-need-plate__plate-status .plate-edit {
+	border-radius: 17.5px;
+	font-size: 1rem;
+	font-weight: bold;
+	color: white;
+	padding: 0.5rem;
+}
+
+.orders-need-plate__plate-status .plate-new {
+	background: #ff1744;
+}
+
+.orders-need-plate__plate-status .plate-edit {
+	background: #3f51b5;
+}
+
+@media (min-width: 600px) {
+	.orders-need-plate {
+		align-items: center;
+		flex-direction: row;
+	}
+
+	.orders-need-plate__account-name,
+	.orders-need-plate__product-size {
+		flex: 1;
+	}
+
+	.orders-need-plate__product-name {
+		flex: 2;
+	}
+}

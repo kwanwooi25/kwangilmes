@@ -52,6 +52,7 @@ ORDERS
 export const SET_ORDERS_PENDING = 'set_orders_pending';
 export const FETCH_ORDERS = 'fetch_orders';
 export const DELETE_ORDERS = 'delete_orders';
+export const FETCH_ORDERS_NEED_PLATE = 'fetch_orders_need_plate';
 
 export const TOGGLE_ORDER_CHECKED = 'toggle_order_checked';
 export const SET_ORDERS_CHECKED = 'set_orders_checked';

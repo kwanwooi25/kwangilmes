@@ -19,404 +19,382 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FullScreenDialog from '../../components/FullScreenDialog/FullScreenDialog';
 import ProductReview from '../../components/ProductReview/ProductReview';
 import './ProductForm.css';
-import {
-  PRODUCT_FORM_SECTIONS,
-  PRODUCT_FORM_REQUIRED,
-  PRODUCT_FORM_INITIAL_STATE
-} from '../../helpers/constants';
+import { PRODUCT_FORM_SECTIONS, PRODUCT_FORM_REQUIRED, PRODUCT_FORM_INITIAL_STATE } from '../../helpers/constants';
 
 class ProductForm extends Component {
-  state = PRODUCT_FORM_INITIAL_STATE;
+	state = PRODUCT_FORM_INITIAL_STATE;
 
-  componentDidMount() {
-    const { auth, productId, products } = this.props;
-    const token = auth.userToken;
-    this.props.fetchAccountNames(token);
-    if (productId !== '') {
-      const product = products.current.find(({ id }) => id === productId);
-      Object.keys(product).forEach(key => {
-        // if (product[key] === null) delete product[key];
-        if (key === 'is_print') {
-          product[key] = product[key] ? 'is_print_true' : 'is_print_false';
-        }
-      });
-      this.setState(Object.assign({}, PRODUCT_FORM_INITIAL_STATE, product));
-    }
-  }
+	componentDidMount() {
+		const { auth, productId, products } = this.props;
+		const token = auth.userToken;
+		this.props.fetchAccountNames(token);
+		if (productId !== '') {
+			const selectedProduct = products.current.find(({ id }) => id === productId);
+			let product = {};
+			Object.keys(selectedProduct).forEach((key) => {
+				if (selectedProduct[key] !== null) product[key] = selectedProduct[key];
+				if (key === 'is_print') product[key] = selectedProduct[key] ? 'is_print_true' : 'is_print_false';
+			});
+			this.setState(Object.assign({}, PRODUCT_FORM_INITIAL_STATE, product));
+		}
+	}
 
-  onClickOk = () => {
-    if (this.validate()) {
-      this.setState({
-        isReviewOpen: true,
-        print_image_preview:
-          this.state.print_image_preview || this.state.print_image_url,
-        account_name_error: '',
-        product_name_error: '',
-        product_thick_error: '',
-        product_length_error: '',
-        product_width_error: '',
-        ext_color_error: ''
-      });
-    }
-  };
+	onClickOk = () => {
+		if (this.validate()) {
+			this.setState({
+				isReviewOpen: true,
+				print_image_preview: this.state.print_image_preview || this.state.print_image_url,
+				account_name_error: '',
+				product_name_error: '',
+				product_thick_error: '',
+				product_length_error: '',
+				product_width_error: '',
+				ext_color_error: ''
+			});
+		}
+	};
 
-  validate = name => {
-    let isValid = true;
+	validate = (name) => {
+		let isValid = true;
 
-    // check required field
-    if (name) {
-      PRODUCT_FORM_REQUIRED.forEach(({ varName, error }) => {
-        if (varName === name && this.state[varName] === '') {
-          this.setState({ [`${varName}_error`]: error });
-        } else if (varName === name && this.state[varName] !== '') {
-          this.setState({ [`${varName}_error`]: '' });
-        }
-      });
-    } else {
-      PRODUCT_FORM_REQUIRED.forEach(({ varName, error }) => {
-        if (this.state[varName] === '') {
-          this.setState({ [`${varName}_error`]: error });
-          isValid = isValid && false;
-        }
-      });
-    }
+		// check required field
+		if (name) {
+			PRODUCT_FORM_REQUIRED.forEach(({ varName, error }) => {
+				if (varName === name && this.state[varName] === '') {
+					this.setState({ [`${varName}_error`]: error });
+				} else if (varName === name && this.state[varName] !== '') {
+					this.setState({ [`${varName}_error`]: '' });
+				}
+			});
+		} else {
+			PRODUCT_FORM_REQUIRED.forEach(({ varName, error }) => {
+				if (this.state[varName] === '') {
+					this.setState({ [`${varName}_error`]: error });
+					isValid = isValid && false;
+				}
+			});
+		}
 
-    return isValid;
-  };
+		return isValid;
+	};
 
-  onInputChange = name => event => {
-    let value;
+	onInputChange = (name) => (event) => {
+		let value;
 
-    if (event.target.type === 'checkbox') {
-      value = event.target.checked;
-    } else if (event.target.type === 'file') {
-      const reader = new FileReader();
-      reader.onload = e => {
-        this.setState({ print_image_preview: e.target.result });
-      };
-      reader.readAsDataURL(event.target.files[0]);
-      value = event.target.value;
-      this.setState({ print_image_file: event.target.files[0] });
-    } else {
-      value = event.target.value;
-    }
+		if (event.target.type === 'checkbox') {
+			value = event.target.checked;
+		} else if (event.target.type === 'file') {
+			const reader = new FileReader();
+			reader.onload = (e) => {
+				this.setState({ print_image_preview: e.target.result });
+			};
+			reader.readAsDataURL(event.target.files[0]);
+			value = event.target.value;
+			this.setState({ print_image_file: event.target.files[0] });
+		} else {
+			value = event.target.value;
+		}
 
-    switch (name) {
-      case 'account_name':
-        const account_id = this.props.accounts.names.filter(
-          ({ account_name }) => account_name === value
-        )[0].id;
-        this.setState({ account_id });
-        break;
+		switch (name) {
+			case 'account_name':
+				const account_id = this.props.accounts.names.filter(({ account_name }) => account_name === value)[0].id;
+				this.setState({ account_id });
+				break;
 
-      case 'is_print':
-        if (value === 'is_print_false') {
-          this.setState({
-            ext_pretreat: '',
-            print_front_color_count: 0,
-            print_front_color: '',
-            print_front_position: '',
-            print_back_color_count: 0,
-            print_back_color: '',
-            print_back_position: '',
-            print_image_file_name: '',
-            print_image_preview: '',
-            print_memo: ''
-          });
-        } else if (value === 'is_print_true') {
-          this.setState({ ext_pretreat: '단면' });
-        }
-        break;
+			case 'is_print':
+				if (value === 'is_print_false') {
+					this.setState({
+						ext_pretreat: '',
+						print_front_color_count: 0,
+						print_front_color: '',
+						print_front_position: '',
+						print_back_color_count: 0,
+						print_back_color: '',
+						print_back_position: '',
+						print_image_file_name: '',
+						print_image_preview: '',
+						print_memo: ''
+					});
+				} else if (value === 'is_print_true') {
+					this.setState({ ext_pretreat: '단면' });
+				}
+				break;
 
-      case 'ext_pretreat':
-        if (value === '단면') {
-          this.setState({
-            print_back_color_count: 0,
-            print_back_color: '',
-            print_back_position: ''
-          });
-        }
-        break;
+			case 'ext_pretreat':
+				if (value === '단면') {
+					this.setState({
+						print_back_color_count: 0,
+						print_back_color: '',
+						print_back_position: ''
+					});
+				}
+				break;
 
-      case 'cut_is_punched':
-        if (value === false) {
-          this.setState({
-            cut_punch_count: 0,
-            cut_punch_size: '',
-            cut_punch_position: ''
-          });
-        }
-        break;
+			case 'cut_is_punched':
+				if (value === false) {
+					this.setState({
+						cut_punch_count: 0,
+						cut_punch_size: '',
+						cut_punch_position: ''
+					});
+				}
+				break;
 
-      default:
-        break;
-    }
+			default:
+				break;
+		}
 
-    this.setState({ [name]: value }, () => {
-      this.validate(name);
-    });
-  };
+		this.setState({ [name]: value }, () => {
+			this.validate(name);
+		});
+	};
 
-  onReviewClose = async result => {
-    this.setState({ isReviewOpen: false });
-    if (result) {
-      const config = {
-        bucketName: process.env.REACT_APP_AWS_BUCKET_NAME,
-        region: process.env.REACT_APP_AWS_REGION,
-        accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY
-      };
-      let response;
-      if (this.state.print_image_file) {
-        response = await uploadFile(this.state.print_image_file, config);
-      }
+	onReviewClose = async (result) => {
+		this.setState({ isReviewOpen: false });
+		if (result) {
+			const config = {
+				bucketName: process.env.REACT_APP_AWS_BUCKET_NAME,
+				region: process.env.REACT_APP_AWS_REGION,
+				accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+				secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY
+			};
+			let response;
+			if (this.state.print_image_file) {
+				response = await uploadFile(this.state.print_image_file, config);
+			}
 
-      const data = {
-        // basic info
-        account_id: this.state.account_id,
-        product_name: this.state.product_name,
-        product_thick: this.state.product_thick,
-        product_length: this.state.product_length,
-        product_width: this.state.product_width,
-        is_print: this.state.is_print === 'is_print_true',
+			const data = {
+				// basic info
+				account_id: this.state.account_id,
+				product_name: this.state.product_name,
+				product_thick: this.state.product_thick,
+				product_length: this.state.product_length,
+				product_width: this.state.product_width,
+				is_print: this.state.is_print === 'is_print_true',
 
-        // extrusion
-        ext_color: this.state.ext_color,
-        ext_antistatic: this.state.ext_antistatic,
-        ext_pretreat: this.state.ext_pretreat,
-        ext_memo: this.state.ext_memo,
+				// extrusion
+				ext_color: this.state.ext_color,
+				ext_antistatic: this.state.ext_antistatic,
+				ext_pretreat: this.state.ext_pretreat,
+				ext_memo: this.state.ext_memo,
 
-        // printing
-        print_front_color_count: this.state.print_front_color_count,
-        print_front_color: this.state.print_front_color,
-        print_front_position: this.state.print_front_position,
-        print_back_color_count: this.state.print_back_color_count,
-        print_back_color: this.state.print_back_color,
-        print_back_position: this.state.print_back_position,
-        print_image_url: this.state.print_image_url
-          ? this.state.print_image_url
-          : response
-            ? response.location
-            : '',
-        print_memo: this.state.print_memo,
+				// printing
+				print_front_color_count: this.state.print_front_color_count,
+				print_front_color: this.state.print_front_color,
+				print_front_position: this.state.print_front_position,
+				print_back_color_count: this.state.print_back_color_count,
+				print_back_color: this.state.print_back_color,
+				print_back_position: this.state.print_back_position,
+				print_image_url: response
+					? response.location
+					: this.state.print_image_url ? this.state.print_image_url : '',
+				print_memo: this.state.print_memo,
 
-        // cutting
-        cut_position: this.state.cut_position,
-        cut_ultrasonic: this.state.cut_ultrasonic,
-        cut_powder_pack: this.state.cut_powder_pack,
-        cut_is_punched: this.state.cut_is_punched,
-        cut_punch_count: this.state.cut_punch_count,
-        cut_punch_size: this.state.cut_punch_size,
-        cut_punch_position: this.state.cut_punch_position,
-        cut_memo: this.state.cut_memo,
+				// cutting
+				cut_position: this.state.cut_position,
+				cut_ultrasonic: this.state.cut_ultrasonic,
+				cut_powder_pack: this.state.cut_powder_pack,
+				cut_is_punched: this.state.cut_is_punched,
+				cut_punch_count: this.state.cut_punch_count,
+				cut_punch_size: this.state.cut_punch_size,
+				cut_punch_position: this.state.cut_punch_position,
+				cut_memo: this.state.cut_memo,
 
-        // packaging
-        pack_material: this.state.pack_material,
-        pack_unit: this.state.pack_unit,
-        pack_deliver_all: this.state.pack_deliver_all,
-        pack_memo: this.state.pack_memo,
+				// packaging
+				pack_material: this.state.pack_material,
+				pack_unit: this.state.pack_unit,
+				pack_deliver_all: this.state.pack_deliver_all,
+				pack_memo: this.state.pack_memo,
 
-        // for manager
-        unit_price: this.state.unit_price,
-        product_memo: this.state.product_memo
-      };
+				// for manager
+				unit_price: this.state.unit_price,
+				product_memo: this.state.product_memo
+			};
 
-      this.setState(PRODUCT_FORM_INITIAL_STATE);
-      this.props.onClose(true, data, this.state.id);
-    }
-  };
+			this.setState(PRODUCT_FORM_INITIAL_STATE);
+			this.props.onClose(true, data, this.state.id);
+		}
+	};
 
-  renderSections = () => {
-    return PRODUCT_FORM_SECTIONS.map(({ title, fields }) => {
-      if (title === '인쇄' && this.state.is_print === 'is_print_false') {
-        return undefined;
-      }
+	renderSections = () => {
+		return PRODUCT_FORM_SECTIONS.map(({ title, fields }) => {
+			if (title === '인쇄' && this.state.is_print === 'is_print_false') {
+				return undefined;
+			}
 
-      return (
-        <div className="product-form__section" key={title}>
-          <div className="product-form__section-title">
-            <Typography variant="title">{title}</Typography>
-          </div>
-          <div className="product-form__section-content">
-            <Grid container spacing={24}>
-              {this.renderFields(fields)}
-            </Grid>
-          </div>
-        </div>
-      );
-    });
-  };
+			return (
+				<div className="product-form__section" key={title}>
+					<div className="product-form__section-title">
+						<Typography variant="title">{title}</Typography>
+					</div>
+					<div className="product-form__section-content">
+						<Grid container spacing={24}>
+							{this.renderFields(fields)}
+						</Grid>
+					</div>
+				</div>
+			);
+		});
+	};
 
-  renderFields = fields => {
-    return fields.map(
-      ({ type, varName, displayName, options, xs, sm, md, lg, multiline }) => {
-        const error = this.state[`${varName}_error`];
+	renderFields = (fields) => {
+		return fields.map(({ type, varName, displayName, options, xs, sm, md, lg, multiline }) => {
+			const error = this.state[`${varName}_error`];
 
-        let disabled;
-        switch (varName) {
-          case 'ext_pretreat':
-            disabled = this.state.is_print === 'is_print_false';
-            break;
+			let disabled;
+			switch (varName) {
+				case 'ext_pretreat':
+					disabled = this.state.is_print === 'is_print_false';
+					break;
 
-          case 'print_image_url':
-            disabled = true;
-            break;
+				case 'print_image_url':
+					disabled = true;
+					break;
 
-          case 'print_back_color_count':
-          case 'print_back_color':
-          case 'print_back_position':
-            disabled = this.state.ext_pretreat !== '양면';
-            break;
+				case 'print_back_color_count':
+				case 'print_back_color':
+				case 'print_back_position':
+					disabled = this.state.ext_pretreat !== '양면';
+					break;
 
-          case 'cut_punch_count':
-          case 'cut_punch_size':
-          case 'cut_punch_position':
-            disabled = this.state.cut_is_punched === false;
-            break;
+				case 'cut_punch_count':
+				case 'cut_punch_size':
+				case 'cut_punch_position':
+					disabled = this.state.cut_is_punched === false;
+					break;
 
-          default:
-            break;
-        }
+				default:
+					break;
+			}
 
-        if (type === 'radio') {
-          return (
-            <Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
-              <FormControl component="fieldset">
-                <RadioGroup
-                  aria-label={varName}
-                  name={varName}
-                  className={`product-form__${varName}`}
-                  value={this.state[varName]}
-                  onChange={this.onInputChange(varName)}
-                >
-                  {options.map(({ value, label }) => {
-                    return (
-                      <FormControlLabel
-                        key={value}
-                        value={value}
-                        control={<Radio color="primary" />}
-                        disabled={disabled}
-                        label={label}
-                      />
-                    );
-                  })}
-                </RadioGroup>
-              </FormControl>
-            </Grid>
-          );
-        } else if (type === 'checkbox') {
-          return (
-            <Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={this.state[varName]}
-                    onChange={this.onInputChange(varName)}
-                    color="primary"
-                  />
-                }
-                label={displayName}
-              />
-            </Grid>
-          );
-        } else if (type === 'file') {
-          return (
-            <Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
-              <Input
-                fullWidth
-                type="file"
-                id={varName}
-                value={this.state[varName]}
-                onChange={this.onInputChange(varName)}
-              />
-            </Grid>
-          );
-        } else if (varName === 'account_name') {
-          return (
-            <Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
-              <FormControl
-                fullWidth
-                error={error !== undefined && error !== ''}
-              >
-                <InputLabel htmlFor={varName}>{displayName}</InputLabel>
-                <Select
-                  value={this.state[varName]}
-                  onChange={this.onInputChange(varName)}
-                  inputProps={{
-                    name: varName,
-                    id: varName
-                  }}
-                >
-                  {this.props.accounts.names.map(({ id, account_name }) => {
-                    return (
-                      <MenuItem key={id} value={account_name}>
-                        {account_name}
-                      </MenuItem>
-                    );
-                  })}
-                </Select>
-                <FormHelperText id={varName}>{error}</FormHelperText>
-              </FormControl>
-            </Grid>
-          );
-        }
+			if (type === 'radio') {
+				return (
+					<Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
+						<FormControl component="fieldset">
+							<RadioGroup
+								aria-label={varName}
+								name={varName}
+								className={`product-form__${varName}`}
+								value={this.state[varName]}
+								onChange={this.onInputChange(varName)}
+							>
+								{options.map(({ value, label }) => {
+									return (
+										<FormControlLabel
+											key={value}
+											value={value}
+											control={<Radio color="primary" />}
+											disabled={disabled}
+											label={label}
+										/>
+									);
+								})}
+							</RadioGroup>
+						</FormControl>
+					</Grid>
+				);
+			} else if (type === 'checkbox') {
+				return (
+					<Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
+						<FormControlLabel
+							control={
+								<Checkbox
+									checked={this.state[varName]}
+									onChange={this.onInputChange(varName)}
+									color="primary"
+								/>
+							}
+							label={displayName}
+						/>
+					</Grid>
+				);
+			} else if (type === 'file') {
+				return (
+					<Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
+						<Input
+							fullWidth
+							type="file"
+							id={varName}
+							value={this.state[varName]}
+							onChange={this.onInputChange(varName)}
+						/>
+					</Grid>
+				);
+			} else if (varName === 'account_name') {
+				return (
+					<Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
+						<FormControl fullWidth error={error !== undefined && error !== ''}>
+							<InputLabel htmlFor={varName}>{displayName}</InputLabel>
+							<Select
+								value={this.state[varName]}
+								onChange={this.onInputChange(varName)}
+								inputProps={{
+									name: varName,
+									id: varName
+								}}
+							>
+								{this.props.accounts.names.map(({ id, account_name }) => {
+									return (
+										<MenuItem key={id} value={account_name}>
+											{account_name}
+										</MenuItem>
+									);
+								})}
+							</Select>
+							<FormHelperText id={varName}>{error}</FormHelperText>
+						</FormControl>
+					</Grid>
+				);
+			}
 
-        return (
-          <Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
-            <FormControl
-              fullWidth
-              disabled={disabled}
-              error={error !== undefined && error !== ''}
-            >
-              <InputLabel htmlFor={varName}>{displayName}</InputLabel>
-              <Input
-                id={varName}
-                value={this.state[varName]}
-                onChange={this.onInputChange(varName)}
-                multiline={multiline}
-              />
-              <FormHelperText id={varName}>{error}</FormHelperText>
-            </FormControl>
-          </Grid>
-        );
-      }
-    );
-  };
+			return (
+				<Grid item xs={xs} sm={sm} md={md} lg={lg} key={varName}>
+					<FormControl fullWidth disabled={disabled} error={error !== undefined && error !== ''}>
+						<InputLabel htmlFor={varName}>{displayName}</InputLabel>
+						<Input
+							id={varName}
+							value={this.state[varName]}
+							onChange={this.onInputChange(varName)}
+							multiline={multiline}
+						/>
+						<FormHelperText id={varName}>{error}</FormHelperText>
+					</FormControl>
+				</Grid>
+			);
+		});
+	};
 
-  render() {
-    const { open, onClose, title } = this.props;
+	render() {
+		const { open, onClose, title } = this.props;
 
-    return (
-      <FullScreenDialog
-        open={open}
-        onClose={onClose}
-        title={title}
-        Buttons={
-          <Button color="inherit" onClick={this.onClickOk.bind(this)}>
-            <Icon>check</Icon>
-            <span> 저장</span>
-          </Button>
-        }
-      >
-        <form className="full-screen-form">{this.renderSections()}</form>
-        {this.state.isReviewOpen && (
-          <ProductReview
-            data={this.state}
-            open={this.state.isReviewOpen}
-            onClose={this.onReviewClose.bind(this)}
-            title={`${title} 확인`}
-          />
-        )}
-      </FullScreenDialog>
-    );
-  }
+		return (
+			<FullScreenDialog
+				open={open}
+				onClose={onClose}
+				title={title}
+				Buttons={
+					<Button color="inherit" onClick={this.onClickOk.bind(this)}>
+						<Icon>check</Icon>
+						<span> 저장</span>
+					</Button>
+				}
+			>
+				<form className="full-screen-form">{this.renderSections()}</form>
+				{this.state.isReviewOpen && (
+					<ProductReview
+						data={this.state}
+						open={this.state.isReviewOpen}
+						onClose={this.onReviewClose.bind(this)}
+						title={`${title} 확인`}
+					/>
+				)}
+			</FullScreenDialog>
+		);
+	}
 }
 
 const mapStateToProps = ({ auth, accounts, products }) => {
-  return { auth, accounts, products };
+	return { auth, accounts, products };
 };
 
-export default connect(
-  mapStateToProps,
-  { fetchAccountNames }
-)(ProductForm);
+export default connect(mapStateToProps, { fetchAccountNames })(ProductForm);
