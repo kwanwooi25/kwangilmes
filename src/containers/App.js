@@ -10,13 +10,13 @@ import Snackbar from '@material-ui/core/Snackbar';
 import Header from '../components/Header/Header';
 import Navigation from '../components/Navigation/Navigation';
 import LoginPage from './LoginPage/LoginPage';
+import DashboardPage from './DashboardPage/DashboardPage';
 import AccountsPage from './AccountsPage/AccountsPage';
 import ProductsPage from './ProductsPage/ProductsPage';
 import PlatesPage from './PlatesPage/PlatesPage';
 import OrdersPage from './OrdersPage/OrdersPage';
 import './App.css';
 
-const DashboardPage = () => <h1>DashboardPage</h1>;
 const UsersPage = () => <h1>UsersPage</h1>;
 
 const PublicRoute = ({ isLoggedIn, ...rest }) =>

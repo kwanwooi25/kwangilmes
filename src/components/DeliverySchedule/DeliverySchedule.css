@@ -1,0 +1,162 @@
+.calendar-header {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: .5rem;
+}
+
+.calendar-month {
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.calendar-body {
+  border-bottom: 1px solid #cdcdcd;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 1rem;
+  margin-top: 0;
+}
+
+.calendar-weekday,
+.calendar-dates {
+  border-top: 1px solid #cdcdcd;
+  border-left: 1px solid #cdcdcd;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 14.285714285714285%;
+}
+
+.calendar-weekday {
+  align-items: center;
+  padding: .25rem;
+}
+
+.calendar-dates {
+  min-height: 10rem;
+}
+
+.calendar-weekday:nth-child(7n),
+.calendar-dates:nth-child(7n) {
+  border-right: 1px solid #cdcdcd;
+  background: #eceef7;
+  color: #2c387e;
+}
+
+.calendar-weekday:nth-child(7n + 1),
+.calendar-dates:nth-child(7n + 1) {
+  background: #ffeff1;
+  color: #aa2e25;
+}
+
+.calendar-dates.prevMonth,
+.calendar-dates.nextMonth {
+  background: #efefef;
+  color: #cdcdcd;
+}
+
+.date-wrapper {
+  align-items: baseline;
+  border-bottom: 1px solid #efefef;
+  display: flex;
+  padding: .5rem;
+}
+
+.date {
+  font-size: 1.2rem;
+  margin-right: 0.5rem;
+}
+
+.weekday {
+  font-size: 0.9rem;
+}
+
+.order {
+  align-items: baseline;
+  border-top: 1px dotted #dedede;
+  display: flex;
+  flex-wrap: wrap;
+  margin: .25rem .5rem;
+  padding: .25rem 0;
+}
+
+.order:first-child {
+  border-top: none;
+}
+
+.order.completed {
+  background: #efefef;
+  color: #cdcdcd;
+}
+
+.order__account-name {
+  font-size: .7rem;
+  width: 100%;
+}
+
+.order__product-name {
+  font-weight: bold;
+  width: 100%;
+}
+
+.order__product-size {
+  font-size: .7rem;
+  flex: 1;
+}
+
+.order__order-quantity {
+
+}
+
+@media (max-width: 960px) {
+  .calendar-body {
+    flex-direction: column;
+  }
+
+  .calendar-weekday {
+    display: none;
+  }
+
+  .calendar-dates {
+    width: 100%;
+    border-right: 1px solid #cdcdcd;
+  }
+
+  .prevMonth {
+    display: none;
+  }
+
+  .nextMonth {
+    display: none;
+  }
+}
+
+@media (min-width: 600px) {
+  .order__account-name {
+    flex: 1;
+  }
+
+  .order__product-name,
+  .order__product-size {
+    flex: 2;
+  }
+}
+
+@media (min-width: 960px) {
+  .weekday {
+    display: none;
+  }
+
+  .order__account-name,
+  .order__product-name {
+    flex: auto;
+    width: 100%;
+  }
+
+  .order__product-size {
+    flex: 1;
+  }
+}

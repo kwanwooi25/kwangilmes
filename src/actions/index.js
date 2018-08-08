@@ -28,7 +28,9 @@ import {
   DELETE_ORDERS,
   TOGGLE_ORDER_CHECKED,
   SET_ORDERS_CHECKED,
-  SET_ORDERS_UNCHECKED
+  SET_ORDERS_UNCHECKED,
+  SET_SCHEDULE_PENDING,
+  FETCH_DELIVERY_SCHEDULE
 } from './types';
 
 // const HOST = 'http://api.kwangilmes.com';
@@ -454,4 +456,24 @@ export const toggleOrderChecked = id => dispatch => {
 export const toggleOrdersChecked = checked => dispatch => {
   if (checked) dispatch({ type: SET_ORDERS_CHECKED });
   else dispatch({ type: SET_ORDERS_UNCHECKED });
+};
+
+
+export const fetchDeliverySchedule = (userToken, search) => dispatch => {
+  dispatch({ type: SET_SCHEDULE_PENDING });
+  fetch(`${HOST}/orders-delivery-schedule`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'post',
+    body: JSON.stringify(search)
+  })
+    .then(response => response.json())
+    .then(({ success, error, data }) => {
+      if (success) {
+        data.search = search;
+        dispatch({ type: FETCH_DELIVERY_SCHEDULE, payload: data });
+      }
+    });
 };

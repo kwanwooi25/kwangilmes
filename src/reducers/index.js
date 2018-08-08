@@ -5,6 +5,7 @@ import accountsReducer from './accountsReducer';
 import productsReducer from './productsReducer';
 import platesReducer from './platesReducer';
 import ordersReducer from './ordersReducer';
+import scheduleReducer from './scheduleReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -12,5 +13,6 @@ export default combineReducers({
   accounts: accountsReducer,
   products: productsReducer,
   plates: platesReducer,
-  orders: ordersReducer
+  orders: ordersReducer,
+  schedule: scheduleReducer
 });

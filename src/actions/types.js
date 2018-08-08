@@ -56,3 +56,9 @@ export const DELETE_ORDERS = 'delete_orders';
 export const TOGGLE_ORDER_CHECKED = 'toggle_order_checked';
 export const SET_ORDERS_CHECKED = 'set_orders_checked';
 export const SET_ORDERS_UNCHECKED = 'set_orders_unchecked';
+
+/*---------------------------
+DELIVERY SCHEDULE
+---------------------------*/
+export const SET_SCHEDULE_PENDING = 'set_schedule_pending';
+export const FETCH_DELIVERY_SCHEDULE = 'fetch_delivery_schedule';
