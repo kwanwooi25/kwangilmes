@@ -19,7 +19,8 @@ const OrderListItem = ({
   onListItemChecked,
   onListItemCompleteClick,
   onListItemEditClick,
-  onListItemDeleteClick
+  onListItemDeleteClick,
+  onListItemPrintClick
 }) => {
   const {
     id,
@@ -172,7 +173,7 @@ const OrderListItem = ({
             color="primary"
             aria-label="print"
             onClick={() => {
-              console.log('print order:::', id);
+              onListItemPrintClick([id]);
             }}
           >
             <Icon>print</Icon>

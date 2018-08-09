@@ -8,6 +8,7 @@ export const convertExcelToJSON = (rows, CSV_HEADERS) => {
   rows.shift();
 
   return rows.map(row => {
+    console.log(row);
     const json = JSON.parse(
       `{ ${row
         .map((column, index) => {

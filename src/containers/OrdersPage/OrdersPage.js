@@ -25,6 +25,7 @@ import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import Spinner from '../../components/Spinner/Spinner';
 import { exportCSV } from '../../helpers/exportCSV';
 import { calculateOffset } from '../../helpers/calculateOffset';
+import { printOrders } from '../../helpers/printOrders';
 import './OrdersPage.css';
 
 const CSV_HEADERS = [
@@ -76,6 +77,7 @@ class OrdersPage extends Component {
 		this.showProductOrderForm = this.showProductOrderForm.bind(this);
 		this.showCompleteOrderModal = this.showCompleteOrderModal.bind(this);
 		this.onExportExcelClick = this.onExportExcelClick.bind(this);
+		this.onPrintOrdersClick = this.onPrintOrdersClick.bind(this);
 	}
 
 	componentDidMount() {
@@ -214,9 +216,6 @@ class OrdersPage extends Component {
 	showProductOrderForm = (orderId) => {
 		const { orders } = this.props;
 		const order = orders.current.find(({ id }) => id === orderId);
-		// Object.keys(order).forEach(key => {
-		//   if (order[key] === null) delete order[key];
-		// });
 		this.setState({
 			isProductOrderFormOpen: true,
 			orderToEdit: order
@@ -245,6 +244,22 @@ class OrdersPage extends Component {
 
 		exportCSV('광일_작업지시목록.csv', CSV_HEADERS, 'orders', search, token);
 	};
+
+	onPrintOrdersClick = (ids) => {
+		const token = this.props.auth.userToken;
+		fetch(`http://localhost:3000/orders-by-ids`, {
+			headers: {
+				'Content-Type': 'application/json',
+				'x-access-token': token
+			},
+			method: 'post',
+			body: JSON.stringify(ids)
+		})
+			.then((response) => response.json())
+			.then(({ success, error, data }) => {
+				if (success) printOrders(data);
+			});
+	}
 
 	render() {
 		const { isPending, count, current, search, selected } = this.props.orders;
@@ -284,7 +299,9 @@ class OrdersPage extends Component {
 					Buttons={
 						<div>
 							<Tooltip title="출력">
-								<IconButton color="primary" aria-label="print">
+								<IconButton color="primary" aria-label="print" onClick={() => {
+									this.onPrintOrdersClick(selected)
+								}}>
 									<Icon>print</Icon>
 								</IconButton>
 							</Tooltip>
@@ -317,6 +334,7 @@ class OrdersPage extends Component {
 								onListItemCompleteClick={this.showCompleteOrderModal}
 								onListItemEditClick={this.showProductOrderForm}
 								onListItemDeleteClick={this.showConfirmDeleteModal}
+								onListItemPrintClick={this.onPrintOrdersClick}
 							/>
 						))}
 					</ListBody>
