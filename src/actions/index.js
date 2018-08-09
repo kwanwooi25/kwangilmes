@@ -202,22 +202,45 @@ export const toggleProductsChecked = (checked) => (dispatch) => {
 };
 
 export const addProducts = (userToken, products, search) => (dispatch) => {
-	fetch(`${HOST}/products/add`, {
-		headers: {
-			'Content-Type': 'application/json',
-			'x-access-token': userToken
-		},
-		method: 'post',
-		body: JSON.stringify(products)
-	})
-		.then((response) => response.json())
-		.then(({ success, data }) => {
-			if (success) {
-				Promise.resolve(dispatch(fetchProducts(userToken, search))).then(() => {
-					dispatch(showSnackbar(`${data.length}개 품목 등록 완료`));
-				});
-			}
-		});
+	let splitProducts = [];
+	for (let i = 0; i < products.length; i += 10) {
+		splitProducts.push(products.slice(i, i + 10));
+	}
+
+	splitProducts.forEach((chunk) => {
+		fetch(`${HOST}/products/add`, {
+			headers: {
+				'Content-Type': 'application/json',
+				'x-access-token': userToken
+			},
+			method: 'post',
+			body: JSON.stringify(chunk)
+		})
+			.then((response) => response.json())
+			.then(({ success, data }) => {
+				if (success) {
+					Promise.resolve(dispatch(fetchProducts(userToken, search))).then(() => {
+						dispatch(showSnackbar(`${data.length}개 품목 등록 완료`));
+					});
+				}
+			});
+	});
+	// fetch(`${HOST}/products/add`, {
+	// 	headers: {
+	// 		'Content-Type': 'application/json',
+	// 		'x-access-token': userToken
+	// 	},
+	// 	method: 'post',
+	// 	body: JSON.stringify(products)
+	// })
+	// 	.then((response) => response.json())
+	// 	.then(({ success, data }) => {
+	// 		if (success) {
+	// 			Promise.resolve(dispatch(fetchProducts(userToken, search))).then(() => {
+	// 				dispatch(showSnackbar(`${data.length}개 품목 등록 완료`));
+	// 			});
+	// 		}
+	// 	});
 };
 
 export const updateProduct = (userToken, productId, data, search) => (dispatch) => {
