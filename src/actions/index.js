@@ -202,45 +202,32 @@ export const toggleProductsChecked = (checked) => (dispatch) => {
 };
 
 export const addProducts = (userToken, products, search) => (dispatch) => {
+	dispatch({ type: SET_PRODUCTS_PENDING });
+
 	let splitProducts = [];
-	for (let i = 0; i < products.length; i += 10) {
-		splitProducts.push(products.slice(i, i + 10));
+	for (let i = 0; i < products.length; i += 1) {
+		splitProducts.push(products.slice(i, i + 1));
 	}
 
-	splitProducts.forEach((chunk) => {
-		fetch(`${HOST}/products/add`, {
-			headers: {
-				'Content-Type': 'application/json',
-				'x-access-token': userToken
-			},
-			method: 'post',
-			body: JSON.stringify(chunk)
+	Promise.all(
+		splitProducts.map((chunk) => {
+			return fetch(`${HOST}/products/add`, {
+				headers: {
+					'Content-Type': 'application/json',
+					'x-access-token': userToken
+				},
+				method: 'post',
+				body: JSON.stringify(chunk)
+			})
+				.then((response) => response.json())
+				.then(({ success }) => success);
 		})
-			.then((response) => response.json())
-			.then(({ success, data }) => {
-				if (success) {
-					Promise.resolve(dispatch(fetchProducts(userToken, search))).then(() => {
-						dispatch(showSnackbar(`${data.length}개 품목 등록 완료`));
-					});
-				}
-			});
+	).then((results) => {
+		const count = results.filter((value) => value === true).length;
+		Promise.resolve(dispatch(fetchProducts(userToken, search))).then(() => {
+			dispatch(showSnackbar(`${count}개 품목 엑셀 등록 완료`));
+		});
 	});
-	// fetch(`${HOST}/products/add`, {
-	// 	headers: {
-	// 		'Content-Type': 'application/json',
-	// 		'x-access-token': userToken
-	// 	},
-	// 	method: 'post',
-	// 	body: JSON.stringify(products)
-	// })
-	// 	.then((response) => response.json())
-	// 	.then(({ success, data }) => {
-	// 		if (success) {
-	// 			Promise.resolve(dispatch(fetchProducts(userToken, search))).then(() => {
-	// 				dispatch(showSnackbar(`${data.length}개 품목 등록 완료`));
-	// 			});
-	// 		}
-	// 	});
 };
 
 export const updateProduct = (userToken, productId, data, search) => (dispatch) => {
@@ -322,22 +309,32 @@ export const deletePlates = (userToken, ids, search) => (dispatch) => {
 };
 
 export const addPlates = (userToken, plates, search) => (dispatch) => {
-	fetch(`${HOST}/plates/add`, {
-		headers: {
-			'Content-Type': 'application/json',
-			'x-access-token': userToken
-		},
-		method: 'post',
-		body: JSON.stringify(plates)
-	})
-		.then((response) => response.json())
-		.then(({ success, data }) => {
-			if (success) {
-				Promise.resolve(dispatch(fetchPlates(userToken, search))).then(() => {
-					dispatch(showSnackbar(`${data.length}개 동판 등록 완료`));
-				});
-			}
+	dispatch({ type: SET_PLATES_PENDING });
+
+	let splitPlates = [];
+	for (let i = 0; i < plates.length; i += 1) {
+		splitPlates.push(plates.slice(i, i + 1));
+	}
+
+	Promise.all(
+		splitPlates.map((chunk) => {
+			return fetch(`${HOST}/plates/add`, {
+				headers: {
+					'Content-Type': 'application/json',
+					'x-access-token': userToken
+				},
+				method: 'post',
+				body: JSON.stringify(chunk)
+			})
+				.then((response) => response.json())
+				.then(({ success }) => success);
+		})
+	).then((results) => {
+		const count = results.filter((value) => value === true).length;
+		Promise.resolve(dispatch(fetchPlates(userToken, search))).then(() => {
+			dispatch(showSnackbar(`${count}개 동판 등록 완료`));
 		});
+	});
 };
 
 export const updatePlate = (userToken, plateId, data, search) => (dispatch) => {
