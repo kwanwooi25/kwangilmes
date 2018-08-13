@@ -6,6 +6,7 @@ import PageHeader from '../../components/PageHeader/PageHeader';
 import ListBody from '../../components/ListBody/ListBody';
 import FabAdd from '../../components/FabAdd/FabAdd';
 import UserListItem from '../../components/UserListItem/UserListItem';
+import UserForm from '../../components/UserForm/UserForm';
 import './UsersPage.css';
 
 // table.integer('permission_id').defaultTo(3);
@@ -41,21 +42,21 @@ class UsersPage extends Component {
 	constructor() {
 		super();
 
-		// this.state = {
-		//   isConfirmModalOpen: false,
-		//   selectedAccounts: [],
-		//   confirmModalTitle: '',
-		//   confirmModalDescription: '',
-		//   isAccountFormOpen: false,
-		//   accountFormTitle: '',
-		//   accountToEdit: '',
-		//   isAddMultiModalOpen: false
-		// };
+		this.state = {
+			// isConfirmModalOpen: false,
+			// selectedAccounts: [],
+			// confirmModalTitle: '',
+			// confirmModalDescription: '',
+			isUserFormOpen: false,
+			userFormTitle: '',
+			userToEdit: '',
+			isAddMultiModalOpen: false
+		};
 
 		// this.showConfirmDeleteModal = this.showConfirmDeleteModal.bind(this);
 		// this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
-		// this.showAccountForm = this.showAccountForm.bind(this);
-		// this.onAccountFormClose = this.onAccountFormClose.bind(this);
+		this.showUserForm = this.showUserForm.bind(this);
+		this.onUserFormClose = this.onUserFormClose.bind(this);
 	}
 
 	componentDidMount() {
@@ -90,38 +91,40 @@ class UsersPage extends Component {
 	//   });
 	// }
 
-	// showAccountForm(mode, accountToEdit) {
-	//   if (mode === 'new') {
-	//     this.setState({
-	//       isAccountFormOpen: true,
-	//       accountFormTitle: '업체등록'
-	//     });
-	//   } else if (mode === 'edit') {
-	//     this.setState({
-	//       isAccountFormOpen: true,
-	//       accountFormTitle: '업체수정',
-	//       accountToEdit
-	//     });
-	//   }
-	// }
+	showUserForm(mode, userToEdit) {
+		if (mode === 'new') {
+			this.setState({
+				isUserFormOpen: true,
+				userFormTitle: '사용자 등록'
+			});
+		} else if (mode === 'edit') {
+			this.setState({
+				isUserFormOpen: true,
+				userFormTitle: '사용자 정보 수정',
+				userToEdit
+			});
+		}
+	}
 
-	// onAccountFormClose(result, data, id) {
-	//   this.setState({
-	//     isAccountFormOpen: false,
-	//     accountFormTitle: '',
-	//     accountToEdit: ''
-	//   });
+	onUserFormClose(result, data, id) {
+		this.setState({
+			isUserFormOpen: false,
+			userFormTitle: '',
+			userToEdit: ''
+		});
 
-	//   if (result && id === undefined) {
-	//     const { search } = this.props.accounts;
-	//     const token = this.props.auth.userToken;
-	//     this.props.addAccounts(token, [data], search);
-	//   } else if (result && id !== undefined) {
-	//     const { search } = this.props.accounts;
-	//     const token = this.props.auth.userToken;
-	//     this.props.updateAccount(token, id, data, search);
-	//   }
-	// }
+		console.log(result, data, id);
+
+		// if (result && id === undefined) {
+		//   const { search } = this.props.accounts;
+		//   const token = this.props.auth.userToken;
+		//   this.props.addAccounts(token, [data], search);
+		// } else if (result && id !== undefined) {
+		//   const { search } = this.props.accounts;
+		//   const token = this.props.auth.userToken;
+		//   this.props.updateAccount(token, id, data, search);
+		// }
+	}
 
 	render() {
 		const { isPending, count, all } = this.props.users;
@@ -142,7 +145,12 @@ class UsersPage extends Component {
 						/>
 					))}
 				</ListBody>
-				<FabAdd title="사용자 추가" onClick={() => {}} />
+				<FabAdd
+					title="사용자 추가"
+					onClick={() => {
+						this.showUserForm('new');
+					}}
+				/>
 				{/* {this.state.isConfirmModalOpen && (
           <ConfirmModal
             open={this.state.isConfirmModalOpen}
@@ -150,15 +158,14 @@ class UsersPage extends Component {
             description={this.state.confirmModalDescription}
             onClose={this.onConfirmModalClose}
           />
-        )}
-        {this.state.isAccountFormOpen && (
-          <AccountForm
-            accountId={this.state.accountToEdit}
-            open={this.state.isAccountFormOpen}
-            title={this.state.accountFormTitle}
-            onClose={this.onAccountFormClose}
-          />
         )} */}
+				{this.state.isUserFormOpen && (
+					<UserForm
+						open={this.state.isUserFormOpen}
+						title={this.state.userFormTitle}
+						onClose={this.onUserFormClose}
+					/>
+				)}
 			</main>
 		);
 	}
