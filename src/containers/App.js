@@ -15,108 +15,101 @@ import AccountsPage from './AccountsPage/AccountsPage';
 import ProductsPage from './ProductsPage/ProductsPage';
 import PlatesPage from './PlatesPage/PlatesPage';
 import OrdersPage from './OrdersPage/OrdersPage';
+import UsersPage from './UsersPage/UsersPage';
 import './App.css';
 
-const UsersPage = () => <h1>UsersPage</h1>;
+const PublicRoute = ({ isPermitted, ...rest }) =>
+	isPermitted === false ? <Route {...rest} /> : <Redirect to="/home" />;
 
-const PublicRoute = ({ isLoggedIn, ...rest }) =>
-  isLoggedIn === false ? <Route {...rest} /> : <Redirect to="/home" />;
+const PrivateRoute = ({ isPermitted, ...rest }) => (isPermitted === false ? <Redirect to="/" /> : <Route {...rest} />);
 
-const PrivateRoute = ({ isLoggedIn, ...rest }) =>
-  isLoggedIn === false ? <Redirect to="/" /> : <Route {...rest} />;
-
-const PUBLIC_ROUTES = [{ path: '/', component: LoginPage }];
+const PUBLIC_ROUTES = [ { path: '/', component: LoginPage } ];
 
 const PRIVATE_ROUTES = [
-  { path: '/home', component: DashboardPage },
-  { path: '/accounts', component: AccountsPage },
-  { path: '/products', component: ProductsPage },
-  { path: '/plates', component: PlatesPage },
-  { path: '/orders', component: OrdersPage },
-  { path: '/users', component: UsersPage }
+	{ path: '/home', component: DashboardPage },
+	{ path: '/accounts', component: AccountsPage },
+	{ path: '/products', component: ProductsPage },
+	{ path: '/plates', component: PlatesPage },
+	{ path: '/orders', component: OrdersPage },
+	{ path: '/users', component: UsersPage }
 ];
 
 class App extends Component {
-  state = {
-    isNavOpen: false
-  };
+	state = {
+		isNavOpen: false
+	};
 
-  renderPublicRoutes() {
-    const { isLoggedIn } = this.props.auth;
-    return PUBLIC_ROUTES.map(({ path, component }) => (
-      <PublicRoute
-        exact
-        key={path}
-        path={path}
-        isLoggedIn={isLoggedIn}
-        component={component}
-      />
-    ));
-  }
+	renderPublicRoutes() {
+		const { isLoggedIn } = this.props.auth;
+		return PUBLIC_ROUTES.map(({ path, component }) => (
+			<PublicRoute exact key={path} path={path} isPermitted={isLoggedIn} component={component} />
+		));
+	}
 
-  renderPrivateRoutes() {
-    const { isLoggedIn } = this.props.auth;
-    return PRIVATE_ROUTES.map(({ path, component }) => (
-      <PrivateRoute
-        exact
-        key={path}
-        path={path}
-        isLoggedIn={isLoggedIn}
-        component={component}
-      />
-    ));
-  }
+	renderPrivateRoutes() {
+		const { isLoggedIn, current_user } = this.props.auth;
+		return PRIVATE_ROUTES.map(({ path, component }) => {
+			const isPermitted = current_user[`can_read_${path.replace('/', '')}`] || path === '/home';
 
-  openNav() {
-    this.setState({ isNavOpen: true });
-  }
+			return (
+				<PrivateRoute
+					exact
+					key={path}
+					path={path}
+					isPermitted={isLoggedIn && isPermitted}
+					component={component}
+				/>
+			);
+		});
+	}
 
-  closeNav() {
-    this.setState({ isNavOpen: false });
-  }
+	openNav() {
+		this.setState({ isNavOpen: true });
+	}
 
-  render() {
-    const { isLoggedIn } = this.props.auth;
-    const { isSnackbarOpen, snackbarMessage } = this.props.snackbar;
-    const { logoutUser } = this.props;
-    return (
-      <MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="ko">
-        <BrowserRouter>
-          <div className="App">
-            <Header isLoggedIn={isLoggedIn} openNav={this.openNav.bind(this)} />
-            {isLoggedIn && (
-              <Navigation
-                open={this.state.isNavOpen}
-                closeNav={this.closeNav.bind(this)}
-                logoutUser={logoutUser}
-              />
-            )}
-            <Switch>
-              {this.renderPublicRoutes()}
-              {this.renderPrivateRoutes()}
-            </Switch>
-            <Snackbar
-              className="snackbar"
-              anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-              open={isSnackbarOpen}
-              ContentProps={{
-                'aria-describedby': 'snackbarMessage',
-                className: 'snackbar-content'
-              }}
-              message={<span id="snackbarMessage">{snackbarMessage}</span>}
-            />
-          </div>
-        </BrowserRouter>
-      </MuiPickersUtilsProvider>
-    );
-  }
+	closeNav() {
+		this.setState({ isNavOpen: false });
+	}
+
+	render() {
+		const { isLoggedIn } = this.props.auth;
+		const { isSnackbarOpen, snackbarMessage } = this.props.snackbar;
+		const { logoutUser } = this.props;
+		return (
+			<MuiPickersUtilsProvider utils={MomentUtils} moment={moment} locale="ko">
+				<BrowserRouter>
+					<div className="App">
+						<Header isLoggedIn={isLoggedIn} openNav={this.openNav.bind(this)} />
+						{isLoggedIn && (
+							<Navigation
+								open={this.state.isNavOpen}
+								closeNav={this.closeNav.bind(this)}
+								logoutUser={logoutUser}
+							/>
+						)}
+						<Switch>
+							{this.renderPublicRoutes()}
+							{this.renderPrivateRoutes()}
+						</Switch>
+						<Snackbar
+							className="snackbar"
+							anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+							open={isSnackbarOpen}
+							ContentProps={{
+								'aria-describedby': 'snackbarMessage',
+								className: 'snackbar-content'
+							}}
+							message={<span id="snackbarMessage">{snackbarMessage}</span>}
+						/>
+					</div>
+				</BrowserRouter>
+			</MuiPickersUtilsProvider>
+		);
+	}
 }
 
 const mapStateToProps = ({ auth, snackbar }) => {
-  return { auth, snackbar };
+	return { auth, snackbar };
 };
 
-export default connect(
-  mapStateToProps,
-  { logoutUser }
-)(App);
+export default connect(mapStateToProps, { logoutUser })(App);

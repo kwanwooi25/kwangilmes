@@ -1,6 +1,8 @@
 import {
 	LOGIN_USER,
 	LOGOUT_USER,
+	SET_USERS_PENDING,
+	FETCH_USERS,
 	SET_ACCOUNTS_PENDING,
 	FETCH_ACCOUNTS,
 	FETCH_ACCOUNT,
@@ -45,13 +47,28 @@ export const loginUser = (username, password) => (dispatch) => {
 	})
 		.then((response) => response.json())
 		.then(({ success, error, data }) => {
-			const payload = { isLoggedIn: success, userToken: data, error };
+			const payload = { isLoggedIn: success, userToken: data.token, current_user: data.user, error };
 			dispatch({ type: LOGIN_USER, payload });
 		});
 };
 
 export const logoutUser = () => (dispatch) => {
 	dispatch({ type: LOGOUT_USER });
+};
+
+export const fetchUsers = (userToken) => (dispatch) => {
+	dispatch({ type: SET_USERS_PENDING });
+	fetch(`${HOST}/users`, {
+		headers: {
+			'Content-Type': 'application/json',
+			'x-access-token': userToken
+		},
+		method: 'get'
+	})
+		.then((response) => response.json())
+		.then(({ success, error, data }) => {
+			dispatch({ type: FETCH_USERS, payload: data });
+		});
 };
 
 export const fetchAccounts = (userToken, search) => (dispatch) => {

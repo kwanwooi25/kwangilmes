@@ -4,6 +4,9 @@ USERS
 export const LOGIN_USER = 'login_user';
 export const LOGOUT_USER = 'logout_user';
 
+export const SET_USERS_PENDING = 'set_users_pending';
+export const FETCH_USERS = 'fetch_users';
+
 /*---------------------------
 SNACKBAR
 ---------------------------*/
