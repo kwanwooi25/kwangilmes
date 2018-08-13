@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { fetchUsers } from '../../actions';
+import { fetchUsers, registerUser } from '../../actions';
 import Divider from '@material-ui/core/Divider';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import ListBody from '../../components/ListBody/ListBody';
@@ -39,119 +39,118 @@ import './UsersPage.css';
 // ];
 
 class UsersPage extends Component {
-	constructor() {
-		super();
+  constructor() {
+    super();
 
-		this.state = {
-			// isConfirmModalOpen: false,
-			// selectedAccounts: [],
-			// confirmModalTitle: '',
-			// confirmModalDescription: '',
-			isUserFormOpen: false,
-			userFormTitle: '',
-			userToEdit: '',
-			isAddMultiModalOpen: false
-		};
+    this.state = {
+      // isConfirmModalOpen: false,
+      // selectedAccounts: [],
+      // confirmModalTitle: '',
+      // confirmModalDescription: '',
+      isUserFormOpen: false,
+      userFormTitle: '',
+      userToEdit: '',
+      isAddMultiModalOpen: false
+    };
 
-		// this.showConfirmDeleteModal = this.showConfirmDeleteModal.bind(this);
-		// this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
-		this.showUserForm = this.showUserForm.bind(this);
-		this.onUserFormClose = this.onUserFormClose.bind(this);
-	}
+    // this.showConfirmDeleteModal = this.showConfirmDeleteModal.bind(this);
+    // this.onConfirmModalClose = this.onConfirmModalClose.bind(this);
+    this.showUserForm = this.showUserForm.bind(this);
+    this.onUserFormClose = this.onUserFormClose.bind(this);
+  }
 
-	componentDidMount() {
-		const token = this.props.auth.userToken;
-		this.props.fetchUsers(token);
-	}
+  componentDidMount() {
+    const token = this.props.auth.userToken;
+    this.props.fetchUsers(token);
+  }
 
-	// showConfirmDeleteModal(ids) {
-	//   this.setState({
-	//     isConfirmModalOpen: true,
-	//     selectedAccounts: ids,
-	//     confirmModalTitle: '업체 삭제',
-	//     confirmModalDescription: `총 ${
-	//       ids.length
-	//     }개 업체를 정말로 삭제 하시겠습니까?`
-	//   });
-	// }
+  // showConfirmDeleteModal(ids) {
+  //   this.setState({
+  //     isConfirmModalOpen: true,
+  //     selectedAccounts: ids,
+  //     confirmModalTitle: '업체 삭제',
+  //     confirmModalDescription: `총 ${
+  //       ids.length
+  //     }개 업체를 정말로 삭제 하시겠습니까?`
+  //   });
+  // }
 
-	// onConfirmModalClose(result) {
-	//   if (result) {
-	//     const { search } = this.props.accounts;
-	//     const token = this.props.auth.userToken;
-	//     const ids = this.state.selectedAccounts;
-	//     this.props.deleteAccounts(token, ids, search);
-	//   }
+  // onConfirmModalClose(result) {
+  //   if (result) {
+  //     const { search } = this.props.accounts;
+  //     const token = this.props.auth.userToken;
+  //     const ids = this.state.selectedAccounts;
+  //     this.props.deleteAccounts(token, ids, search);
+  //   }
 
-	//   this.setState({
-	//     isConfirmModalOpen: false,
-	//     selectedAccounts: [],
-	//     confirmModalTitle: '',
-	//     confirmModalDescription: ''
-	//   });
-	// }
+  //   this.setState({
+  //     isConfirmModalOpen: false,
+  //     selectedAccounts: [],
+  //     confirmModalTitle: '',
+  //     confirmModalDescription: ''
+  //   });
+  // }
 
-	showUserForm(mode, userToEdit) {
-		if (mode === 'new') {
-			this.setState({
-				isUserFormOpen: true,
-				userFormTitle: '사용자 등록'
-			});
-		} else if (mode === 'edit') {
-			this.setState({
-				isUserFormOpen: true,
-				userFormTitle: '사용자 정보 수정',
-				userToEdit
-			});
-		}
-	}
+  showUserForm(mode, userToEdit) {
+    if (mode === 'new') {
+      this.setState({
+        isUserFormOpen: true,
+        userFormTitle: '사용자 등록'
+      });
+    } else if (mode === 'edit') {
+      this.setState({
+        isUserFormOpen: true,
+        userFormTitle: '사용자 정보 수정',
+        userToEdit
+      });
+    }
+  }
 
-	onUserFormClose(result, data, id) {
-		this.setState({
-			isUserFormOpen: false,
-			userFormTitle: '',
-			userToEdit: ''
-		});
+  onUserFormClose(result, data, id) {
+    this.setState({
+      isUserFormOpen: false,
+      userFormTitle: '',
+      userToEdit: ''
+    });
 
-		console.log(result, data, id);
+    console.log(result, data, id);
 
-		// if (result && id === undefined) {
-		//   const { search } = this.props.accounts;
-		//   const token = this.props.auth.userToken;
-		//   this.props.addAccounts(token, [data], search);
-		// } else if (result && id !== undefined) {
-		//   const { search } = this.props.accounts;
-		//   const token = this.props.auth.userToken;
-		//   this.props.updateAccount(token, id, data, search);
-		// }
-	}
+    if (result && id === undefined) {
+      const token = this.props.auth.userToken;
+      this.props.registerUser(token, data);
+    } else if (result && id !== undefined) {
+      // const { search } = this.props.accounts;
+      // const token = this.props.auth.userToken;
+      // this.props.updateAccount(token, id, data, search);
+    }
+  }
 
-	render() {
-		const { isPending, count, all } = this.props.users;
-		const { current_user } = this.props.auth;
-		return (
-			<main>
-				<PageHeader title="사용자관리" />
-				<Divider />
-				<ListBody isPending={isPending} hasData={count !== 0}>
-					{all.map((user) => (
-						<UserListItem
-							key={user.id}
-							user={user}
-							current_user={current_user}
-							onListItemPasswordChangeClick={() => {}}
-							onListItemEditClick={() => {}}
-							onListItemDeleteClick={() => {}}
-						/>
-					))}
-				</ListBody>
-				<FabAdd
-					title="사용자 추가"
-					onClick={() => {
-						this.showUserForm('new');
-					}}
-				/>
-				{/* {this.state.isConfirmModalOpen && (
+  render() {
+    const { isPending, count, all } = this.props.users;
+    const { current_user } = this.props.auth;
+    return (
+      <main>
+        <PageHeader title="사용자관리" />
+        <Divider />
+        <ListBody isPending={isPending} hasData={count !== 0}>
+          {all.map(user => (
+            <UserListItem
+              key={user.id}
+              user={user}
+              current_user={current_user}
+              onListItemPasswordChangeClick={() => {}}
+              onListItemEditClick={() => {}}
+              onListItemDeleteClick={() => {}}
+            />
+          ))}
+        </ListBody>
+        <FabAdd
+          title="사용자 추가"
+          onClick={() => {
+            this.showUserForm('new');
+          }}
+        />
+        {/* {this.state.isConfirmModalOpen && (
           <ConfirmModal
             open={this.state.isConfirmModalOpen}
             title={this.state.confirmModalTitle}
@@ -159,22 +158,26 @@ class UsersPage extends Component {
             onClose={this.onConfirmModalClose}
           />
         )} */}
-				{this.state.isUserFormOpen && (
-					<UserForm
-						open={this.state.isUserFormOpen}
-						title={this.state.userFormTitle}
-						onClose={this.onUserFormClose}
-					/>
-				)}
-			</main>
-		);
-	}
+        {this.state.isUserFormOpen && (
+          <UserForm
+            open={this.state.isUserFormOpen}
+            title={this.state.userFormTitle}
+            onClose={this.onUserFormClose}
+          />
+        )}
+      </main>
+    );
+  }
 }
 
 const mapStateToProps = ({ auth, users }) => {
-	return { auth, users };
+  return { auth, users };
 };
 
-export default connect(mapStateToProps, {
-	fetchUsers
-})(UsersPage);
+export default connect(
+  mapStateToProps,
+  {
+    fetchUsers,
+    registerUser
+  }
+)(UsersPage);
