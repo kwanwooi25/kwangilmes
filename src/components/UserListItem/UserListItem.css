@@ -1,0 +1,18 @@
+.user-list-item__display_name,
+.user-list-item__department-position,
+.user-list-item__user_phone,
+.user-list-item__user_permission,
+.user-list-item__user_memo {
+	padding-bottom: .5rem;
+}
+
+.user-list-item__display_name {
+	font-size: 1.25rem;
+	font-weight: bold;
+}
+
+.user-list-item__user_phone,
+.user-list-item__user_permission,
+.user-list-item__user_memo {
+	font-size: 0.8rem;
+}
