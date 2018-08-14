@@ -12,11 +12,11 @@ const UserListItem = ({
 	onListItemEditClick,
 	onListItemDeleteClick
 }) => {
-	const { id, display_name, user_department, user_position, user_phone, permission_id, user_memo } = user;
+	const { username, display_name, user_department, user_position, user_phone, permission_id, user_memo } = user;
 	const user_permission =
 		permission_id === 1 ? '최종관리자' : permission_id === 2 ? '관리자' : permission_id === 3 ? '사용자' : '';
 	return (
-		<li key={id} className="list-body__item">
+		<li key={username} className="list-body__item">
 			<Grid container className="list-body__item-details">
 				<Grid item xs={12}>
 					{display_name}
@@ -44,7 +44,7 @@ const UserListItem = ({
 							color="primary"
 							aria-label="change password"
 							onClick={() => {
-								onListItemPasswordChangeClick(id);
+								onListItemPasswordChangeClick('change_password', username);
 							}}
 						>
 							<Icon>vpn_key</Icon>
@@ -54,8 +54,9 @@ const UserListItem = ({
 						<IconButton
 							color="primary"
 							aria-label="edit"
+							disabled={user.permission_id === 1}
 							onClick={() => {
-								onListItemEditClick(id);
+								onListItemEditClick('edit', username);
 							}}
 						>
 							<Icon>edit</Icon>
@@ -66,7 +67,7 @@ const UserListItem = ({
 							aria-label="delete"
 							disabled={user.permission_id === 1}
 							onClick={() => {
-								onListItemDeleteClick(id);
+								onListItemDeleteClick(username);
 							}}
 						>
 							<Icon>delete</Icon>
