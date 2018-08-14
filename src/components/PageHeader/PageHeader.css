@@ -1,4 +1,6 @@
 .page-header {
+  align-items: center;
+  display: flex;
   padding-bottom: 1rem;
 }
 
@@ -14,7 +16,7 @@
 }
 
 .page-header__search {
-  width: 100%;
+  width: 13rem;
 }
 
 .page-header__buttons {
@@ -22,10 +24,6 @@
 }
 
 @media (min-width: 960px) {
-  .page-header__search {
-    flex: 1;
-  }
-
   .page-header__buttons {
     display: flex;
   }
