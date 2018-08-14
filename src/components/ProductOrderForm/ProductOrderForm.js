@@ -100,14 +100,21 @@ class ProductOrderForm extends Component {
 
 	onClickOk = () => {
 		if (this.validate()) {
-			const orderDetail = `
-        ${this.state.order_quantity}매
-        ${this.state.is_print && `(동판${this.state.plate_status})`}
-        ${this.state.is_delivery_strict ? ' / 납기엄수' : ''}
-        ${this.state.is_urgent ? ' / 지급' : ''}
-        ${this.state.order_memo_work ? ` / ${this.state.order_memo_work}` : ''}
-        ${this.state.order_memo_delivery ? ` / ${this.state.order_memo_delivery}` : ''}
-      `;
+			const {
+				is_print,
+				plate_status,
+				is_delivery_strict,
+				is_urgent,
+				order_memo_work,
+				order_memo_delivery
+			} = this.state;
+			let orderDetailArray = [];
+			if (is_print) orderDetailArray.push(`(동판${plate_status})`);
+			if (is_delivery_strict) orderDetailArray.push('납기엄수');
+			if (is_urgent) orderDetailArray.push('지급');
+			if (order_memo_work !== '') orderDetailArray.push(order_memo_work);
+			if (order_memo_delivery !== '') orderDetailArray.push(order_memo_delivery);
+			const orderDetail = orderDetailArray.join(' / ');
 
 			this.setState({ isConfirmModalOpen: true, orderDetail });
 		}
@@ -425,7 +432,7 @@ class ProductOrderForm extends Component {
 					<ConfirmModal
 						open={this.state.isConfirmModalOpen}
 						title={this.state.order_id ? '작업지시 수정하시겠습니까?' : '작업지시 하시겠습니까?'}
-						subtitle={productTitle}
+						subtitle={`${productTitle} = ${this.state.order_quantity}매 `}
 						description={this.state.orderDetail}
 						onClose={this.onConfirmModalClose}
 					/>
