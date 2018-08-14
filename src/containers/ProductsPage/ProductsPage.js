@@ -263,6 +263,7 @@ class ProductsPage extends Component {
 	};
 
 	render() {
+		const hasWritePermission = this.props.auth.current_user.can_write_products;
 		const { isPending, count, current, search, selected } = this.props.products;
 		const isFirstPage = search.offset === 0;
 		const isLastPage = count <= search.offset + search.limit;
@@ -271,7 +272,7 @@ class ProductsPage extends Component {
 			<main>
 				<PageHeader
 					title="품목관리"
-					uploadButton={true}
+					uploadButton={hasWritePermission}
 					onUploadButtonClick={this.showAddMultiModal}
 					exportButton={true}
 					onExportButtonClick={this.onExportExcelClick}
@@ -279,6 +280,7 @@ class ProductsPage extends Component {
 				<Divider />
 				<ProductSearch onInputChange={this.onSearchChange} onReset={this.onSearchReset} searchValues={search} />
 				<ListHeader
+					hasWritePermission={hasWritePermission}
 					rowsPerPage={search.limit}
 					isFirstPage={isFirstPage}
 					isLastPage={isLastPage}
@@ -298,6 +300,7 @@ class ProductsPage extends Component {
 							key={product.id}
 							search={search}
 							product={product}
+							hasWritePermission={hasWritePermission}
 							onListItemChecked={this.onListItemChecked}
 							onListItemOrderClick={this.showProductOrderForm}
 							onListItemEditClick={this.showProductForm}
@@ -305,12 +308,14 @@ class ProductsPage extends Component {
 						/>
 					))}
 				</ListBody>
-				<FabAdd
-					title="품목 추가"
-					onClick={() => {
-						this.showProductForm('new');
-					}}
-				/>
+				{hasWritePermission && (
+					<FabAdd
+						title="품목 추가"
+						onClick={() => {
+							this.showProductForm('new');
+						}}
+					/>
+				)}
 				{this.state.isConfirmModalOpen && (
 					<ConfirmModal
 						open={this.state.isConfirmModalOpen}

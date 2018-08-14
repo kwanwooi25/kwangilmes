@@ -72,7 +72,7 @@ class App extends Component {
 	}
 
 	render() {
-		const { isLoggedIn } = this.props.auth;
+		const { isLoggedIn, current_user } = this.props.auth;
 		const { isSnackbarOpen, snackbarMessage } = this.props.snackbar;
 		const { logoutUser } = this.props;
 		return (
@@ -84,6 +84,7 @@ class App extends Component {
 							<Navigation
 								open={this.state.isNavOpen}
 								closeNav={this.closeNav.bind(this)}
+								current_user={current_user}
 								logoutUser={logoutUser}
 							/>
 						)}

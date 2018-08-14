@@ -12,6 +12,7 @@ import ProductSize from '../ProductSize/ProductSize';
 import './ProductListItem.css';
 
 const ProductListItem = ({
+	hasWritePermission,
 	search,
 	product,
 	onListItemChecked,
@@ -47,15 +48,17 @@ const ProductListItem = ({
 
 	return (
 		<li key={id} className="list-body__item">
-			<div>
-				<Checkbox
-					checked={checked}
-					onChange={() => {
-						onListItemChecked(id);
-					}}
-					color="primary"
-				/>
-			</div>
+			{hasWritePermission && (
+				<div>
+					<Checkbox
+						checked={checked}
+						onChange={() => {
+							onListItemChecked(id);
+						}}
+						color="primary"
+					/>
+				</div>
+			)}
 			<Grid container className="list-body__item-details">
 				<Grid item xs={12} md={9} className="product-list-item__names">
 					<Grid item xs={12} sm={4}>
@@ -85,40 +88,42 @@ const ProductListItem = ({
 					</Grid>
 				</Hidden>
 			</Grid>
-			<div className="list-body__item-buttons">
-				<Tooltip title="작업지시">
-					<IconButton
-						color="secondary"
-						aria-label="order"
-						onClick={() => {
-							onListItemOrderClick(id);
-						}}
-					>
-						<Icon>build</Icon>
-					</IconButton>
-				</Tooltip>
-				<Tooltip title="수정">
-					<IconButton
-						color="primary"
-						aria-label="edit"
-						onClick={() => {
-							onListItemEditClick('edit', id);
-						}}
-					>
-						<Icon>edit</Icon>
-					</IconButton>
-				</Tooltip>
-				<Tooltip title="삭제">
-					<IconButton
-						aria-label="delete"
-						onClick={() => {
-							onListItemDeleteClick([ id ]);
-						}}
-					>
-						<Icon>delete</Icon>
-					</IconButton>
-				</Tooltip>
-			</div>
+			{hasWritePermission && (
+				<div className="list-body__item-buttons">
+					<Tooltip title="작업지시">
+						<IconButton
+							color="secondary"
+							aria-label="order"
+							onClick={() => {
+								onListItemOrderClick(id);
+							}}
+						>
+							<Icon>build</Icon>
+						</IconButton>
+					</Tooltip>
+					<Tooltip title="수정">
+						<IconButton
+							color="primary"
+							aria-label="edit"
+							onClick={() => {
+								onListItemEditClick('edit', id);
+							}}
+						>
+							<Icon>edit</Icon>
+						</IconButton>
+					</Tooltip>
+					<Tooltip title="삭제">
+						<IconButton
+							aria-label="delete"
+							onClick={() => {
+								onListItemDeleteClick([ id ]);
+							}}
+						>
+							<Icon>delete</Icon>
+						</IconButton>
+					</Tooltip>
+				</div>
+			)}
 		</li>
 	);
 };

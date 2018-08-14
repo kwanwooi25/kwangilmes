@@ -259,9 +259,10 @@ class OrdersPage extends Component {
 			.then(({ success, error, data }) => {
 				if (success) printOrders(data);
 			});
-	}
+	};
 
 	render() {
+		const hasWritePermission = this.props.auth.current_user.can_write_orders;
 		const { isPending, count, current, search, selected } = this.props.orders;
 		const isFirstPage = search.offset === 0;
 		const isLastPage = count <= search.offset + search.limit;
@@ -283,6 +284,7 @@ class OrdersPage extends Component {
 					searchValues={search}
 				/>
 				<ListHeader
+					hasWritePermission={hasWritePermission}
 					rowsPerPage={search.limit}
 					isFirstPage={isFirstPage}
 					isLastPage={isLastPage}
@@ -299,9 +301,13 @@ class OrdersPage extends Component {
 					Buttons={
 						<div>
 							<Tooltip title="출력">
-								<IconButton color="primary" aria-label="print" onClick={() => {
-									this.onPrintOrdersClick(selected)
-								}}>
+								<IconButton
+									color="primary"
+									aria-label="print"
+									onClick={() => {
+										this.onPrintOrdersClick(selected);
+									}}
+								>
 									<Icon>print</Icon>
 								</IconButton>
 							</Tooltip>
@@ -330,6 +336,7 @@ class OrdersPage extends Component {
 								key={order.id}
 								search={search}
 								order={order}
+								hasWritePermission={hasWritePermission}
 								onListItemChecked={this.onListItemChecked}
 								onListItemCompleteClick={this.showCompleteOrderModal}
 								onListItemEditClick={this.showProductOrderForm}

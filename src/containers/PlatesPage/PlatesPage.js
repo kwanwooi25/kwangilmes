@@ -223,6 +223,7 @@ class PlatesPage extends Component {
 	};
 
 	render() {
+		const hasWritePermission = this.props.auth.current_user.can_write_plates;
 		const { isPending, count, current, search, selected } = this.props.plates;
 		const isFirstPage = search.offset === 0;
 		const isLastPage = count <= search.offset + search.limit;
@@ -231,7 +232,7 @@ class PlatesPage extends Component {
 			<main>
 				<PageHeader
 					title="동판관리"
-					uploadButton={true}
+					uploadButton={hasWritePermission}
 					onUploadButtonClick={this.showAddMultiModal}
 					exportButton={true}
 					onExportButtonClick={this.onExportExcelClick}
@@ -239,6 +240,7 @@ class PlatesPage extends Component {
 				<Divider />
 				<PlateSearch onInputChange={this.onSearchChange} onReset={this.onSearchReset} searchValues={search} />
 				<ListHeader
+					hasWritePermission={hasWritePermission}
 					rowsPerPage={search.limit}
 					isFirstPage={isFirstPage}
 					isLastPage={isLastPage}
@@ -263,6 +265,7 @@ class PlatesPage extends Component {
 								key={plate.id}
 								search={search}
 								plate={plate}
+								hasWritePermission={hasWritePermission}
 								onListItemChecked={this.onListItemChecked}
 								onListItemEditClick={this.showPlateForm}
 								onListItemDeleteClick={this.showConfirmDeleteModal}
@@ -270,12 +273,14 @@ class PlatesPage extends Component {
 						))}
 					</ListBody>
 				)}
-				<FabAdd
-					title="동판 추가"
-					onClick={() => {
-						this.showPlateForm('new');
-					}}
-				/>
+				{hasWritePermission && (
+					<FabAdd
+						title="동판 추가"
+						onClick={() => {
+							this.showPlateForm('new');
+						}}
+					/>
+				)}
 				{this.state.isConfirmModalOpen && (
 					<ConfirmModal
 						open={this.state.isConfirmModalOpen}

@@ -8,25 +8,20 @@ import header_logo from '../../assets/kwangil_logo_with_name.svg';
 import './Header.css';
 
 const Header = ({ isLoggedIn, openNav }) => {
-  return (
-    <AppBar className="header" position="fixed">
-      <Toolbar>
-        <Link to="/home" className="header-logo">
-          <img src={header_logo} alt="kwangil logo" />
-        </Link>
-        {isLoggedIn && (
-          <IconButton
-            id="nav-toggle"
-            color="inherit"
-            aria-label="Menu"
-            onClick={openNav}
-          >
-            <MenuIcon />
-          </IconButton>
-        )}
-      </Toolbar>
-    </AppBar>
-  )
-}
+	return (
+		<AppBar className="header" position="fixed">
+			<Toolbar>
+				<Link to="/home" className="header-logo">
+					<img src={header_logo} alt="kwangil logo" />
+				</Link>
+				{isLoggedIn && (
+					<IconButton id="nav-toggle" color="inherit" aria-label="Menu" onClick={openNav}>
+						<MenuIcon />
+					</IconButton>
+				)}
+			</Toolbar>
+		</AppBar>
+	);
+};
 
 export default Header;
