@@ -1,8 +1,8 @@
 .calendar-header {
   align-items: center;
   display: flex;
-  justify-content: center;
-  padding: .5rem;
+  justify-content: space-between;
+  padding: 0.5rem;
 }
 
 .calendar-month {
@@ -32,7 +32,7 @@
 
 .calendar-weekday {
   align-items: center;
-  padding: .25rem;
+  padding: 0.25rem;
 }
 
 .calendar-dates {
@@ -62,7 +62,7 @@
   align-items: baseline;
   border-bottom: 1px solid #efefef;
   display: flex;
-  padding: .5rem;
+  padding: 0.5rem;
 }
 
 .date {
@@ -79,8 +79,8 @@
   border-top: 1px dotted #dedede;
   display: flex;
   flex-wrap: wrap;
-  margin: .25rem .5rem;
-  padding: .25rem 0;
+  margin: 0.25rem 0.5rem;
+  padding: 0.25rem 0;
 }
 
 .order:first-child {
@@ -93,7 +93,7 @@
 }
 
 .order__account-name {
-  font-size: .7rem;
+  font-size: 0.7rem;
   width: 100%;
 }
 
@@ -103,12 +103,11 @@
 }
 
 .order__product-size {
-  font-size: .7rem;
+  font-size: 0.7rem;
   flex: 1;
 }
 
 .order__order-quantity {
-
 }
 
 @media (max-width: 960px) {

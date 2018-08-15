@@ -8,7 +8,7 @@ export const exportCSV = (filename, headers, target, search, userToken) => {
     body: JSON.stringify(search)
   })
     .then(response => response.json())
-    .then(({ success, data }) => {
+    .then(({ data }) => {
       const keys = headers.map(({ key }) => key);
       const headerCSV = headers.map(({ name }) => name).join(',');
 
@@ -36,16 +36,31 @@ export const exportCSV = (filename, headers, target, search, userToken) => {
         })
         .join('\r\n');
 
-      // ** must add '\ueff' to prevent broken korean font
-      const blob = new Blob(['\ufeff' + headerCSV + '\r\n' + bodyCSV], {
-        type: 'text/csv;charset=utf-8;'
-      });
+      generateCSV(headerCSV, bodyCSV, filename);
+    });
+};
 
-      if (navigator.msSaveOrOpenBlob) {
-        navigator.msSaveOrOpenBlob(blob, filename);
-      } else {
-        downloadAnchor(URL.createObjectURL(blob), filename);
-      }
+export const getOrderWeights = (year, month, userToken) => {
+  fetch(`http://localhost:3000/order-weights/${year}/${month}`, {
+    headers: {
+      'Content-Type': 'application/json',
+      'x-access-token': userToken
+    },
+    method: 'get'
+  })
+    .then(response => response.json())
+    .then(({ data }) => {
+      const keys = ['date', 'is_print', 'is_not_print'];
+      const headerCSV = '날짜,인쇄,무지';
+
+      // generate body csv from data
+      const bodyCSV = data
+        .map(item => {
+          return keys.map(key => '"t"'.replace('t', item[key])).join(',');
+        })
+        .join('\r\n');
+
+      generateCSV(headerCSV, bodyCSV, `주문중량_${year}년_${month + 1}월.csv`);
     });
 };
 
@@ -65,4 +80,18 @@ const downloadAnchor = (content, filename) => {
   anchor.href = content;
   anchor.click();
   anchor.remove();
+};
+
+// function to generate CSV file
+// ** must add '\ueff' to prevent broken korean font
+const generateCSV = (headerCSV, bodyCSV, filename) => {
+  const blob = new Blob(['\ufeff' + headerCSV + '\r\n' + bodyCSV], {
+    type: 'text/csv;charset=utf-8;'
+  });
+
+  if (navigator.msSaveOrOpenBlob) {
+    navigator.msSaveOrOpenBlob(blob, filename);
+  } else {
+    downloadAnchor(URL.createObjectURL(blob), filename);
+  }
 };

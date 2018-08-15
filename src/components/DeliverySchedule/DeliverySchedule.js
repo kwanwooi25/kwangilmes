@@ -3,6 +3,7 @@ import moment from 'moment';
 import 'moment/locale/ko';
 import IconButton from '@material-ui/core/IconButton';
 import Icon from '@material-ui/core/Icon';
+import Tooltip from '@material-ui/core/Tooltip';
 import Spinner from '../../components/Spinner/Spinner';
 import { comma } from '../../helpers/comma';
 import './DeliverySchedule.css';
@@ -126,19 +127,28 @@ class DeliverySchedule extends Component {
   }
 
   render() {
-    const { year, month, isPending } = this.props;
+    const { year, month, isPending, onStatsDownloadClick } = this.props;
     return (
       <div className="calendar">
         <div className="calendar-header">
-          <IconButton onClick={this.onPrevClick.bind(this)}>
-            <Icon>navigate_before</Icon>
-          </IconButton>
-          <span className="calendar-month">
-            {year}년 {month + 1}월
-          </span>
-          <IconButton onClick={this.onNextClick.bind(this)}>
-            <Icon>navigate_next</Icon>
-          </IconButton>
+          <div className="calendar-header__navigator">
+            <IconButton onClick={this.onPrevClick.bind(this)}>
+              <Icon>navigate_before</Icon>
+            </IconButton>
+            <span className="calendar-month">
+              {year}년 {month + 1}월
+            </span>
+            <IconButton onClick={this.onNextClick.bind(this)}>
+              <Icon>navigate_next</Icon>
+            </IconButton>
+          </div>
+          <div className="calendar-header__buttons">
+            <Tooltip title="주문중량표 다운로드">
+              <IconButton onClick={onStatsDownloadClick}>
+                <Icon>save_alt</Icon>
+              </IconButton>
+            </Tooltip>
+          </div>
         </div>
         {isPending ? (
           <Spinner />
