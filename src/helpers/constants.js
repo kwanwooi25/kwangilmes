@@ -130,13 +130,13 @@ export const PRODUCT_FORM_SECTIONS = [
       {
         varName: 'print_image_url',
         displayName: '기존 도안',
-        xs: 12,
+        xs: 12
       },
       {
         type: 'file',
         varName: 'print_image_file_name',
         displayName: '도안',
-        xs: 12,
+        xs: 12
       },
       {
         varName: 'print_front_color_count',
@@ -367,6 +367,13 @@ export const PRODUCT_DETAIL_SECTIONS = [
     fields: [
       { varName: 'unit_price', displayName: '단가' },
       { varName: 'product_memo', displayName: '메모' }
+    ]
+  },
+  {
+    title: '작업이력',
+    fields: [
+      { varName: 'old_history', displayName: '작업내역' },
+      { varName: 'history', displayName: '작업내역' }
     ]
   }
 ];
