@@ -1,5 +1,7 @@
+const HOST = process.env.REACT_APP_API_HOST;
+
 export const exportCSV = (filename, headers, target, search, userToken) => {
-  fetch(`http://localhost:3000/${target}-for-xls`, {
+  fetch(`${HOST}/${target}-for-xls`, {
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': userToken
@@ -41,7 +43,7 @@ export const exportCSV = (filename, headers, target, search, userToken) => {
 };
 
 export const getOrderWeights = (year, month, userToken) => {
-  fetch(`http://localhost:3000/order-weights/${year}/${month}`, {
+  fetch(`${HOST}/order-weights/${year}/${month}`, {
     headers: {
       'Content-Type': 'application/json',
       'x-access-token': userToken

@@ -28,6 +28,8 @@ import { calculateOffset } from '../../helpers/calculateOffset';
 import { printOrders } from '../../helpers/printOrders';
 import './OrdersPage.css';
 
+const HOST = process.env.REACT_APP_API_HOST;
+
 const CSV_HEADERS = [
   { key: 'id', name: 'ID' },
   { key: 'ordered_at', name: '발주일' },
@@ -185,7 +187,7 @@ class OrdersPage extends Component {
 
   showCompleteOrderModal = ids => {
     const token = this.props.auth.userToken;
-    fetch(`http://localhost:3000/orders-by-ids`, {
+    fetch(`${HOST}/orders-by-ids`, {
       headers: {
         'Content-Type': 'application/json',
         'x-access-token': token
@@ -251,7 +253,7 @@ class OrdersPage extends Component {
 
   onPrintOrdersClick = ids => {
     const token = this.props.auth.userToken;
-    fetch(`http://localhost:3000/orders-by-ids`, {
+    fetch(`${HOST}/orders-by-ids`, {
       headers: {
         'Content-Type': 'application/json',
         'x-access-token': token

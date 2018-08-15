@@ -18,6 +18,8 @@ import FullScreenDialog from '../../components/FullScreenDialog/FullScreenDialog
 import ConfirmModal from '../../components/ConfirmModal/ConfirmModal';
 import './PlateForm.css';
 
+const HOST = process.env.REACT_APP_API_HOST;
+
 const PLATE_FORM_FIELDS = [
   { varName: 'plate_round', displayName: '둘레', xs: 6, sm: 3 },
   { varName: 'plate_length', displayName: '기장', xs: 6, sm: 3 },
@@ -61,7 +63,7 @@ class PlateForm extends Component {
     product_search: '',
     product_search_result: [],
     selectedProduct: null
-  }
+  };
 
   componentDidMount() {
     const { plateId, plates } = this.props;
@@ -195,18 +197,13 @@ class PlateForm extends Component {
     } else {
       this.setState({ product_search_error: '' });
       const { userToken } = this.props.auth;
-      fetch(
-        `http://localhost:3000/products?product_name=${
-          this.state.product_search
-        }`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'x-access-token': userToken
-          },
-          method: 'get'
-        }
-      )
+      fetch(`${HOST}/products?product_name=${this.state.product_search}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          'x-access-token': userToken
+        },
+        method: 'get'
+      })
         .then(response => response.json())
         .then(({ success, data }) => {
           if (success) {
