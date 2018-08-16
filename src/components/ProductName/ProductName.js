@@ -35,7 +35,7 @@ class ProductName extends Component {
             {this.renderFields(fields, data)}
           </Grid>
         );
-      } else if (title === '작업이력') {
+      } else if (title === '작업내역') {
         return (
           <Grid item xs={12} md={6} key={title}>
             <h2 className="detail-view__subtitle">{title}</h2>

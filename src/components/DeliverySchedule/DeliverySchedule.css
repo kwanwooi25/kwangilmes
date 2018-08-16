@@ -107,9 +107,6 @@
   flex: 1;
 }
 
-.order__order-quantity {
-}
-
 @media (max-width: 960px) {
   .calendar-body {
     flex-direction: column;

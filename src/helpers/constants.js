@@ -370,10 +370,6 @@ export const PRODUCT_DETAIL_SECTIONS = [
     ]
   },
   {
-    title: '작업이력',
-    fields: [
-      { varName: 'old_history', displayName: '작업내역' },
-      { varName: 'history', displayName: '작업내역' }
-    ]
+    title: '작업내역'
   }
 ];
