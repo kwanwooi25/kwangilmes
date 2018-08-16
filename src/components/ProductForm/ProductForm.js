@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { uploadFile } from 'react-s3';
+import S3Client from 'aws-s3';
 import { fetchAccountNames } from '../../actions';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -160,7 +160,7 @@ class ProductForm extends Component {
 			};
 			let response;
 			if (this.state.print_image_file) {
-				response = await uploadFile(this.state.print_image_file, config);
+				response = await S3Client.uploadFile(this.state.print_image_file, config);
 			}
 
 			const data = {
