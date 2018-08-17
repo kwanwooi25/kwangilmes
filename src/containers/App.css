@@ -1,43 +1,43 @@
 .App {
-  display: flex;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
+	display: flex;
+	overflow: hidden;
+	position: relative;
+	width: 100%;
 }
 
 .highlight {
-  background: #ff7961;
+	background: #ff7961;
 }
 
 /* SNACKBAR MESSAGE */
 
 .snackbar {
-  position: absolute;
+	position: absolute;
 }
 
 .snackbar-content {
-  width: 90%;
-  max-width: 200px;
+	width: 90%;
+	max-width: 200px;
 }
 
 /* LIST SEARCH */
 
 .search-wrapper {
-  display: flex;
-  flex-direction: row;
-  padding: 1rem;
-  background: #efefef;
+	display: flex;
+	flex-direction: row;
+	padding: 1rem;
+	background: #efefef;
 }
 
 .search-inputs {
-  flex: 1;
+	flex: 1;
 }
 
 .search-buttons {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: flex-end;
 }
 
 /* DETAIL VIEW */
@@ -46,51 +46,47 @@
 .detail-view__row,
 .detail-view__name,
 .detail-view__value {
-  margin: 0;
+	margin: 0;
 }
 
 .detail-view__subtitle {
-  margin-top: 0.5rem;
-  padding: 0.5rem;
+	margin-top: 0.5rem;
+	padding: 0.5rem;
 }
 
 .detail-view__row {
-  align-items: baseline;
-  display: flex;
-  padding: 0.5rem 1rem;
+	align-items: baseline;
+	display: flex;
+	padding: 0.5rem 1rem;
 }
 
 .detail-view__name {
-  font-size: 0.8rem;
-  width: 35%;
+	font-size: 0.8rem;
+	width: 35%;
 }
 
 .detail-view__value {
-  font-weight: bold;
-  width: 65%;
-}
-
-.detail-view__image-container {
-  max-height: 80%;
-  margin: auto;
+	font-weight: bold;
+	width: 65%;
 }
 
 .detail-view__image {
-  width: 100%;
-  height: auto;
+	display: block;
+	max-width: 90%;
+	margin: auto;
 }
 
 .detail-view__badges {
-  display: flex;
-  justify-content: flex-end;
-  padding: 1rem;
+	display: flex;
+	justify-content: flex-end;
+	padding: 1rem;
 }
 
 .detail-view__badges-badge {
-  background: #ababab;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 0.5rem;
-  border-radius: 0.2rem;
+	background: #ababab;
+	color: white;
+	font-size: 1rem;
+	font-weight: bold;
+	padding: 0.5rem;
+	border-radius: 0.2rem;
 }

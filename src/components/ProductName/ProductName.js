@@ -1,20 +1,17 @@
 import React, { Component } from 'react';
-import moment from 'moment';
 import { connect } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import Popover from '@material-ui/core/Popover';
 import { highlight } from '../../helpers/highlight';
 import CustomModal from '../../components/CustomModal/CustomModal';
 import './ProductName.css';
+import { comma } from '../../helpers/comma';
 import { PRODUCT_DETAIL_SECTIONS } from '../../helpers/constants';
-
-const HOST = process.env.REACT_APP_API_HOST;
 
 class ProductName extends Component {
 	state = {
 		isDetailViewOpen: false,
-		anchorEl: null
+		isPrintImageViewOpen: false
 	};
 
 	showDetailView = () => {
@@ -34,13 +31,6 @@ class ProductName extends Component {
 					<Grid item xs={12} md={6} key={title}>
 						<h2 className="detail-view__subtitle">{title}</h2>
 						{this.renderFields(fields, data)}
-					</Grid>
-				);
-			} else if (title === '작업내역') {
-				return (
-					<Grid item xs={12} md={6} key={title}>
-						<h2 className="detail-view__subtitle">{title}</h2>
-						{this.renderHistory(data)}
 					</Grid>
 				);
 			} else {
@@ -85,38 +75,41 @@ class ProductName extends Component {
 								<Button
 									fullWidth
 									variant="contained"
-									onClick={(event) => {
-										this.setState({ anchorEl: event.target });
+									onClick={() => {
+										this.setState({ isPrintImageViewOpen: true });
 									}}
 								>
 									도안보기
 								</Button>
-								<Popover
-									className="detail-view__image-container"
-									open={Boolean(this.state.anchorEl)}
-									anchorEl={this.state.anchorEl}
+								<CustomModal
+									title="도안 보기"
+									open={this.state.isPrintImageViewOpen}
 									onClose={() => {
-										this.setState({ anchorEl: null });
+										this.setState({ isPrintImageViewOpen: false });
 									}}
-									anchorOrigin={{
-										vertical: 'top',
-										horizontal: 'center'
-									}}
-									transformOrigin={{
-										vertical: 'bottom',
-										horizontal: 'center'
-									}}
+									Buttons={
+										<Button
+											variant="contained"
+											color="primary"
+											onClick={() => {
+												this.setState({ isPrintImageViewOpen: false });
+											}}
+										>
+											확인
+										</Button>
+									}
 								>
-									<img
-										className="detail-view__image"
-										src={data.print_image_url}
-										alt={displayName}
-										onClick={() => {
-											this.setState({ anchorEl: null });
-										}}
-									/>
-								</Popover>
+									<a href={value} target="_blank" className="detail-view__image-container">
+										<img className="detail-view__image" src={value} alt={displayName} />
+									</a>
+								</CustomModal>
 							</span>
+						</div>
+					);
+				} else if (varName === 'history') {
+					return (
+						<div key={displayName} className="detail-view__row">
+							<ul className="order-history-list">{this.renderHistory(value)}</ul>
 						</div>
 					);
 				}
@@ -130,48 +123,15 @@ class ProductName extends Component {
 			} else return undefined;
 		});
 
-	renderHistory = (data) => {
-		/*TODO: display history on product detail view */
-		// let history = [];
-		// const { id, old_history } = data;
-		// const token = this.props.auth.userToken;
-
-		// if (old_history) {
-		// 	history = old_history
-		// 		.split('매')
-		// 		.map((value) => {
-		// 			const array = value.split('수량:');
-		// 			if (array.includes('') === false) return array;
-		// 		})
-		// 		.filter((value) => value !== undefined)
-		// 		.map((data) => {
-		// 			return {
-		// 				date: data[0].trim(),
-		// 				quantity: Number(data[1].trim())
-		// 			};
-		// 		});
-		// }
-
-		// return await fetch(`${HOST}/orders-by-product/${id}`, {
-		// 	headers: {
-		// 		'Content-Type': 'application/json',
-		// 		'x-access-token': token
-		// 	},
-		// 	method: 'get'
-		// })
-		// 	.then((response) => response.json())
-		// 	.then(({ data }) => {
-		// 		if (data) {
-		// 			data.forEach(({ ordered_at, order_quantity }) => {
-		// 				history.push({ date: moment(ordered_at).format('YYYY-MM-DD'), quantity: order_quantity });
-		// 			});
-		// 		}
-
-		// 		console.log(history);
-
-		//   });
-
-		return <div className="detail-view__row">History</div>;
+	renderHistory = (history) => {
+		return history.map(({ date, quantity }) => {
+			return (
+				<li key={date} className="order-history-list__item">
+					<span>{date}</span>
+					<span>{`${comma(quantity)}매`}</span>
+				</li>
+			);
+		});
 	};
 
 	render() {

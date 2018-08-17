@@ -362,6 +362,6 @@ export const PRODUCT_DETAIL_SECTIONS = [
 	},
 	{
 		title: '작업내역',
-		fields: []
+		fields: [ { varName: 'history', displayName: '작업내역' } ]
 	}
 ];

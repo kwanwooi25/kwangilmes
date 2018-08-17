@@ -3,50 +3,40 @@
 .product-order-form__row,
 .product-order-form__name,
 .product-order-form__value {
-  padding: 0.5rem;
-  margin: 0;
+	padding: 0.5rem;
+	margin: 0;
 }
 
 .product-order-form__message {
-  text-align: center;
+	text-align: center;
 }
 
 .product-order-form__title {
-  margin-top: .5rem;
+	margin-top: .5rem;
 }
 
 .product-order-form__row {
-  align-items: center;
-  display: flex;
+	align-items: center;
+	display: flex;
 }
 
 .product-order-form__name {
-  padding: 0 0.5rem;
-  width: 30%;
+	padding: 0 0.5rem;
+	width: 30%;
 }
 
 .product-order-form__value {
-  padding: 0 0.5rem;
-  font-weight: bold;
-  width: 70%;
-}
-
-.product-order-form__image-container {
-  max-height: 80%;
-  margin: auto;
-}
-
-.product-order-form__image {
-  width: 100%;
-  height: auto;
+	padding: 0 0.5rem;
+	font-weight: bold;
+	width: 70%;
 }
 
 .product-order-form__datepicker {
-  width: 100%;
+	width: 100%;
 }
 
 .product-order-form__plate_status {
-  display: flex;
-  flex-direction: row !important;
-  justify-content: space-between;
+	display: flex;
+	flex-direction: row !important;
+	justify-content: space-between;
 }
