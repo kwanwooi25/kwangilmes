@@ -21,17 +21,19 @@ import './PlateForm.css';
 const HOST = process.env.REACT_APP_API_HOST;
 
 const PLATE_FORM_FIELDS = [
-  { varName: 'plate_round', displayName: '둘레', xs: 6, sm: 3 },
-  { varName: 'plate_length', displayName: '기장', xs: 6, sm: 3 },
+  { varName: 'plate_round', displayName: '둘레', xs: 6, sm: 3, md: 2 },
+  { varName: 'plate_length', displayName: '기장', xs: 6, sm: 3, md: 2 },
   {
     type: 'select',
     varName: 'plate_material',
     displayName: '재질',
     options: ['신주', '데스'],
     xs: 4,
-    sm: 2
+    sm: 2,
+    md: 2
   },
-  { varName: 'storage_location', displayName: '위치', xs: 8, sm: 4 }
+  { varName: 'storage_location', displayName: '위치', xs: 8, sm: 4, md: 2 },
+  { varName: 'memo', displayName: '메모', xs: 12, md: 4 }
 ];
 
 const PLATE_FORM_REQUIRED = [
@@ -112,7 +114,7 @@ class PlateForm extends Component {
         product_1: this.state.products[0] ? this.state.products[0].id : null,
         product_2: this.state.products[1] ? this.state.products[1].id : null,
         product_3: this.state.products[2] ? this.state.products[2].id : null,
-        memo: ''
+        memo: this.state.memo
       };
 
       this.setState({
