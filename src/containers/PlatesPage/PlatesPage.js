@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
@@ -86,11 +87,13 @@ class PlatesPage extends Component {
 	}
 
 	onSearchChange = (name, event) => {
-		const { search } = this.props.plates;
-		const token = this.props.auth.userToken;
-		search[name] = event.target.value.toLowerCase();
-		search.offset = 0;
-		this.props.fetchPlates(token, search);
+		_.debounce(() => {
+			const { search } = this.props.plates;
+			const token = this.props.auth.userToken;
+			search[name] = event.target.value.toLowerCase();
+			search.offset = 0;
+			this.props.fetchPlates(token, search);
+		}, 300);
 	};
 
 	onSearchReset = () => {
