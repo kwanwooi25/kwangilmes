@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
@@ -79,13 +78,11 @@ class AccountsPage extends Component {
 	}
 
 	onSearchChange(text) {
-		_.debounce(() => {
-			const { search } = this.props.accounts;
-			const token = this.props.auth.userToken;
-			search.account_name = text;
-			search.offset = 0;
-			this.props.fetchAccounts(token, search);
-		}, 300);
+		const { search } = this.props.accounts;
+		const token = this.props.auth.userToken;
+		search.account_name = text;
+		search.offset = 0;
+		this.props.fetchAccounts(token, search);
 	}
 
 	onRowsPerPageChange(limit) {

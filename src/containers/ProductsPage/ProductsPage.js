@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
@@ -103,13 +102,11 @@ class ProductsPage extends Component {
 	}
 
 	onSearchChange = (name, event) => {
-		_.debounce(() => {
-			const { search } = this.props.products;
-			const token = this.props.auth.userToken;
-			search[name] = event.target.value.toLowerCase();
-			search.offset = 0;
-			this.props.fetchProducts(token, search);
-		}, 300);
+		const { search } = this.props.products;
+		const token = this.props.auth.userToken;
+		search[name] = event.target.value.toLowerCase();
+		search.offset = 0;
+		this.props.fetchProducts(token, search);
 	};
 
 	onSearchReset = () => {

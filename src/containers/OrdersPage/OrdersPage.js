@@ -1,4 +1,3 @@
-import _ from 'underscore';
 import React, { Component } from 'react';
 import moment from 'moment';
 import { connect } from 'react-redux';
@@ -90,13 +89,11 @@ class OrdersPage extends Component {
 	}
 
 	onSearchChange = (name, value) => {
-		_.debounce(() => {
-			const { search } = this.props.orders;
-			const token = this.props.auth.userToken;
-			search[name] = value;
-			search.offset = 0;
-			this.props.fetchOrders(token, search);
-		}, 300);
+		const { search } = this.props.orders;
+		const token = this.props.auth.userToken;
+		search[name] = value;
+		search.offset = 0;
+		this.props.fetchOrders(token, search);
 	};
 
 	onDateChange = (date_from, date_to) => {
@@ -104,6 +101,7 @@ class OrdersPage extends Component {
 		const token = this.props.auth.userToken;
 		search.date_from = date_from;
 		search.date_to = date_to;
+		search.offset = 0;
 		this.props.fetchOrders(token, search);
 	};
 
