@@ -92,7 +92,7 @@ class ProductReview extends React.Component {
 		PRODUCT_DETAIL_SECTIONS.map(({ title, fields }) => {
 			const hasInfo = fields.map(({ varName }) => !!data[varName]).filter((value) => value === true).length > 0;
 
-			if (hasInfo) {
+			if (hasInfo && title !== '작업내역') {
 				return (
 					<Grid item xs={12} md={6} key={title}>
 						<h2 className="product-review__title">{title}</h2>
