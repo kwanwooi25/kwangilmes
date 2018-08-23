@@ -10,7 +10,7 @@ const INITIAL_STATE = {
 export default function (state = INITIAL_STATE, action) {
 	switch (action.type) {
 		case LOGIN_USER:
-			localStorage.setItem('usetToken', action.payload.userToken);
+			localStorage.setItem('userToken', action.payload.userToken);
 			return action.payload;
 		case LOGOUT_USER:
 			localStorage.removeItem('userToken');
