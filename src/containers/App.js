@@ -5,7 +5,7 @@ import moment from 'moment';
 import 'moment/locale/ko';
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
 import MomentUtils from 'material-ui-pickers/utils/moment-utils';
-import { logoutUser } from '../actions';
+import { getCurrentUser, logoutUser } from '../actions';
 import Snackbar from '@material-ui/core/Snackbar';
 import Header from '../components/Header/Header';
 import Navigation from '../components/Navigation/Navigation';
@@ -23,7 +23,7 @@ const PublicRoute = ({ isPermitted, ...rest }) =>
 
 const PrivateRoute = ({ isPermitted, ...rest }) => (isPermitted === false ? <Redirect to="/" /> : <Route {...rest} />);
 
-const PUBLIC_ROUTES = [ { path: '/', component: LoginPage } ];
+const PUBLIC_ROUTES = [{ path: '/', component: LoginPage }];
 
 const PRIVATE_ROUTES = [
 	{ path: '/home', component: DashboardPage },
@@ -39,6 +39,12 @@ class App extends Component {
 		isNavOpen: false
 	};
 
+	componentDidMount() {
+		const token = localStorage.getItem('userToken');
+		console.log(token);
+		if (token) this.props.getCurrentUser(token);
+	}
+
 	renderPublicRoutes() {
 		const { isLoggedIn } = this.props.auth;
 		return PUBLIC_ROUTES.map(({ path, component }) => (
@@ -49,8 +55,7 @@ class App extends Component {
 	renderPrivateRoutes() {
 		const { isLoggedIn, current_user } = this.props.auth;
 		return PRIVATE_ROUTES.map(({ path, component }) => {
-			const isPermitted = current_user[`can_read_${path.replace('/', '')}`] || path === '/home';
-
+			const isPermitted = path === '/home' ? true : current_user && current_user[`can_read_${path.replace('/', '')}`];
 			return (
 				<PrivateRoute
 					exact
@@ -113,4 +118,4 @@ const mapStateToProps = ({ auth, snackbar }) => {
 	return { auth, snackbar };
 };
 
-export default connect(mapStateToProps, { logoutUser })(App);
+export default connect(mapStateToProps, { getCurrentUser, logoutUser })(App);

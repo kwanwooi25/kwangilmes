@@ -47,6 +47,7 @@ export const loginUser = (username, password) => dispatch => {
   })
     .then(response => response.json())
     .then(({ success, error, data }) => {
+      console.log(data.user);
       const payload = {
         isLoggedIn: success,
         userToken: data.token,
@@ -56,6 +57,20 @@ export const loginUser = (username, password) => dispatch => {
       dispatch({ type: LOGIN_USER, payload });
     });
 };
+
+export const getCurrentUser = (token) => dispatch => {
+  fetch(`${HOST}/current_user?token=${token}`)
+    .then(response => response.json())
+    .then(({ success, error, data }) => {
+      const payload = {
+        isLoggedIn: success,
+        userToken: token,
+        current_user: data.user,
+        error
+      }
+      dispatch({ type: LOGIN_USER, payload });
+    })
+}
 
 export const logoutUser = () => dispatch => {
   dispatch({ type: LOGOUT_USER });
