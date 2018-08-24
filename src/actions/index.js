@@ -37,7 +37,6 @@ import {
 } from './types';
 
 const HOST = process.env.REACT_APP_API_HOST;
-// const HOST = 'http://localhost:3000';
 
 export const loginUser = (username, password) => dispatch => {
   fetch(`${HOST}/login`, {
@@ -47,7 +46,6 @@ export const loginUser = (username, password) => dispatch => {
   })
     .then(response => response.json())
     .then(({ success, error, data }) => {
-      console.log(data.user);
       const payload = {
         isLoggedIn: success,
         userToken: data.token,
