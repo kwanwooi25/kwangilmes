@@ -34,6 +34,7 @@ const OrderListItem = ({
 		product_length,
 		product_width,
 		is_print,
+		plate_status,
 		print_front_color_count,
 		print_back_color_count,
 		order_quantity,
@@ -52,7 +53,7 @@ const OrderListItem = ({
 
 	// 제품 정보 (무지/인쇄)
 	let printInfo = '무지';
-	if (is_print) printInfo = `인쇄 ${Number(print_front_color_count) + Number(print_back_color_count)}도`;
+	if (is_print) printInfo = `인쇄 ${Number(print_front_color_count) + Number(print_back_color_count)}도 (동판 ${plate_status})`;
 
 	// 완성중량
 	const completedQuantityWeight = getWeight(order, completed_quantity);
@@ -155,7 +156,7 @@ const OrderListItem = ({
 							color="primary"
 							aria-label="print"
 							onClick={() => {
-								onListItemPrintClick([ id ]);
+								onListItemPrintClick([id]);
 							}}
 						>
 							<Icon>print</Icon>
@@ -167,7 +168,7 @@ const OrderListItem = ({
 							disabled={is_completed}
 							aria-label="complete"
 							onClick={() => {
-								onListItemCompleteClick([ id ]);
+								onListItemCompleteClick([id]);
 							}}
 						>
 							<Icon>done</Icon>
@@ -190,7 +191,7 @@ const OrderListItem = ({
 							disabled={is_completed}
 							aria-label="delete"
 							onClick={() => {
-								onListItemDeleteClick([ id ]);
+								onListItemDeleteClick([id]);
 							}}
 						>
 							<Icon>delete</Icon>
