@@ -200,16 +200,21 @@ const getTextForDocContent = async ({
 
 const imageToBase64 = (imageURL) => {
 	return new Promise((resolve, reject) => {
-		fetch(imageURL).then((response) => response.arrayBuffer()).then((buffer) => {
-			let binary = '';
-			let bytes = [].slice.call(new Uint8Array(buffer));
-			bytes.forEach((byte) => {
-				binary += String.fromCharCode(byte);
-			});
+		fetch(imageURL)
+			.then((response) => response.arrayBuffer())
+			.then((buffer) => {
+				let binary = '';
+				let bytes = [].slice.call(new Uint8Array(buffer));
+				bytes.forEach((byte) => {
+					binary += String.fromCharCode(byte);
+				});
 
-			const imageString = 'data:image/jpeg;base64,' + window.btoa(binary);
-			resolve(imageString);
-		});
+				const imageString = 'data:image/jpeg;base64,' + window.btoa(binary);
+				resolve(imageString);
+			})
+			.catch((error) => {
+				resolve('');
+			})
 	});
 };
 

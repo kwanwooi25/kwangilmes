@@ -60,13 +60,15 @@ export const getCurrentUser = (token) => dispatch => {
   fetch(`${HOST}/current_user?token=${token}`)
     .then(response => response.json())
     .then(({ success, error, data }) => {
-      const payload = {
-        isLoggedIn: success,
-        userToken: token,
-        current_user: data.user,
-        error
+      if (success) {
+        const payload = {
+          isLoggedIn: success,
+          userToken: token,
+          current_user: data.user,
+          error
+        }
+        dispatch({ type: LOGIN_USER, payload });
       }
-      dispatch({ type: LOGIN_USER, payload });
     })
 }
 

@@ -22,7 +22,7 @@ import './ProductForm.css';
 import { PRODUCT_FORM_SECTIONS, PRODUCT_FORM_REQUIRED, PRODUCT_FORM_INITIAL_STATE } from '../../helpers/constants';
 
 class ProductForm extends Component {
-	state = PRODUCT_FORM_INITIAL_STATE;
+	state = Object.assign({}, PRODUCT_FORM_INITIAL_STATE);
 
 	componentDidMount() {
 		const { auth, productId, products } = this.props;
