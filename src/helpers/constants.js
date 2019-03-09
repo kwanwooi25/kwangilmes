@@ -324,7 +324,7 @@ export const PRODUCT_DETAIL_SECTIONS = [
 	{
 		title: '인쇄',
 		fields: [
-			{ varName: 'print_image_preview', displayName: '도안' },
+			{ varName: 'print_image_url', displayName: '도안' },
 			{ varName: 'print_front_color_count', displayName: '전면도수' },
 			{ varName: 'print_front_color', displayName: '전면색상' },
 			{ varName: 'print_front_position', displayName: '전면인쇄위치' },

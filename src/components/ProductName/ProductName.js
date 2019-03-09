@@ -41,18 +41,19 @@ class ProductName extends Component {
 	renderFields = (fields, data) =>
 		fields.map(({ varName, displayName }) => {
 			let value;
+			console.log(fields, data)
 
 			switch (varName) {
 				case 'product_size':
 					value = `${data.product_thick} x ${data.product_length} x ${data.product_width}`;
 					break;
 				case 'is_print':
-					value = data.is_print === 'is_print_true' ? '인쇄' : '무지';
+					value = data.is_print === 'is_print_true' || data.is_print === true ? '인쇄' : '무지';
 					break;
 				case 'ext_pretreat':
 					value = data.ext_pretreat === 'single' ? '단면' : data.ext_pretreat === 'double' ? '양면' : '';
 					break;
-				case 'print_image_preview':
+				case 'print_image_url':
 					value = data.print_image_url;
 					break;
 				case 'ext_antistatic':
@@ -67,7 +68,7 @@ class ProductName extends Component {
 			}
 
 			if (value) {
-				if (varName === 'print_image_preview') {
+				if (varName === 'print_image_url') {
 					return (
 						<div key={displayName} className="detail-view__row">
 							<span className="detail-view__name">{displayName}</span>
@@ -136,6 +137,8 @@ class ProductName extends Component {
 
 	render() {
 		const { product, searchTerm, className } = this.props;
+
+		console.log(product)
 
 		const productName = highlight(product.product_name, searchTerm);
 
