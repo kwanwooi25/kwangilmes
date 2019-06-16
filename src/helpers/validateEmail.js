@@ -2,7 +2,6 @@ const regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*
 
 export const validateEmail = email => {
   if (email !== '') {
-    console.log(regExp.test(email));
     return regExp.test(email);
   }
 };

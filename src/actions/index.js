@@ -46,13 +46,15 @@ export const loginUser = (username, password) => dispatch => {
   })
     .then(response => response.json())
     .then(({ success, error, data }) => {
-      const payload = {
-        isLoggedIn: success,
-        userToken: data.token,
-        current_user: data.user,
-        error
-      };
-      dispatch({ type: LOGIN_USER, payload });
+      if (success) {
+        const payload = {
+          isLoggedIn: success,
+          userToken: data.token,
+          current_user: data.user,
+          error
+        };
+        dispatch({ type: LOGIN_USER, payload });
+      }
     });
 };
 

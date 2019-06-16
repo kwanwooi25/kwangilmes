@@ -199,7 +199,7 @@ class ProductOrderForm extends Component {
 										</Button>
 									}
 								>
-									<a href={value} target="_blank" className="detail-view__image-container">
+									<a href={value} target="_blank" rel="noopener noreferrer" className="detail-view__image-container">
 										<img className="detail-view__image" src={value} alt={displayName} />
 									</a>
 								</CustomModal>
